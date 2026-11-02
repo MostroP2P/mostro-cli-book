@@ -1,8 +1,8 @@
 # mostro-cli JSON Interface Book
 
-A guide for people and programs that drive [mostro-cli](https://github.com/MostroP2P/mostro-cli)
 Online: **https://arkanoider.github.io/mostro-cli-book/**
 
+A guide for people and programs that drive [mostro-cli](https://github.com/MostroP2P/mostro-cli)
 through its machine interface (`--output json`): generic wrappers, bots, GUIs, MCP servers
 and AI agents.
 
