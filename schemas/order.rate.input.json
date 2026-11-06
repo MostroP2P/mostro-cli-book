@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "order": {
+      "description": "Id of the finished order whose counterparty you rate",
+      "type": "string"
+    },
+    "rating": {
+      "description": "The rating, from 1 to 5",
+      "type": "string"
+    },
+    "yes": {
+      "description": "Send the rating without asking (required with --output json)",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "order",
+    "rating"
+  ],
+  "type": "object"
+}

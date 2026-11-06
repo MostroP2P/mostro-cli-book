@@ -37,7 +37,7 @@ key, never spends an index.
 
 | `result` | Meaning | `next_step` | Local status |
 | --- | --- | --- | --- |
-| `canceled` | Canceled outright (e.g. your own pending order) | null | `canceled` |
+| `canceled` | Canceled outright (e.g. your own pending order, or an order whose take or creation still waits on a bond: a taker at `waiting-taker-bond`, a maker at `waiting-maker-bond`) | null | `canceled` |
 | `cancel_requested` | You started a cooperative cancel | `wait_for_peer_cancel` | unchanged |
 | `cancel_accepted` | The other party had requested it; now canceled by both | null | `cooperatively-canceled` |
 
@@ -61,9 +61,7 @@ As [order add-invoice](order_add_invoice.md#errors). A typical refusal reason is
 
 ## Warnings
 
-`local_status_stale`, `invalid_event_timestamp`, `cleanup_incomplete`. The schema also
-lists `trade_index_not_recorded` (shared with the other steps), but `cancel` never sends a
-next trade key, so it does not occur.
+`local_status_stale`, `invalid_event_timestamp`, `cleanup_incomplete`.
 
 ## Examples
 

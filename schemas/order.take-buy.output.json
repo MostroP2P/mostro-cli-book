@@ -405,6 +405,20 @@
               "$ref": "#/$defs/ErrorInfo"
             }
           ],
+          "anyOf": [
+            {
+              "properties": {
+                "code": {
+                  "const": "node_refused"
+                }
+              }
+            },
+            {
+              "properties": {
+                "reason": false
+              }
+            }
+          ],
           "properties": {
             "code": {
               "enum": [
@@ -454,6 +468,19 @@
                 },
                 "persistence": {
                   "const": "not_attempted"
+                },
+                "publication": {
+                  "const": "published"
+                }
+              }
+            },
+            {
+              "properties": {
+                "daemon_acceptance": {
+                  "const": "rejected"
+                },
+                "persistence": {
+                  "const": "applied"
                 },
                 "publication": {
                   "const": "published"

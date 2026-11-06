@@ -74,7 +74,6 @@ Shared with [release](order_release.md) and [cancel](order_cancel.md).
 | --- | --- | --- | --- |
 | Accepted, row updated | `ok` | | published / accepted / applied |
 | Accepted, row update failed | `ok` + `local_status_stale` | | published / accepted / failed |
-| Accepted, next index not recorded (range) | `ok` + `trade_index_not_recorded` | | published / accepted / failed |
 | Not in store | `error` | `order_unknown` | not_attempted / unknown / not_attempted |
 | Other local failure | `error` | its code | not_attempted / unknown / not_attempted |
 | Refused (wrong status, not the buyer...) | `error` | `node_refused` + `reason` | published / rejected / not_attempted |
@@ -91,8 +90,7 @@ As [order add-invoice](order_add_invoice.md#errors).
 
 ## Warnings
 
-`local_status_stale`, `trade_index_not_recorded`, `invalid_event_timestamp`,
-`cleanup_incomplete`.
+`local_status_stale`, `invalid_event_timestamp`, `cleanup_incomplete`.
 
 ## Examples
 

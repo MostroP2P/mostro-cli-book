@@ -18,16 +18,25 @@ fails like an unknown command: `invalid_arguments`, exit 2, `command: null`.
 | `release -o ID` | `order release --order ID --yes` |
 | `cancel -o ID` | `order cancel --order ID --yes` |
 | `getdm ...` | `message list [--since MINUTES] [--order ID]` |
+| `dispute -o ID` / `--orderid` | `dispute open --order ID --yes` |
+| `rate -o ID -r RATING` | `order rate --order ID --rating RATING --yes` |
 | — | `order sync [--since MINUTES]` (new) |
+| — | `order mine` (new) |
+| — | `identity init`, `identity show` (new) |
 | — | `schema` (new) |
 
 Behaviour changes that matter to wrappers:
 
-- JSON commands **never create an identity**; `identity_missing` instead.
+- JSON commands other than `identity init` **never create an identity**; they return
+  `identity_missing` instead. Create one explicitly with `identity init` (a legacy command
+  run first still creates it too).
 - `order info` waits for the reply to **its** request (not the first message), and an empty
   answer is a success with `not_returned`.
 - Writes require `--yes` in JSON mode; no stdin prompt is ever shown.
 - `message list` is read-only and shows only messages authored by the node.
 - `--kind` became `--side`; short option letters of the old commands are gone.
+- New options with no old spelling: `order new --expires-in SECONDS`, `--invoice -` (the
+  invoice read from standard input) and the global `--reply-timeout SECONDS`; see
+  [Invoking the CLI](../invocation.md).
 
 The short root options (`-m`, `-r`, `-p`, `-s`, `-t`, `-v`) still exist.

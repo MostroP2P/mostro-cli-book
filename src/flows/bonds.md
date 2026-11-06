@@ -25,6 +25,30 @@ invoice.
 invoice in `data.payment_request`. Pay it; the node continues the take (for take-buy, the
 hold invoice then arrives as a message with `next_step: pay_hold_invoice`).
 
+## Cancelling while a bond is due
+
+Until the bond is paid, `order cancel --order <id> --yes` withdraws, with
+`data.result: "canceled"` and local status `canceled`:
+
+- a taker at `waiting-taker-bond` backs out: the node releases the taker's bond and puts the
+  order back to `pending` for other takers;
+- a maker at `waiting-maker-bond` closes the order, which was never published.
+
+If the maker's bond got
+locked meanwhile, the node refuses with `node_refused` and `reason: not_allowed_by_status`
+(read from the daemon's source; the scripted node does not exercise it).
+
+## Bond messages
+
+`message list` reports the bond events as informational records (`next_step: null`) whose
+`payload.kind` is `order`:
+
+| `action` | Meaning | `payload.order.sats_amount` |
+| --- | --- | --- |
+| `bond-invoice-accepted` | The node accepted your payout invoice | Your share |
+| `bond-payout-completed` | The node paid your share | Your share |
+| `bond-slashed` | A bond was slashed | The slashed bond |
+
 ## Receiving a slashed bond
 
 When your counterparty's bond is slashed, the node asks you for a payout invoice:
@@ -34,6 +58,7 @@ When your counterparty's bond is slashed, the node asks you for a payout invoice
  "payload": {"kind": "bond_payout_request", "order": {...}, "slashed_at": "...", "slashed_at_unix": "..."}}
 ```
 
+`payload.order.sats_amount` is your share and `payload.slashed_at` the time of the slash.
 Create an invoice for exactly your share and send it:
 
 ```sh

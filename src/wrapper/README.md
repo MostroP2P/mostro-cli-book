@@ -25,8 +25,10 @@ simple if the wrapper follows a few rules. Complete, tested wrappers are in `wra
 2. **One `--output json`, placed first.** Never let user data land where an option is
    expected. For a value that could start with `-`, use the attached form
    `--payment-method=<value>`: the CLI never reads an output selection inside a value.
-3. **Close stdin.** The CLI does not read it in JSON mode; a closed stdin makes sure a
-   future version can never block on a prompt.
+3. **Close stdin.** The CLI reads it only for `--invoice -` (then write the invoice line
+   and close it); otherwise a closed stdin makes sure a future version can never block on a
+   prompt. Prefer `--invoice -` to a literal invoice: a command line is visible to other
+   local users in the process list.
 4. **Parse stdout, ignore stderr** (log it, do not parse it).
 5. **Branch on `status`, then `error.code`.** Never on `message`. Keep a default branch for
    codes you do not know (within v1 new commands can add codes).

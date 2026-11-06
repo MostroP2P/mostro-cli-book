@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "command": "order.mine",
+  "status": "ok",
+  "data": {
+    "orders": []
+  },
+  "error": null,
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

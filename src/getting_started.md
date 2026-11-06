@@ -63,12 +63,16 @@ The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported.
 
 Commands that act for you (everything except `order list` and `schema`) need a local
 identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one trade key per
-order are derived. **JSON commands never create an identity**; they fail with
-`identity_missing` instead. Create it once in human mode:
+order are derived. Only [`identity init`](commands/identity_init.md) creates it; every
+other JSON command fails with `identity_missing` instead. Create it once:
 
 ```sh
-mostro-cli getadmindm      # any identity-using legacy command creates ~/.mcli/mcli.db
+mostro-cli --output json identity init   # creates $MCLI_DIR (else ~/.mcli) and mcli.db
+mostro-cli --output json identity show   # identity public key and last trade index
 ```
+
+`identity init` needs no node, relay or `--yes`, publishes nothing and never prints the
+mnemonic. If a store already exists it changes nothing and fails with `identity_exists`.
 
 Back up `~/.mcli/mcli.db` (or the mnemonic in it). A copy of the database also carries your
 in-flight trades; the mnemonic alone recovers the identity but not the local order rows.
@@ -92,6 +96,7 @@ shows complete code.
 
 ## What is not in JSON yet
 
-Ratings, disputes, chat, `restore`, user info and the admin commands are human-only today.
+Chat, the dispute conversation, `restore`, user info and the admin commands are human-only
+today.
 Asking them for JSON returns `output_not_supported` (exit 2) before anything runs. See
 [Human-only commands](commands/legacy.md).

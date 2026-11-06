@@ -24,18 +24,6 @@ mostro-cli --output json order fiat-sent --order 00000000-0000-0000-0000-0000000
 {{#include ../examples/order.fiat-sent/range_key_sent.json}}
 ```
 
-### Range maker: accepted, but the reserved index 4 could not be recorded
-
-_`order.fiat-sent/trade_index_not_recorded` · status ok · exit 0 · authored_
-
-```sh
-mostro-cli --output json order fiat-sent --order 00000000-0000-0000-0000-000000000001 --yes
-```
-
-```json
-{{#include ../examples/order.fiat-sent/trade_index_not_recorded.json}}
-```
-
 ### Refused with reason invalid_pubkey
 
 _`order.fiat-sent/node_refused` · status error · `node_refused` · exit 1 · fixture_

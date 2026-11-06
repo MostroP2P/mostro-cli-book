@@ -26,6 +26,8 @@ second order, or (for `release`) act twice on money.
 | `order fiat-sent` | `order info --order <id>` | Status `fiat-sent` (or later) |
 | `order release` | `order info --order <id>` | Status `settled-hold-invoice` or `success` |
 | `order cancel` | `order info --order <id>` | Status `canceled` / `cooperatively-canceled`, or a cooperative-cancel message in `message list` |
+| `dispute open` | `order info --order <id>` | Status `dispute`. **Do not resend blindly**: the node answers a second dispute on the same order with silence |
+| `order rate` | No command shows it | Assume it may have happened; do not resend (the node does not answer a side that already rated) |
 | `order sync` | Run `order sync` again | It is idempotent; always safe |
 
 Give the node a little time (tens of seconds) before concluding it did not act: a
@@ -43,9 +45,10 @@ Give the node a little time (tens of seconds) before concluding it did not act: 
 ## Trade index after uncertain
 
 For `order new` and the takes, `meta.persistence` on an uncertain outcome is about the
-reserved trade index: `applied` means it was recorded as spent (good), `failed` means it
-could not be recorded, so the next order might reuse it and be refused by the node. In
-that case run the human command `mostro-cli getlasttradeindex` to resynchronise.
+reserved trade index. The CLI records the index as spent **before** it publishes, so it is
+`applied`: the next attempt uses a fresh key, which is what the node expects. An index
+that cannot be recorded stops the command with `store_unwritable` before anything is sent,
+so there is nothing uncertain to recover.
 
 ## A small state machine
 

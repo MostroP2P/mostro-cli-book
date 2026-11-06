@@ -17,7 +17,7 @@ The node asks for an invoice (`message list` shows `next_step: add_bond_invoice`
 ## Invocation
 
 ```text
-mostro-cli --output json bond add-invoice --order UUID --invoice BOLT11 --yes
+mostro-cli --output json bond add-invoice --order UUID --invoice BOLT11|- --yes
 ```
 
 Replaces `addbondinvoice`.
@@ -27,7 +27,7 @@ Replaces `addbondinvoice`.
 | Option | Required | Rule |
 | --- | --- | --- |
 | `--order` | yes | UUID of the order whose bond was slashed |
-| `--invoice` | yes | A BOLT-11 invoice for **exactly your share** of the slashed bond |
+| `--invoice` | yes | A BOLT-11 invoice for **exactly your share** of the slashed bond. `-` reads it from standard input: see [Invoice on standard input](../invocation.md#invoice-on-standard-input) |
 | `--yes` | **yes in JSON** | |
 
 ## Success data: `BondInvoiceData`
@@ -45,7 +45,7 @@ Replaces `addbondinvoice`.
 | Case | status | code | Stages |
 | --- | --- | --- | --- |
 | Accepted | `ok` | | published / accepted / not_attempted |
-| Local failure, `order_unknown` | `error` | its code | not_attempted / unknown / not_attempted |
+| Local failure, `order_unknown`, store not readable for the order's key (`store_unwritable`) | `error` | its code | not_attempted / unknown / not_attempted |
 | Refused (wrong amount...) | `error` | `node_refused` + `reason` | published / rejected / not_attempted |
 | No / unusable reply | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` | published / unknown / not_attempted |
 | Ambiguous relays | `uncertain` | `request_rejected` | unknown / unknown / not_attempted |
@@ -57,7 +57,7 @@ another invoice.
 
 `invalid_arguments`, `configuration_*`, `relay_connection_failed`, `relay_read_failed`,
 `internal_error`, `identity_*`, `protocol_unsupported`, `pow_required`, `request_rejected`,
-`node_refused`, `order_declined`, `order_unknown`; uncertain: `reply_timeout`,
+`node_refused`, `order_declined`, `store_unwritable`, `order_unknown`; uncertain: `reply_timeout`,
 `reply_malformed`, `request_rejected`, `relay_read_failed`, `pow_required`.
 
 ## Warnings

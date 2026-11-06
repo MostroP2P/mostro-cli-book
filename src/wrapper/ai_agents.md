@@ -15,6 +15,8 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `get_orders(order_ids[])` | `order info` | no |
 | `read_messages(since_minutes?, order_id?)` | `message list` | no |
 | `sync_orders(since_minutes?)` | `order sync` | local only |
+| `my_orders()` | `order mine` | no |
+| `show_identity()` | `identity show` | no |
 | `create_order(...)` | `order new` | **yes** |
 | `take_sell_order(order_id, invoice?, amount?)` | `order take-sell` | **yes** |
 | `take_buy_order(order_id, amount?)` | `order take-buy` | **yes** |
@@ -23,6 +25,11 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `confirm_fiat_sent(order_id)` | `order fiat-sent` | **yes** |
 | `release_sats(order_id)` | `order release` | **yes, irreversible** |
 | `cancel_order(order_id)` | `order cancel` | **yes** |
+| `open_dispute(order_id)` | `dispute open` | **yes** |
+| `rate_counterparty(order_id, rating)` | `order rate` | **yes** |
+
+`identity init` is a set-up step for the operator, not a tool: run it once when deploying.
+Pass invoices with `--invoice -` on standard input rather than on the command line.
 
 Return the **whole envelope** to the model (it is compact and self-describing), or a
 reduced form: `status`, `error.code`, `error.reason`, warning codes, `data`.
@@ -35,6 +42,7 @@ amounts). Recommended:
 
 - read tools: run freely;
 - `order sync`: run freely (local, idempotent);
+- `order mine`, `identity show`: run freely (local, read-only);
 - every write: require an explicit confirmation step in the UI each time;
 - `order release`: additionally show that it is irreversible and that the fiat must have
   arrived; never auto-approve.

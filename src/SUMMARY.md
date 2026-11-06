@@ -16,7 +16,10 @@
 
 - [Command index](commands/README.md)
 - [schema](commands/schema.md)
+- [identity init](commands/identity_init.md)
+- [identity show](commands/identity_show.md)
 - [order list](commands/order_list.md)
+- [order mine](commands/order_mine.md)
 - [order info](commands/order_info.md)
 - [order new](commands/order_new.md)
 - [order take-sell](commands/order_take_sell.md)
@@ -28,6 +31,8 @@
 - [order sync](commands/order_sync.md)
 - [bond add-invoice](commands/bond_add_invoice.md)
 - [message list](commands/message_list.md)
+- [dispute open](commands/dispute_open.md)
+- [order rate](commands/order_rate.md)
 - [Human-only commands](commands/legacy.md)
 
 # Trade flows

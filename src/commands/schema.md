@@ -36,6 +36,7 @@ at wrapper start-up and cache it keyed by `executable_version`.
 | `executable_version` | string | Package version of the binary, e.g. `"0.16.3"` |
 | `schema_dialect` | string | `"https://json-schema.org/draft/2020-12/schema"` |
 | `commands` | array of `CommandDescriptor` | Sorted by `name`; JSON-capable and human-only commands alike |
+| `global_options` | array of `GlobalOption` | The options accepted at any command depth (`output`, `reply-timeout`), sorted by `name` |
 
 ### CommandDescriptor
 
@@ -46,7 +47,7 @@ at wrapper start-up and cache it keyed by `executable_version`.
 | `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
 | `input_schema` | object or null | JSON Schema of the options; `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
-| `required_configuration` | array of string or null | Environment variables read (`["MOSTRO_PUBKEY", "RELAYS"]`); `[]` for `schema`; `null` when not modeled (legacy) |
+| `required_configuration` | array of string or null | Environment variables read (`["MOSTRO_PUBKEY", "RELAYS"]`); `[]` for the local commands (`schema`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
 
 Example descriptor (trimmed):
 
@@ -61,7 +62,7 @@ Example descriptor (trimmed):
     "additionalProperties": false,
     "properties": {
       "order": { "type": "string", "description": "Id of the order" },
-      "yes": { "type": "string", "enum": ["true", "false"], "description": "Send the request without asking (required with --output json)" }
+      "yes": { "type": "boolean", "description": "Send the request without asking (required with --output json)" }
     },
     "required": ["order"]
   },
@@ -70,8 +71,22 @@ Example descriptor (trimmed):
 }
 ```
 
-Input schemas use one extension keyword: `"x-case-insensitive": true` on enums that accept
-any letter case (`side`, `status` of `order list`).
+Input schemas use two extension keywords: `"x-case-insensitive": true` on enums that accept
+any letter case (`side`, `status` of `order list`), and `"x-stdin": "-"` on the options
+that read their value from standard input when given `-` (`invoice` of `order new`,
+`order take-sell`, `order add-invoice` and `bond add-invoice`; see
+[Invoice on standard input](../invocation.md#invoice-on-standard-input)).
+
+### GlobalOption
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `name` | string | Long option name without dashes: `output`, `reply-timeout` |
+| `type` | string | Value type on the command line (`string`) |
+| `description` | string | Help text, with the range and default |
+| `enum` | array of string | Allowed values, when the option has a fixed set (`output`); absent otherwise |
+| `default` | string | Default value as text (`"15"` for `reply-timeout`); absent when there is none |
+| `applies_to` | array of string | Canonical names of the commands the option takes effect on, sorted |
 
 ## Outcomes
 

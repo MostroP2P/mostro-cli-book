@@ -7,8 +7,6 @@ be used when they gain JSON output.
 
 | CLI command | Reserved `command` | What it does |
 | --- | --- | --- |
-| `rate` | `order.rate` | Rate the counterparty after a successful trade |
-| `dispute` | `dispute.open` | Open a dispute on an order |
 | `listdisputes` | `dispute.list` | List open disputes |
 | `disputechat` | `dispute.chat` | Read the dispute conversation with the solver |
 | `getdmuser` | `chat.history` | Read both sides of the peer chat of an order |

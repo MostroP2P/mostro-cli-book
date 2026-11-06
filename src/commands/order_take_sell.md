@@ -16,7 +16,7 @@ order taken, not your side.
 ## Invocation
 
 ```text
-mostro-cli --output json order take-sell --order UUID [--invoice INVOICE] [--amount FIAT] --yes
+mostro-cli --output json order take-sell --order UUID [--invoice INVOICE|-] [--amount FIAT] --yes
 ```
 
 Replaces `takesell -o ...`.
@@ -26,7 +26,7 @@ Replaces `takesell -o ...`.
 | Option | Required | Rule |
 | --- | --- | --- |
 | `--order` | yes | UUID of a `sell` order, any case |
-| `--invoice` | no | Where you want to receive the sats: a BOLT-11 invoice or a Lightning address, ≤ 4096 bytes, no whitespace. Without it, the node asks for one next (`add_invoice`) |
+| `--invoice` | no | Where you want to receive the sats: a BOLT-11 invoice or a Lightning address, ≤ 4096 bytes, no whitespace. Without it, the node asks for one next (`add_invoice`). `-` reads it from standard input: see [Invoice on standard input](../invocation.md#invoice-on-standard-input) |
 | `--amount` | no | Integer > 0: the fiat amount you take from a **range** order. The node checks the range |
 | `--yes` | **yes in JSON** | |
 
@@ -34,7 +34,7 @@ Replaces `takesell -o ...`.
 
 Like [order new](order_new.md): reserve a trade index, publish one request, wait for the
 correlated reply, save the order row with the trade key. The index is spent whenever the
-request was published and not provably refused.
+request was published and not provably refused (or refused for a stale index).
 
 If the node answers that the seller must pay first and sends no order
 (`wait_for_seller_payment`), the CLI saves a minimal local row (id, side `sell`, status
@@ -70,9 +70,10 @@ Identical to [order new](order_new.md#outcomes), with `OrderTakeData` as data.
 | Taken and saved | `ok` | | published / accepted / applied |
 | Local failure, `--yes` missing | `error` | its code | not_attempted / unknown / not_attempted |
 | Refused (taken by someone else, wrong amount...) | `error` | `node_refused` + `reason` | published / rejected / not_attempted |
+| Refused for a stale trade index (`reason: invalid_trade_index`) | `error` | `node_refused` + `reason` | published / rejected / applied |
 | Accepted, row not saved | `uncertain` | `order_not_saved` (data present) | published / accepted / failed |
-| No / unusable reply, relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` | published / unknown / applied or failed |
-| Ambiguous relays | `uncertain` | `request_rejected` | unknown / unknown / applied or failed |
+| No / unusable reply, relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` | published / unknown / applied |
+| Ambiguous relays | `uncertain` | `request_rejected` | unknown / unknown / applied |
 
 `reply_malformed` also covers replies this CLI does not handle (for example a Cashu escrow).
 

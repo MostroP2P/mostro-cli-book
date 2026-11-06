@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 120 outcomes, each in its own file with the exact command line, all
+- **many examples**: 145 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -39,7 +39,7 @@ What you see is the **result**, already decoded, typed and checked.
 
 ## The contract in five lines
 
-1. Pass `--output json`; write commands also need `--yes`. Nothing is ever read from stdin.
+1. Pass `--output json`; write commands also need `--yes`. Stdin is read only for `--invoice -`.
 2. Stdout holds exactly one JSON object and a newline. Diagnostics go to stderr.
 3. Branch on `status` (`ok`, `error`, `uncertain`), then on `error.code`. Never on `message`.
 4. `uncertain` means *the node may have acted*. Do not retry blindly; check first.
@@ -50,7 +50,7 @@ What you see is the **result**, already decoded, typed and checked.
 | Item | Value |
 | --- | --- |
 | JSON contract | `schema_version` `"1"` |
-| Documented executable | mostro-cli 0.16.3 (`develop`, 2026-11-02) |
+| Documented executable | mostro-cli 0.16.3 as built from `main` (`9cbdb57`, 2026-11-06) |
 | Schema dialect | JSON Schema Draft 2020-12 |
 | Node protocol | Mostro protocol v2 (NIP-44 kind-14); v1 nodes are refused |
 
@@ -59,5 +59,6 @@ optional additions are allowed (a new command, a new code scoped to a new comman
 renamed command, a changed type or a changed meaning requires `schema_version` `"2"`.
 Reject documents whose `schema_version` you do not know.
 
-> `order sync` is documented from the development branch, where it is implemented and
-> tested but not yet released. Check `mostro-cli --output json schema` on your binary.
+> The JSON interface is merged on `main` but not yet in a release: the v0.16.3 release
+> predates it, although a build of `main` still reports 0.16.3. Check
+> `mostro-cli --output json schema` on your binary.

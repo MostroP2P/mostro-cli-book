@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-120 examples: 75 fixtures from the CLI's test suite, 14 captured from the binary, 31 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+145 examples: 101 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -19,9 +19,25 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `bond.add-invoice/node_refused` — Refused with reason invalid_invoice | `bond.add-invoice` | error | `node_refused` | 1 | fixture |
 | `bond.add-invoice/order_unknown` — No local row for this order | `bond.add-invoice` | error | `order_unknown` | 1 | fixture |
 | `bond.add-invoice/reply_timeout_uncertain` — No answer: wait for the payout before sending again | `bond.add-invoice` | uncertain | `reply_timeout` | 1 | fixture |
+| `dispute.open/dispute_opened` — The node opened the dispute; local status dispute | `dispute.open` | ok |  | 0 | fixture |
+| `dispute.open/dispute_opened_status_stale` — Dispute opened, local status not updated: ok with local_status_stale | `dispute.open` | ok |  | 0 | fixture |
+| `dispute.open/no_answer_uncertain` — No answer: the dispute may be open. Check order info before trying again | `dispute.open` | uncertain | `reply_timeout` | 1 | fixture |
+| `dispute.open/node_refused` — Refused with reason not_allowed_by_status (the order is not active or fiat-sent) | `dispute.open` | error | `node_refused` | 1 | fixture |
+| `dispute.open/order_unknown` — No local row for this order; nothing sent | `dispute.open` | error | `order_unknown` | 1 | fixture |
+| `dispute.open/yes_required` — JSON mode without --yes | `dispute.open` | error | `invalid_arguments` | 2 | fixture |
 | `general/output_not_supported_dispute_list` — Another legacy command asked for JSON | `dispute.list` | error | `output_not_supported` | 2 | captured |
 | `general/output_not_supported_secret` — A legacy command asked for JSON: rejected before it runs | `account.trade-key` | error | `output_not_supported` | 2 | fixture |
 | `general/unknown_command` — An unknown command: command is null | `None` | error | `invalid_arguments` | 2 | captured |
+| `identity.init/created` — A new store with a fresh mnemonic | `identity.init` | ok |  | 0 | fixture |
+| `identity.init/directory_not_created` — The data directory cannot be created: nothing written | `identity.init` | error | `store_unwritable` | 1 | fixture |
+| `identity.init/identity_exists` — A store (or a companion file) is already there: nothing changed | `identity.init` | error | `identity_exists` | 1 | fixture |
+| `identity.init/invalid_arguments` — identity init takes no options | `identity.init` | error | `invalid_arguments` | 2 | fixture |
+| `identity.init/store_not_completed` — The file was created but not completed, and removed again | `identity.init` | error | `store_unwritable` | 1 | fixture |
+| `identity.show/after_three_trades` — After three orders or takes: the next one uses index 4 | `identity.show` | ok |  | 0 | fixture |
+| `identity.show/identity_missing` — No local store | `identity.show` | error | `identity_missing` | 1 | fixture |
+| `identity.show/identity_unreadable` — The store exists but cannot be read | `identity.show` | error | `identity_unreadable` | 1 | fixture |
+| `identity.show/invalid_arguments` — identity show takes no options | `identity.show` | error | `invalid_arguments` | 2 | fixture |
+| `identity.show/new_identity` — A fresh store: no trade index recorded yet | `identity.show` | ok |  | 0 | fixture |
 | `message.list/identity_missing` — No local identity | `message.list` | error | `identity_missing` | 1 | fixture |
 | `message.list/identity_unreadable` — The database holds no valid mnemonic | `message.list` | error | `identity_unreadable` | 1 | authored |
 | `message.list/messages_of_a_trade` — Four messages of one trade, oldest first | `message.list` | ok |  | 0 | fixture |
@@ -59,7 +75,6 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.fiat-sent/node_refused` — Refused with reason invalid_pubkey | `order.fiat-sent` | error | `node_refused` | 1 | fixture |
 | `order.fiat-sent/range_key_sent` — Maker of a buy range order: the step carried the next trade key (index 4) | `order.fiat-sent` | ok |  | 0 | fixture |
 | `order.fiat-sent/removed_spelling` — The removed fiatsent spelling | `None` | error | `invalid_arguments` | 2 | fixture |
-| `order.fiat-sent/trade_index_not_recorded` — Range maker: accepted, but the reserved index 4 could not be recorded | `order.fiat-sent` | ok |  | 0 | authored |
 | `order.fiat-sent/yes_required` — JSON mode without --yes | `order.fiat-sent` | error | `invalid_arguments` | 2 | fixture |
 | `order.info/identity_missing` — No local identity: nothing was sent | `order.info` | error | `identity_missing` | 1 | fixture |
 | `order.info/identity_missing_captured` — Identity checked before any network access | `order.info` | error | `identity_missing` | 1 | captured |
@@ -86,6 +101,12 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.list/relay_connection_failed` — The only relay refuses connections | `order.list` | error | `relay_connection_failed` | 1 | captured |
 | `order.list/relay_read_failed` — A relay closed the subscription before EOSE: no partial data | `order.list` | error | `relay_read_failed` | 1 | authored |
 | `order.list/terminator_keeps_json` — Tokens after -- are not options; JSON stays selected and the stray tokens are an argument error | `order.list` | error | `invalid_arguments` | 2 | captured |
+| `order.mine/identity_missing` — No local store | `order.mine` | error | `identity_missing` | 1 | fixture |
+| `order.mine/invalid_arguments` — order mine takes no options | `order.mine` | error | `invalid_arguments` | 2 | fixture |
+| `order.mine/key_older_than_derived` — A key older than the newest 200: index unknown, with trade_keys_limited | `order.mine` | ok |  | 0 | fixture |
+| `order.mine/no_orders` — An identity with no orders yet | `order.mine` | ok |  | 0 | fixture |
+| `order.mine/orders_newest_first` — Two local orders, highest trade index first | `order.mine` | ok |  | 0 | fixture |
+| `order.mine/store_unreadable` — The orders table or a row cannot be read | `order.mine` | error | `store_unreadable` | 1 | fixture |
 | `order.new/bond_to_pay` — A bonded node asks the maker to pay a bond first | `order.new` | ok |  | 0 | fixture |
 | `order.new/created` — A market-price sell order created and saved | `order.new` | ok |  | 0 | fixture |
 | `order.new/fixed_buy_with_invoice` — A fixed-price buy order with the buyer's invoice attached | `order.new` | ok |  | 0 | authored |
@@ -103,6 +124,10 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.new/request_rejected_uncertain` — Relays answered ambiguously: the event may be out there; the index was spent | `order.new` | uncertain | `request_rejected` | 1 | authored |
 | `order.new/store_unwritable` — The database is read-only, so the index cannot be reserved: nothing sent | `order.new` | error | `store_unwritable` | 1 | authored |
 | `order.new/yes_required` — JSON mode without --yes is an argument error; nothing is done | `order.new` | error | `invalid_arguments` | 2 | fixture |
+| `order.rate/no_answer_uncertain` — No answer: the rating may have been recorded. Do not send it again | `order.rate` | uncertain | `reply_timeout` | 1 | fixture |
+| `order.rate/node_refused` — Refused with reason invalid_order_status (the trade is not finished) | `order.rate` | error | `node_refused` | 1 | fixture |
+| `order.rate/rating_out_of_range` — A rating outside 1 to 5 is rejected before anything is sent | `order.rate` | error | `invalid_arguments` | 2 | fixture |
+| `order.rate/rating_received` — The node received the rating | `order.rate` | ok |  | 0 | fixture |
 | `order.release/node_refused` — Refused with reason invalid_peer | `order.release` | error | `node_refused` | 1 | fixture |
 | `order.release/order_unknown` — No local row for this order | `order.release` | error | `order_unknown` | 1 | fixture |
 | `order.release/range_continued` — Maker of a sell range order released; the node creates a child order: run order sync | `order.release` | ok |  | 0 | fixture |

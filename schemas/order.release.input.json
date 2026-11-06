@@ -8,11 +8,7 @@
     },
     "yes": {
       "description": "Send the request without asking (required with --output json)",
-      "enum": [
-        "true",
-        "false"
-      ],
-      "type": "string"
+      "type": "boolean"
     }
   },
   "required": [

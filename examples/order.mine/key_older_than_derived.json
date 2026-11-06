@@ -1,0 +1,36 @@
+{
+  "schema_version": "1",
+  "command": "order.mine",
+  "status": "ok",
+  "data": {
+    "orders": [
+      {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "side": "sell",
+        "status": "success",
+        "trade_index": null,
+        "trade_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "side": "sell",
+        "status": "canceled",
+        "trade_index": null,
+        "trade_pubkey": null
+      }
+    ]
+  },
+  "error": null,
+  "warnings": [
+    {
+      "code": "trade_keys_limited",
+      "message": "Trade keys older than the newest 200 were not read."
+    }
+  ],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

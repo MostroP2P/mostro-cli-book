@@ -84,11 +84,14 @@ The generated schemas enforce exactly these combinations. The tables read
 | `error` | `not_attempted / unknown / not_attempted` | local failures, proven `request_rejected` |
 | `error` | `published / rejected / not_attempted` | `node_refused` |
 | `uncertain` | `published / accepted / failed` | `order_not_saved` (data present) |
-| `uncertain` | `published / unknown / applied` or `failed` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` |
-| `uncertain` | `unknown / unknown / applied` or `failed` | `request_rejected` |
+| `error` | `published / rejected / applied` | `node_refused` with `reason: invalid_trade_index` (the index stays spent) |
+| `uncertain` | `published / unknown / applied` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` |
+| `uncertain` | `unknown / unknown / applied` | `request_rejected` |
 
-Here `persistence` on an uncertain outcome is about the **trade index**: it is spent
-whenever the request may have been published, so the next attempt uses a fresh key.
+Here `persistence` on an uncertain outcome is about the **trade index**: it is recorded
+before the request is published and stays spent whenever the request may have been
+published, so the next attempt uses a fresh key. An index that cannot be recorded stops the
+command with `store_unwritable` before anything is sent.
 
 ### Updating: `order add-invoice`, `order fiat-sent`, `order release`, `order cancel`
 
@@ -96,7 +99,7 @@ whenever the request may have been published, so the next attempt uses a fresh k
 | --- | --- | --- |
 | `ok` | `published / accepted / applied` | |
 | `ok` | `published / accepted / not_attempted` | nothing to record (`cancel_requested`, `invoice_updated`) |
-| `ok` | `published / accepted / failed` | with warning `local_status_stale` or `trade_index_not_recorded` |
+| `ok` | `published / accepted / failed` | with warning `local_status_stale` |
 | `error` | `not_attempted / unknown / not_attempted` | local failures, `order_unknown` |
 | `error` | `published / rejected / not_attempted` | `node_refused` |
 | `uncertain` | `published / unknown / not_attempted` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` |

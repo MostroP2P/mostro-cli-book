@@ -31,6 +31,6 @@ You take someone's **buy** order: you lock sats, receive fiat, then release.
 
 | Situation | What to do |
 | --- | --- |
-| The buyer never sends fiat | Cancel cooperatively (`order cancel`) or open a dispute |
+| The buyer never sends fiat | Cancel cooperatively (`order cancel`) or open a dispute ([`dispute open`](../commands/dispute_open.md)) |
 | You did not pay the hold invoice | Nothing of yours is locked; the node will not keep the trade open forever (its timeouts apply). `order info` shows the current status |
 | `take-buy` returned `uncertain` with `order_not_saved` | `data.payment_request` is still the hold invoice; the local row is missing. Fix the store, then use `order info`. Commands that need the row fail with `order_unknown` until it exists |

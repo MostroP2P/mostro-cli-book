@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "command": "identity.show",
+  "status": "ok",
+  "data": {
+    "identity_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "last_trade_index": 0
+  },
+  "error": null,
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

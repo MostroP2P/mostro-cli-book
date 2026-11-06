@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "command": "identity.init",
+  "status": "error",
+  "data": null,
+  "error": {
+    "code": "store_unwritable",
+    "message": "The local store cannot be written, so nothing was sent."
+  },
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "failed",
+    "snapshot": null
+  }
+}
