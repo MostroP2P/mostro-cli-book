@@ -117,7 +117,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.new/order_not_saved_uncertain` — The node created the order but the local row could not be written; data is present | `order.new` | uncertain | `order_not_saved` | 1 | fixture |
 | `order.new/pow_required` — Not enough proof of work configured: nothing sent | `order.new` | error | `pow_required` | 1 | authored |
 | `order.new/range_created` — A range order 100-300 USD | `order.new` | ok |  | 0 | fixture |
-| `order.new/relay_read_failed_uncertain` — Published, then the relays dropped the wait; recording the spent index also failed | `order.new` | uncertain | `relay_read_failed` | 1 | authored |
+| `order.new/relay_read_failed_uncertain` — Published, then the relays dropped the wait; the trade index stays spent | `order.new` | uncertain | `relay_read_failed` | 1 | authored |
 | `order.new/removed_spelling` — The removed neworder spelling | `None` | error | `invalid_arguments` | 2 | fixture |
 | `order.new/reply_timeout_uncertain` — Published, no answer: the order may exist; the trade index was spent | `order.new` | uncertain | `reply_timeout` | 1 | fixture |
 | `order.new/request_rejected_error` — Every relay explicitly rejected the event: provably nothing sent, a plain error | `order.new` | error | `request_rejected` | 1 | authored |
@@ -147,7 +147,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.take-buy/pay_bond_invoice` — A bonded node asks the taker for a bond before the hold invoice | `order.take-buy` | ok |  | 0 | authored |
 | `order.take-buy/pay_hold_invoice` — Took a buy order: as the seller, pay the hold invoice | `order.take-buy` | ok |  | 0 | fixture |
 | `order.take-buy/reply_timeout_uncertain` — Published, no answer: the take may have happened | `order.take-buy` | uncertain | `reply_timeout` | 1 | fixture |
-| `order.take-buy/request_rejected_uncertain` — Ambiguous relay answers; recording the spent index failed too | `order.take-buy` | uncertain | `request_rejected` | 1 | authored |
+| `order.take-buy/request_rejected_uncertain` — Ambiguous relay answers; the trade index stays spent | `order.take-buy` | uncertain | `request_rejected` | 1 | authored |
 | `order.take-sell/add_invoice` — Took a sell order without an invoice: the node asks for one next | `order.take-sell` | ok |  | 0 | fixture |
 | `order.take-sell/node_refused` — The order is no longer pending: invalid_order_status | `order.take-sell` | error | `node_refused` | 1 | fixture |
 | `order.take-sell/order_declined` — Declined at the human prompt (not reachable in JSON mode) | `order.take-sell` | error | `order_declined` | 1 | fixture |

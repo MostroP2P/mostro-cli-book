@@ -60,7 +60,7 @@ mostro-cli --output json order new --side sell --currency USD --fiat-amount 100 
 {{#include ../examples/order.new/order_not_saved_uncertain.json}}
 ```
 
-### Published, then the relays dropped the wait; recording the spent index also failed
+### Published, then the relays dropped the wait; the trade index stays spent
 
 _`order.new/relay_read_failed_uncertain` · status uncertain · `relay_read_failed` · exit 1 · authored_
 

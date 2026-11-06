@@ -88,10 +88,11 @@ The generated schemas enforce exactly these combinations. The tables read
 | `uncertain` | `published / unknown / applied` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` |
 | `uncertain` | `unknown / unknown / applied` | `request_rejected` |
 
-Here `persistence` on an uncertain outcome is about the **trade index**: it is recorded
-before the request is published and stays spent whenever the request may have been
+Here `persistence` on an uncertain outcome with `daemon_acceptance: unknown` is about the
+**trade index**: it is recorded before the request is published and stays spent whenever the request may have been
 published, so the next attempt uses a fresh key. An index that cannot be recorded stops the
-command with `store_unwritable` before anything is sent.
+command with `store_unwritable` before anything is sent. With `order_not_saved`,
+`persistence: failed` is about the order row, which could not be saved.
 
 ### Updating: `order add-invoice`, `order fiat-sent`, `order release`, `order cancel`
 
@@ -105,9 +106,10 @@ command with `store_unwritable` before anything is sent.
 | `uncertain` | `published / unknown / not_attempted` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` |
 | `uncertain` | `unknown / unknown / not_attempted` | `request_rejected` |
 
-For the trade steps (`fiat-sent`, `release`, `cancel`) an uncertain outcome may also show
-`applied` or `failed`: the maker of a range order reserved a trade index for the child
-order, and persistence tells whether it was recorded.
+For the trade steps (`fiat-sent`, `release`, `cancel`) an uncertain outcome shows
+`applied` instead when the maker of a range order sent a key for the child order: its trade
+index was recorded before publishing. An index that cannot be recorded stops the step with
+`store_unwritable` before anything is sent.
 
 ### `bond add-invoice`
 

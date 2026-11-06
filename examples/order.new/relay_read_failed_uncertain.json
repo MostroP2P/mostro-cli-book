@@ -11,7 +11,7 @@
   "meta": {
     "publication": "published",
     "daemon_acceptance": "unknown",
-    "persistence": "failed",
+    "persistence": "applied",
     "snapshot": null
   }
 }

@@ -9,7 +9,9 @@ simple if the wrapper follows a few rules. Complete, tested wrappers are in `wra
 ```text
 1. argv = [binary, "--output", "json", ...command path, ...options]   # array, no shell
    + "--yes" for writes, only with the user's consent
-2. spawn with stdin closed, a timeout (≈45 s), environment with MOSTRO_PUBKEY/RELAYS
+2. spawn with a timeout (≈45 s), environment with MOSTRO_PUBKEY/RELAYS
+   with --invoice -: pipe stdin, write the invoice line, then close stdin
+   otherwise: stdin closed
 3. if spawn failed                     → TransportError(may_have_acted = false)
    if timeout                          → TransportError(may_have_acted = is_write)
 4. stdout.strip() empty                → TransportError(may_have_acted = is_write and exit == 1)

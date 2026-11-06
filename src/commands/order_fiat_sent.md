@@ -77,11 +77,11 @@ Shared with [release](order_release.md) and [cancel](order_cancel.md).
 | Not in store | `error` | `order_unknown` | not_attempted / unknown / not_attempted |
 | Other local failure | `error` | its code | not_attempted / unknown / not_attempted |
 | Refused (wrong status, not the buyer...) | `error` | `node_refused` + `reason` | published / rejected / not_attempted |
-| No / unusable reply, relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` | published / unknown / not_attempted, applied or failed |
-| Ambiguous relays | `uncertain` | `request_rejected` | unknown / unknown / not_attempted, applied or failed |
+| No / unusable reply, relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed`, `pow_required` | published / unknown / not_attempted or applied |
+| Ambiguous relays | `uncertain` | `request_rejected` | unknown / unknown / not_attempted or applied |
 
-On `uncertain`, `persistence` is `not_attempted` unless a range key was sent (then it says
-whether the reserved index was recorded). Check `order info`: status `fiat-sent` means it
+On `uncertain`, `persistence` is `not_attempted` unless a range key was sent; then it is
+`applied`, because the index was recorded before publishing. Check `order info`: status `fiat-sent` means it
 went through.
 
 ## Errors

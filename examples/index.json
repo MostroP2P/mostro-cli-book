@@ -1840,7 +1840,7 @@
         "Zelle",
         "--yes"
       ],
-      "title": "Published, then the relays dropped the wait; recording the spent index also failed",
+      "title": "Published, then the relays dropped the wait; the trade index stays spent",
       "source": {
         "kind": "authored",
         "note": "Written for this book and validated against the generated schema; synthetic values."
@@ -2429,7 +2429,7 @@
         "00000000-0000-0000-0000-000000000001",
         "--yes"
       ],
-      "title": "Ambiguous relay answers; recording the spent index failed too",
+      "title": "Ambiguous relay answers; the trade index stays spent",
       "source": {
         "kind": "authored",
         "note": "Written for this book and validated against the generated schema; synthetic values."

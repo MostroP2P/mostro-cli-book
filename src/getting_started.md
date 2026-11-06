@@ -18,13 +18,18 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 
 ```text
 "bond.add-invoice"
+"dispute.open"
+"identity.init"
+"identity.show"
 "message.list"
 "order.add-invoice"
 "order.cancel"
 "order.fiat-sent"
 "order.info"
 "order.list"
+"order.mine"
 "order.new"
+"order.rate"
 "order.release"
 "order.sync"
 "order.take-buy"
@@ -36,7 +41,8 @@ See [schema](commands/schema.md) for the full document.
 
 ## Configure the node
 
-Every command except `schema` talks to one Mostro node through Nostr relays.
+Every command except `schema`, `identity init`, `identity show` and `order mine` talks to
+one Mostro node through Nostr relays.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
