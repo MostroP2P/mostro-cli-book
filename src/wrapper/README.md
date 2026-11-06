@@ -9,8 +9,9 @@ simple if the wrapper follows a few rules. Complete, tested wrappers are in `wra
 ```text
 1. argv = [binary, "--output", "json", ...command path, ...options]   # array, no shell
    + "--yes" for writes, only with the user's consent
-2. spawn with a timeout (≈45 s), environment with MOSTRO_PUBKEY/RELAYS
-   with --invoice -: pipe stdin, write the invoice line, then close stdin
+2. spawn with a timeout (≈45 s, plus whatever --reply-timeout adds over 15 s),
+   environment with MOSTRO_PUBKEY/RELAYS
+   with --invoice - or --invoice=-: pipe stdin, write the invoice line, then close stdin
    otherwise: stdin closed
 3. if spawn failed                     → TransportError(may_have_acted = false)
    if timeout                          → TransportError(may_have_acted = is_write)
@@ -27,8 +28,8 @@ simple if the wrapper follows a few rules. Complete, tested wrappers are in `wra
 2. **One `--output json`, placed first.** Never let user data land where an option is
    expected. For a value that could start with `-`, use the attached form
    `--payment-method=<value>`: the CLI never reads an output selection inside a value.
-3. **Close stdin.** The CLI reads it only for `--invoice -` (then write the invoice line
-   and close it); otherwise a closed stdin makes sure a future version can never block on a
+3. **Close stdin.** The CLI reads it only for `--invoice -` or `--invoice=-` (then write
+   the invoice line and close it); otherwise a closed stdin makes sure a future version can never block on a
    prompt. Prefer `--invoice -` to a literal invoice: a command line is visible to other
    local users in the process list.
 4. **Parse stdout, ignore stderr** (log it, do not parse it).

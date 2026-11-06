@@ -2,10 +2,17 @@
 
 ## Install
 
+The JSON interface is on `main` but not in a release yet: `cargo install mostro-cli`
+installs the v0.16.3 release, which predates it and has no `schema` command. Install the
+documented revision from source (Rust 1.94 or later):
+
 ```sh
-cargo install mostro-cli          # or build from source: cargo build --release
+cargo install --locked --git https://github.com/MostroP2P/mostro-cli --rev 9cbdb57fe95a856d0ab68c6fc0b41bca93671aab
 mostro-cli --version              # mostro-cli 0.16.3
 ```
+
+The version number does not tell this build from the release: both report 0.16.3. Check
+with `mostro-cli --output json schema`, which only a build with the JSON interface answers.
 
 ## Discover what your binary supports
 
@@ -41,8 +48,10 @@ See [schema](commands/schema.md) for the full document.
 
 ## Configure the node
 
-Every command except `schema`, `identity init`, `identity show` and `order mine` talks to
-one Mostro node through Nostr relays.
+Every command except `schema`, `identity init`, `identity show` and `order mine` needs the
+node's public key and the relays. `order list`, `message list` and `order sync` only read
+events from the relays; the other commands also send the node one signed request through
+them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
