@@ -78,8 +78,8 @@ The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported.
 
 Commands that act for you (everything except `order list` and `schema`) need a local
 identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one trade key per
-order are derived. Only [`identity init`](commands/identity_init.md) creates it; every
-other JSON command fails with `identity_missing` instead. Create it once:
+order are derived. Only [`identity init`](commands/identity_init.md) creates it; the
+other commands that need it fail with `identity_missing` instead. Create it once:
 
 ```sh
 mostro-cli --output json identity init   # creates $MCLI_DIR (else ~/.mcli) and mcli.db

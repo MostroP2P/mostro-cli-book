@@ -184,7 +184,7 @@ export class MostroCli {
           }
           resolve({ ...envelope, exitCode });
         });
-      child.stdin?.end(); // the CLI never reads stdin in JSON mode
+      child.stdin?.end(); // invoices are passed literally; the CLI reads stdin only for --invoice -
     });
   }
 

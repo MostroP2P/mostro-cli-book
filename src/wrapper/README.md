@@ -3,12 +3,14 @@
 A wrapper turns "run a process, read stdout" into function calls. The contract makes this
 simple if the wrapper follows a few rules. Complete, tested wrappers are in `wrappers/`:
 [Python](python.md), [TypeScript](typescript.md), [Rust](rust.md), [Shell](shell.md).
+They keep stdin closed, so they pass invoices on the command line; to use `--invoice -`,
+pipe stdin as in step 2 below.
 
 ## The algorithm
 
 ```text
 1. argv = [binary, "--output", "json", ...command path, ...options]   # array, no shell
-   + "--yes" for writes, only with the user's consent
+   + "--yes" for the commands that take it, only with the user's consent
 2. spawn with a timeout (≈45 s, plus whatever --reply-timeout adds over 15 s),
    environment with MOSTRO_PUBKEY/RELAYS
    with --invoice - or --invoice=-: pipe stdin, write the invoice line, then close stdin
