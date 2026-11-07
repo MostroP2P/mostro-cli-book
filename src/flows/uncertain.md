@@ -44,11 +44,14 @@ Give the node a little time (tens of seconds) before concluding it did not act: 
 
 ## Trade index after uncertain
 
-For `order new` and the takes, `meta.persistence` on an uncertain outcome is about the
-reserved trade index. The CLI records the index as spent **before** it publishes, so it is
-`applied`: the next attempt uses a fresh key, which is what the node expects. An index
-that cannot be recorded stops the command with `store_unwritable` before anything is sent,
-so there is nothing uncertain to recover.
+For `order new` and the takes, an uncertain outcome with `meta.daemon_acceptance`
+`unknown` (`reply_timeout` and the like) has `meta.persistence` `applied`: it is about the
+reserved trade index, which the CLI records as spent **before** it publishes, so the next
+attempt uses a fresh key, which is what the node expects. With `order_not_saved` the node
+accepted (`daemon_acceptance` `accepted`) and `persistence` is `failed`: it describes the
+order's local row, which could not be saved (see the table above); the index was still
+spent. An index that cannot be recorded stops the command with `store_unwritable` before
+anything is sent, so there is nothing uncertain to recover.
 
 ## A small state machine
 
