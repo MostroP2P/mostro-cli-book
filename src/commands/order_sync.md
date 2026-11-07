@@ -10,8 +10,8 @@
 | Statuses | `ok`, `error`, `uncertain` |
 | Schemas | `schemas/order.sync.input.json`, `schemas/order.sync.output.json` |
 
-> **Development branch.** `order sync` is implemented and tested on `develop` but not yet
-> in a release. Check that your binary lists `order.sync` in `schema`.
+> `order sync` is in releases from v0.17.0 on. Check that your binary lists `order.sync`
+> in `schema`.
 
 Gives a local row to orders the node announced to your trade keys, so that the commands
 that need a row (`order cancel`, `order release`, `order add-invoice`...) work on them.

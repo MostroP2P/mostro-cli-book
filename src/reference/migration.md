@@ -27,9 +27,10 @@ fails like an unknown command: `invalid_arguments`, exit 2, `command: null`.
 
 Behaviour changes that matter to wrappers:
 
-- JSON commands other than `identity init` **never create an identity**; they return
-  `identity_missing` instead. Create one explicitly with `identity init` (a legacy command
-  run first still creates it too).
+- JSON commands other than `identity init` **never create an identity**. A command that
+  needs one returns `identity_missing` when none exists; `schema` and `order list` need
+  none. Create one explicitly with `identity init` (a legacy command run first still
+  creates it too).
 - `order info` waits for the reply to **its** request (not the first message), and an empty
   answer is a success with `not_returned`.
 - Writes require `--yes` in JSON mode; no stdin prompt is ever shown.
