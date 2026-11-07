@@ -3,8 +3,9 @@
   "additionalProperties": false,
   "properties": {
     "invoice": {
-      "description": "Your invoice (BOLT-11 or Lightning address) for the sats",
-      "type": "string"
+      "description": "Your invoice (BOLT-11 or Lightning address) for the sats; `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+      "type": "string",
+      "x-stdin": "-"
     },
     "order": {
       "description": "Id of the order the node asked an invoice for",
@@ -12,11 +13,7 @@
     },
     "yes": {
       "description": "Send the invoice without asking (required with --output json)",
-      "enum": [
-        "true",
-        "false"
-      ],
-      "type": "string"
+      "type": "boolean"
     }
   },
   "required": [

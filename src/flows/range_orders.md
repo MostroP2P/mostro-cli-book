@@ -63,9 +63,9 @@ maker: order cancel --order B            (works: B has a row now)
 
 ## Pitfalls
 
-- The warning `trade_index_not_recorded` on a step means index 4 was used but not stored:
-  `order sync` will not read key #4 until the index is recorded. Run the human command
-  `mostro-cli getlasttradeindex`, then `order sync`. See [Warning codes](../warnings.md).
+- The index of the next key (#4 above) is recorded in the store before the step is
+  published. If it cannot be recorded, the step fails with `store_unwritable` and nothing is
+  sent; fix the store and run the step again.
 - Orders saved by older CLI versions mark taken orders as "mine" too; for those, a taker's
   step may send a next key that the node ignores, costing one trade index. Harmless.
 - `cancel` never continues a range.

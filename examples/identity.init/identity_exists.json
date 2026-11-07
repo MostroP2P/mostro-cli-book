@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "command": "identity.init",
+  "status": "error",
+  "data": null,
+  "error": {
+    "code": "identity_exists",
+    "message": "A local identity already exists, so nothing was changed."
+  },
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_attempted",
+    "snapshot": null
+  }
+}

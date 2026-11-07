@@ -17,7 +17,7 @@ Creates an order as **maker**. A `sell` order sells sats for fiat; a `buy` order
 ```text
 mostro-cli --output json order new --side buy|sell --currency CODE --fiat-amount N
     [--fiat-amount-max M] --payment-method TEXT [--sats N] [--premium N]
-    [--invoice INVOICE] [--expiration-days N] --yes
+    [--invoice INVOICE|-] [--expiration-days N | --expires-in SECONDS] --yes
 ```
 
 Replaces `neworder` and its short flags and the `100-200` range syntax.
@@ -33,8 +33,9 @@ Replaces `neworder` and its short flags and the `100-200` range syntax.
 | `--payment-method` | yes | Non-empty text, ≤ 200 bytes, no control characters. Comma-separate several methods |
 | `--sats` | no | Integer ≥ 0, default 0 = market price at take time |
 | `--premium` | no | Integer −100..100 percent over/under market, default 0 |
-| `--invoice` | no | ≤ 4096 bytes, no whitespace. A buyer's invoice or Lightning address to be paid; which side may carry one is the node's rule (normally a `buy` order) |
+| `--invoice` | no | ≤ 4096 bytes, no whitespace. A buyer's invoice or Lightning address to be paid; which side may carry one is the node's rule (normally a `buy` order). `-` reads it from standard input: see [Invoice on standard input](../invocation.md#invoice-on-standard-input) |
 | `--expiration-days` | no | 0..365, default 0 = the node's default |
+| `--expires-in` | no | 1..31536000 seconds: the order expires `SECONDS` from now instead of after whole days. The node lowers it to its own maximum (`max_expiration_days`). Cannot be combined with `--expiration-days` (`invalid_arguments`, exit 2, nothing done) |
 | `--yes` | **yes in JSON** | Without it: `invalid_arguments`, exit 2, nothing done |
 
 Local checks only catch what is cheap and certain. The node remains the authority
@@ -44,7 +45,7 @@ Local checks only catch what is cheap and certain. The node remains the authorit
 
 1. Validate, read configuration and identity, check the store is writable.
 2. **Reserve** the next trade index and derive its key.
-3. Connect, probe the node (protocol, PoW), publish the request, wait for the reply (15 s).
+3. Connect, probe the node (protocol, PoW), publish the request, wait for the reply (`--reply-timeout`, 15 s by default).
 4. On acceptance, save the order row (with trade key and index) in one transaction.
 
 The trade index is **spent** whenever the request was published and not provably refused,
@@ -75,13 +76,18 @@ so a later attempt always uses a fresh key. The CLI never retries.
 | Local failure, `--yes` missing | `error` | its code | not_attempted / unknown / not_attempted |
 | Every relay refused the event | `error` | `request_rejected` | not_attempted / unknown / not_attempted |
 | Refused by the node | `error` | `node_refused` + `reason` | published / rejected / not_attempted |
+| Refused for a stale trade index (`reason: invalid_trade_index`) | `error` | `node_refused` + `reason` | published / rejected / applied |
 | Created, row **not** saved | `uncertain` | `order_not_saved` (**data present**) | published / accepted / failed |
-| No reply / unusable reply / relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed` | published / unknown / applied or failed |
-| PoW discovered too late | `uncertain` | `pow_required` | published / unknown / applied or failed |
-| Relays answered ambiguously | `uncertain` | `request_rejected` | unknown / unknown / applied or failed |
+| No reply / unusable reply / relay dropped wait | `uncertain` | `reply_timeout`, `reply_malformed`, `relay_read_failed` | published / unknown / applied |
+| PoW discovered too late | `uncertain` | `pow_required` | published / unknown / applied |
+| Relays answered ambiguously | `uncertain` | `request_rejected` | unknown / unknown / applied |
 
-On `uncertain` with `daemon_acceptance: unknown`, `persistence` refers to the reserved
-trade index (spent: `applied`; could not be recorded: `failed`).
+The trade index is recorded as spent in the store **before** the request is published; an
+index that cannot be recorded stops the command with `store_unwritable` before anything is
+sent. A refusal, or a request that provably never left, gives the index back, except a
+refusal for a stale index: the node is already at or past it, so it stays spent
+(`persistence: applied`). On `uncertain` with `daemon_acceptance: unknown`, `persistence:
+applied` means the index stays spent, so a retry uses a fresh key.
 
 **After `uncertain`, do not send `order new` again blindly**: the node may already hold a
 live order. Look for it first (`message list`, `order list` with your terms, or

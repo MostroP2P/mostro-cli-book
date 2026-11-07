@@ -28,7 +28,6 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 | Warning | Action |
 | --- | --- |
 | `local_status_stale` | Step succeeded. Do not resend. Local status lags; trust `order info` |
-| `trade_index_not_recorded` | Step succeeded. Run `getlasttradeindex` (human) before the next `order new` and before `order sync` |
 | `orders_not_returned` | Some ids unknown or not yours: see `data.not_returned` |
 | `trade_keys_limited` | Old keys skipped; use `message list --order` for old orders |
 | `invalid_event_timestamp`, `invalid_order_timestamp` | Display "invalid date"; use `_unix` fields |

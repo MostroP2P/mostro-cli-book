@@ -55,13 +55,13 @@ waiting-buyer-invoice / active ──(buyer: fiat-sent)──► fiat-sent ─�
 
    `data.result` is `released`. This is irreversible.
 
-6. **Rate** the buyer (human-only today: `mostro-cli rate`).
+6. **Rate** the buyer: [`order rate`](../commands/order_rate.md).
 
 ## If something goes wrong
 
 | Situation | What to do |
 | --- | --- |
 | Nobody takes the order | `order cancel --order <id> --yes` → `canceled` |
-| The buyer does not pay | Cancel cooperatively or open a dispute (human-only today) |
+| The buyer does not pay | Cancel cooperatively or open a dispute ([`dispute open`](../commands/dispute_open.md)) |
 | `release` returned `uncertain` | `order info --order <id>`; see [Recovering](uncertain.md) |
 | It was a range order | After `release`, `next_step: sync_child_order`: see [Range orders](range_orders.md) |

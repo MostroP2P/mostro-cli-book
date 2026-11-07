@@ -21,8 +21,8 @@ B: (sees a message from the node about the request; order info shows the trade s
 B: order cancel --order X  → ok, result cancel_accepted
 ```
 
-If the counterparty does not agree, the trade continues; a dispute (human-only today) is
-the escalation path.
+If the counterparty does not agree, the trade continues; a dispute
+([`dispute open`](../commands/dispute_open.md)) is the escalation path.
 
 ## Refusals
 

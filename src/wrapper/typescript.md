@@ -2,8 +2,8 @@
 
 `wrappers/typescript/mostroCli.ts` — Node 18+, no dependencies. It contains complete
 TypeScript types for every data object of contract 1, usable on their own (for example to
-type the output of a different runner). Tested with Node 22
-(`node --experimental-strip-types`) against mostro-cli 0.16.3.
+type the output of a different runner). Tested (`node --experimental-strip-types`) with
+Node 22 against a pre-release build and with Node 24 against mostro-cli 0.17.0.
 
 ```ts
 import { MostroCli, TransportError } from "./mostroCli.ts";

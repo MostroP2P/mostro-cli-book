@@ -11,6 +11,9 @@ the ones this book refers to, with how the CLI presents them.
 | `pay-invoice` | You are the seller: lock the sats | `pay_hold_invoice` | `payment_request` |
 | `add-invoice` | You are the buyer: the node needs your invoice | `add_invoice` | `order` |
 | `add-bond-invoice` | A counterparty bond was slashed; send a payout invoice | `add_bond_invoice` | `bond_payout_request` |
+| `bond-invoice-accepted` | Your payout invoice was accepted | — | `order` (amount: your share) |
+| `bond-payout-completed` | Your share of a slashed bond was paid | — | `order` (amount: your share) |
+| `bond-slashed` | A bond was slashed | — | `order` (amount: the slashed bond) |
 | `waiting-seller-to-pay` | Your invoice is in; the seller has to pay | — | `none` |
 | `hold-invoice-payment-accepted` | The seller locked the sats; the trade is active | — | (varies) |
 | `fiat-sent-ok` | The buyer's `fiat-sent` was accepted | — | `peer` |

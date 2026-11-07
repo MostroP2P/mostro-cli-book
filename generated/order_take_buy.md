@@ -48,7 +48,7 @@ mostro-cli --output json order take-buy --order 00000000-0000-0000-0000-00000000
 {{#include ../examples/order.take-buy/reply_timeout_uncertain.json}}
 ```
 
-### Ambiguous relay answers; recording the spent index failed too
+### Ambiguous relay answers; the trade index stays spent
 
 _`order.take-buy/request_rejected_uncertain` · status uncertain · `request_rejected` · exit 1 · authored_
 

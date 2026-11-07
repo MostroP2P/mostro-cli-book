@@ -93,7 +93,7 @@ def main():
         "",
         "- **fixture**: a contract case of the CLI repository (`specs/*/contracts/examples.json`), "
         "reproduced by its tests. Synthetic values.",
-        "- **captured**: real output of mostro-cli 0.16.3, run offline.",
+        "- **captured**: real output of mostro-cli 0.17.0, run offline.",
         "- **authored**: written for this book from the contract and validated against the schema; "
         "synthetic values.",
         "",

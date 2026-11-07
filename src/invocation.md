@@ -31,8 +31,8 @@ through a shell.
 
 Commands that publish a request which changes something (`order new`, `order take-sell`,
 `order take-buy`, `order add-invoice`, `bond add-invoice`, `order fiat-sent`,
-`order release`, `order cancel`) ask for confirmation in human mode. In JSON mode **there is
-no prompt and stdin is never read**; instead `--yes` is mandatory:
+`order release`, `order cancel`, `dispute open`, `order rate`) ask for confirmation in human
+mode. In JSON mode **there is no prompt**; instead `--yes` is mandatory:
 
 ```sh
 mostro-cli --output json order cancel --order 00000000-0000-0000-0000-000000000001
@@ -45,6 +45,29 @@ mostro-cli --output json order cancel --order 00000000-0000-0000-0000-0000000000
 after it has obtained that consent (see [Guide for AI agents](wrapper/ai_agents.md)).
 
 `order sync` writes only local rows and publishes nothing; it does not take `--yes`.
+Neither do the local commands `identity init`, `identity show` and `order mine`.
+
+## Invoice on standard input
+
+The four commands that take an invoice (`order new`, `order take-sell`,
+`order add-invoice`, `bond add-invoice`) also accept `--invoice -` (or `--invoice=-`): the
+invoice is then read from standard input instead of the command line, where other local
+users could see it in the process list.
+
+```sh
+printf '%s\n' "$INVOICE" | mostro-cli --output json order add-invoice \
+  --order 00000000-0000-0000-0000-000000000001 --invoice - --yes
+```
+
+| Rule | Otherwise |
+| --- | --- |
+| `--yes` is given | `invalid_arguments`, exit 2, stdin not read |
+| stdin is not a terminal | `invalid_arguments`, exit 2, stdin not read |
+| At most 8192 bytes of UTF-8 holding exactly one non-empty line (ASCII whitespace around it is trimmed), then end of input: **close stdin** after the line | `invalid_arguments` with `reason: invalid_invoice`, exit 2, before any effect |
+
+The line is then validated like a literal `--invoice` value. The error message is fixed text
+and never contains what was read. `mostro-cli schema` marks these properties with
+`"x-stdin": "-"`.
 
 ## Streams
 
@@ -56,7 +79,7 @@ With JSON selected, a controlled outcome is:
   option) a command adds one line such as `verbose: order.take-sell ok` or
   `verbose: order.release reply_timeout`. Diagnostics never contain keys, invoices, relay
   URLs or argument values. Do not parse stderr.
-- **stdin**: never read.
+- **stdin**: read only for `--invoice -` (above); otherwise never read.
 
 ## Exit codes
 
@@ -119,15 +142,36 @@ The JSON-capable commands replaced old spellings (`listorders`, `neworder`, `tak
 | Connect to relays | 10 s |
 | Node-info probe (protocol version, PoW) | 3 s, best effort |
 | Public read until every relay sent EOSE | 15 s |
-| Wait for the node's reply to a request | 15 s |
+| Wait for the node's reply to a request | `--reply-timeout`, 15 s by default |
 | Relay cleanup | 1 s (overrun is only a warning) |
 
-A wrapper timeout of **45 seconds** per run is comfortably above the worst case. If you kill
-the process earlier, treat a write as uncertain.
+With the default reply deadline, a wrapper timeout of **45 seconds** per run is comfortably
+above the worst case; add whatever you add to `--reply-timeout`. If you kill the process
+earlier, treat a write as uncertain.
+
+### `--reply-timeout SECONDS`
+
+A global option like `--output`, accepted at any depth: 5 to 300 seconds, default 15. It is
+the deadline from publishing the request to the node's reply for the commands that wait for
+one: `order new`, `order take-sell`, `order take-buy`, `order add-invoice`,
+`order fiat-sent`, `order release`, `order cancel`, `order info`, `dispute open`,
+`order rate` and `bond add-invoice`. Other commands accept it and ignore it; the public
+reads keep their own limits.
+
+```sh
+mostro-cli --output json --reply-timeout 60 order take-buy \
+  --order 00000000-0000-0000-0000-000000000001 --yes
+```
+
+A reply after the deadline is `reply_timeout` as before (`uncertain` for the writes,
+`error` for `order info`), and the CLI never retries. A value outside the range is
+`invalid_arguments`, exit 2. `mostro-cli schema` lists both global options with their
+range, default and the commands they apply to (`data.global_options`).
 
 ## Running several commands
 
 The CLI makes no promise about two write commands running at the same time against one
 data directory (both may reserve trade indexes and update rows). Run write commands
 **one at a time** per data directory; queue them in your wrapper. `order list` and
-`schema` never touch the data directory; `order info` and `message list` only read it.
+`schema` never touch the data directory; `order info`, `message list`, `order mine` and
+`identity show` only read it. `identity init` creates it.

@@ -57,8 +57,7 @@ As [order add-invoice](order_add_invoice.md#errors).
 
 ## Warnings
 
-`local_status_stale`, `trade_index_not_recorded`, `invalid_event_timestamp`,
-`cleanup_incomplete`.
+`local_status_stale`, `invalid_event_timestamp`, `cleanup_incomplete`.
 
 ## Examples
 
@@ -66,5 +65,5 @@ As [order add-invoice](order_add_invoice.md#errors).
 
 ## Next
 
-Rate the counterparty (human-only today: `mostro-cli rate`). For a range order:
+Rate the counterparty: [order rate](order_rate.md). For a range order:
 [order sync](order_sync.md).

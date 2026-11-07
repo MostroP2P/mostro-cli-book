@@ -17,15 +17,14 @@ export type ErrorCode =
   | "invalid_arguments" | "output_not_supported"
   | "configuration_missing" | "configuration_invalid"
   | "relay_connection_failed" | "relay_read_failed" | "read_timeout" | "read_limit_exceeded"
-  | "internal_error" | "identity_missing" | "identity_unreadable"
+  | "internal_error" | "identity_missing" | "identity_unreadable" | "identity_exists"
   | "protocol_unsupported" | "pow_required" | "request_rejected" | "reply_timeout"
   | "node_refused" | "reply_malformed" | "order_declined" | "order_not_saved"
   | "store_unwritable" | "order_unknown" | "store_unreadable";
 
 export type WarningCode =
   | "invalid_event_timestamp" | "cleanup_incomplete" | "orders_not_returned"
-  | "invalid_order_timestamp" | "local_status_stale" | "trade_keys_limited"
-  | "trade_index_not_recorded";
+  | "invalid_order_timestamp" | "local_status_stale" | "trade_keys_limited";
 
 /** Base-10 signed 64-bit integer as a string. Use BigInt(value) for arithmetic. */
 export type Decimal = string;
@@ -185,7 +184,7 @@ export class MostroCli {
           }
           resolve({ ...envelope, exitCode });
         });
-      child.stdin?.end(); // the CLI never reads stdin in JSON mode
+      child.stdin?.end(); // invoices are passed literally; the CLI reads stdin only for --invoice -
     });
   }
 

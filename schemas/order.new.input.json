@@ -10,6 +10,10 @@
       "description": "Days until the pending order expires; 0 uses the node's default",
       "type": "string"
     },
+    "expires-in": {
+      "description": "Seconds until the pending order expires (1 to 31536000), instead of --expiration-days; the node lowers it to its own maximum",
+      "type": "string"
+    },
     "fiat-amount": {
       "description": "Fiat amount; with --fiat-amount-max, the range minimum",
       "type": "string"
@@ -19,8 +23,9 @@
       "type": "string"
     },
     "invoice": {
-      "description": "Lightning invoice, when the order needs one",
-      "type": "string"
+      "description": "Lightning invoice, when the order needs one; `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+      "type": "string",
+      "x-stdin": "-"
     },
     "payment-method": {
       "description": "Payment method text",
@@ -45,11 +50,7 @@
     },
     "yes": {
       "description": "Create the order without asking (required with --output json)",
-      "enum": [
-        "true",
-        "false"
-      ],
-      "type": "string"
+      "type": "boolean"
     }
   },
   "required": [

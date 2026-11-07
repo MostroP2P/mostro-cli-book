@@ -1,20 +1,18 @@
 {
   "schema_version": "1",
-  "command": "order.fiat-sent",
+  "command": "dispute.open",
   "status": "ok",
   "data": {
+    "dispute_id": "00000000-0000-0000-0000-000000000d16",
     "node_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
     "order_id": "00000000-0000-0000-0000-000000000001",
-    "result": "fiat_sent",
-    "next_step": "wait_for_release",
-    "trade_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
-    "next_trade_index": "4"
+    "trade_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5"
   },
   "error": null,
   "warnings": [
     {
-      "code": "trade_index_not_recorded",
-      "message": "The request was accepted but its new trade index could not be recorded, so the next order may reuse it."
+      "code": "local_status_stale",
+      "message": "The node accepted the request but the local order status could not be updated."
     }
   ],
   "meta": {

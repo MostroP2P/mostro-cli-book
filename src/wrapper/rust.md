@@ -2,7 +2,7 @@
 
 `wrappers/rust/mostro_cli.rs` — `std::process::Command`, `serde` and `serde_json`. It
 deserializes the envelope generically and lets you choose the data type per command
-(`serde_json::Value` when you do not care). Compiled and run against mostro-cli 0.16.3.
+(`serde_json::Value` when you do not care). Compiled and run against mostro-cli 0.17.0.
 
 Notes:
 

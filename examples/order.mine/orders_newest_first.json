@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "command": "order.mine",
+  "status": "ok",
+  "data": {
+    "orders": [
+      {
+        "id": "00000000-0000-0000-0000-000000000005",
+        "side": "sell",
+        "status": "pending",
+        "trade_index": "3",
+        "trade_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "side": "buy",
+        "status": "waiting-payment",
+        "trade_index": "1",
+        "trade_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"
+      }
+    ]
+  },
+  "error": null,
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

@@ -64,4 +64,4 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
 | `take-sell` refused with `invalid_order_status` | Someone else took it; pick another |
 | `take-sell` was `uncertain` | `order info --order <id>`: if the order is no longer `pending`, it may be yours; check `buyer_trade_pubkey` against `data.trade_pubkey` when `order_not_saved` gave you data |
 | The seller never pays | Cancel (`order cancel`) |
-| The seller does not release after `fiat-sent` | Open a dispute (human-only today) |
+| The seller does not release after `fiat-sent` | Open a dispute: [`dispute open`](../commands/dispute_open.md) |

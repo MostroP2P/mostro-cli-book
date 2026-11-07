@@ -16,7 +16,7 @@ Gives the node the **buyer's** invoice for the sats, when it asked for one
 ## Invocation
 
 ```text
-mostro-cli --output json order add-invoice --order UUID --invoice INVOICE --yes
+mostro-cli --output json order add-invoice --order UUID --invoice INVOICE|- --yes
 ```
 
 Replaces `addinvoice -o ... -i ...`.
@@ -26,7 +26,7 @@ Replaces `addinvoice -o ... -i ...`.
 | Option | Required | Rule |
 | --- | --- | --- |
 | `--order` | yes | UUID of an order in the local store |
-| `--invoice` | yes | A BOLT-11 invoice (for exactly the order's `sats_amount`, unless the node says otherwise) or a Lightning address |
+| `--invoice` | yes | A BOLT-11 invoice (for exactly the order's `sats_amount`, unless the node says otherwise) or a Lightning address. `-` reads it from standard input: see [Invoice on standard input](../invocation.md#invoice-on-standard-input) |
 | `--yes` | **yes in JSON** | |
 
 ## Behavior

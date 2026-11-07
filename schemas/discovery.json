@@ -4,7 +4,7 @@
   "status": "ok",
   "data": {
     "schema_version": "1",
-    "executable_version": "0.16.3",
+    "executable_version": "0.17.0",
     "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
     "commands": [
       {
@@ -166,8 +166,9 @@
           "additionalProperties": false,
           "properties": {
             "invoice": {
-              "description": "A BOLT-11 invoice for exactly your share of the slashed bond",
-              "type": "string"
+              "description": "A BOLT-11 invoice for exactly your share of the slashed bond; `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+              "type": "string",
+              "x-stdin": "-"
             },
             "order": {
               "description": "Id of the order whose bond was slashed",
@@ -175,11 +176,7 @@
             },
             "yes": {
               "description": "Send the invoice without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -265,6 +262,7 @@
                 "request_rejected",
                 "node_refused",
                 "order_declined",
+                "store_unwritable",
                 "order_unknown",
                 "reply_timeout",
                 "reply_malformed"
@@ -408,6 +406,32 @@
                       "$ref": "#/$defs/ErrorInfo"
                     }
                   ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "invalid_arguments"
+                        },
+                        "reason": {
+                          "enum": [
+                            "invalid_invoice"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "code": {
                       "enum": [
@@ -424,11 +448,12 @@
                         "request_rejected",
                         "node_refused",
                         "order_declined",
+                        "store_unwritable",
                         "order_unknown"
                       ]
                     },
                     "reason": {
-                      "description": "The node's refusal reason; present only on node_refused.",
+                      "description": "The node's refusal reason on node_refused; on invalid_arguments, invalid_invoice when the program refused the invoice value itself.",
                       "pattern": "^[a-z][a-z0-9_]{0,63}$",
                       "type": "string"
                     }
@@ -701,14 +726,1196 @@
       {
         "name": "dispute.open",
         "cli_path": [
-          "dispute"
+          "dispute",
+          "open"
         ],
         "output_modes": [
-          "human"
+          "human",
+          "json"
         ],
-        "input_schema": null,
-        "output_schema": null,
-        "required_configuration": null
+        "input_schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "order": {
+              "description": "Id of the order",
+              "type": "string"
+            },
+            "yes": {
+              "description": "Send the request without asking (required with --output json)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "order"
+          ],
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DaemonAcceptance": {
+              "enum": [
+                "unknown",
+                "accepted",
+                "rejected",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "DisputeOpenData": {
+              "description": "The dispute the node opened.",
+              "properties": {
+                "dispute_id": {
+                  "description": "The id of the dispute the node created.",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                "node_pubkey": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "order_id": {
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                "trade_pubkey": {
+                  "description": "The public key of the order's trade key.",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "node_pubkey",
+                "order_id",
+                "dispute_id",
+                "trade_pubkey"
+              ],
+              "type": "object"
+            },
+            "ErrorCode": {
+              "enum": [
+                "invalid_arguments",
+                "output_not_supported",
+                "configuration_missing",
+                "configuration_invalid",
+                "relay_connection_failed",
+                "relay_read_failed",
+                "read_timeout",
+                "read_limit_exceeded",
+                "internal_error",
+                "identity_missing",
+                "identity_unreadable",
+                "protocol_unsupported",
+                "pow_required",
+                "request_rejected",
+                "node_refused",
+                "order_declined",
+                "store_unwritable",
+                "order_unknown",
+                "reply_timeout",
+                "reply_malformed"
+              ],
+              "type": "string"
+            },
+            "ErrorInfo": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/ErrorCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "ExecutionMeta": {
+              "description": "Execution stages and optional snapshot evidence of one outcome.",
+              "properties": {
+                "daemon_acceptance": {
+                  "$ref": "#/$defs/DaemonAcceptance"
+                },
+                "persistence": {
+                  "$ref": "#/$defs/Persistence"
+                },
+                "publication": {
+                  "$ref": "#/$defs/Publication"
+                },
+                "snapshot": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "publication",
+                "daemon_acceptance",
+                "persistence",
+                "snapshot"
+              ],
+              "type": "object"
+            },
+            "Persistence": {
+              "enum": [
+                "not_attempted",
+                "applied",
+                "failed",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Publication": {
+              "enum": [
+                "not_attempted",
+                "unknown",
+                "published",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Warning": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/WarningCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "WarningCode": {
+              "enum": [
+                "invalid_event_timestamp",
+                "cleanup_incomplete",
+                "local_status_stale"
+              ],
+              "type": "string"
+            },
+            "Warnings": {
+              "description": "Warnings of one outcome, at most one per code.",
+              "items": {
+                "$ref": "#/$defs/Warning"
+              },
+              "type": "array"
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "oneOf": [
+            {
+              "properties": {
+                "command": {
+                  "const": "dispute.open"
+                },
+                "data": {
+                  "$ref": "#/$defs/DisputeOpenData"
+                },
+                "error": {
+                  "type": "null"
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "accepted"
+                        },
+                        "persistence": {
+                          "const": "applied"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "accepted"
+                        },
+                        "persistence": {
+                          "const": "failed"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "accepted"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "ok"
+                }
+              },
+              "title": "success"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "dispute.open"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "invalid_arguments",
+                        "configuration_missing",
+                        "configuration_invalid",
+                        "relay_connection_failed",
+                        "relay_read_failed",
+                        "internal_error",
+                        "identity_missing",
+                        "identity_unreadable",
+                        "protocol_unsupported",
+                        "pow_required",
+                        "request_rejected",
+                        "node_refused",
+                        "order_declined",
+                        "store_unwritable",
+                        "order_unknown"
+                      ]
+                    },
+                    "reason": {
+                      "description": "The node's refusal reason; present only on node_refused.",
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "not_attempted"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "rejected"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "dispute.open"
+                },
+                "data": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/DisputeOpenData"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "reply_timeout",
+                        "reply_malformed",
+                        "request_rejected",
+                        "relay_read_failed",
+                        "pow_required"
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "unknown"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "uncertain"
+                }
+              },
+              "title": "uncertain outcome of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "type": "null"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "invalid_arguments"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "unknown"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "not_attempted"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure before the command was resolved"
+            }
+          ],
+          "properties": {
+            "command": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meta": {
+              "$ref": "#/$defs/ExecutionMeta"
+            },
+            "schema_version": {
+              "const": "1"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "error",
+                "uncertain"
+              ]
+            },
+            "warnings": {
+              "$ref": "#/$defs/Warnings"
+            }
+          },
+          "required": [
+            "schema_version",
+            "command",
+            "status",
+            "data",
+            "error",
+            "warnings",
+            "meta"
+          ],
+          "title": "dispute.open outcome",
+          "type": "object"
+        },
+        "required_configuration": [
+          "MOSTRO_PUBKEY",
+          "RELAYS"
+        ]
+      },
+      {
+        "name": "identity.init",
+        "cli_path": [
+          "identity",
+          "init"
+        ],
+        "output_modes": [
+          "human",
+          "json"
+        ],
+        "input_schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DaemonAcceptance": {
+              "enum": [
+                "unknown",
+                "accepted",
+                "rejected",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "ErrorCode": {
+              "enum": [
+                "invalid_arguments",
+                "output_not_supported",
+                "configuration_missing",
+                "configuration_invalid",
+                "relay_connection_failed",
+                "relay_read_failed",
+                "read_timeout",
+                "read_limit_exceeded",
+                "internal_error",
+                "identity_exists",
+                "store_unwritable"
+              ],
+              "type": "string"
+            },
+            "ErrorInfo": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/ErrorCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "ExecutionMeta": {
+              "description": "Execution stages and optional snapshot evidence of one outcome.",
+              "properties": {
+                "daemon_acceptance": {
+                  "$ref": "#/$defs/DaemonAcceptance"
+                },
+                "persistence": {
+                  "$ref": "#/$defs/Persistence"
+                },
+                "publication": {
+                  "$ref": "#/$defs/Publication"
+                },
+                "snapshot": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "publication",
+                "daemon_acceptance",
+                "persistence",
+                "snapshot"
+              ],
+              "type": "object"
+            },
+            "IdentityInitData": {
+              "description": "The identity a new store was created with.",
+              "properties": {
+                "identity_pubkey": {
+                  "description": "The identity public key (index 0 of the new mnemonic), lowercase hex.",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "identity_pubkey"
+              ],
+              "type": "object"
+            },
+            "Persistence": {
+              "enum": [
+                "not_attempted",
+                "applied",
+                "failed",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Publication": {
+              "enum": [
+                "not_attempted",
+                "unknown",
+                "published",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Warning": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/WarningCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "WarningCode": {
+              "enum": [
+                "invalid_event_timestamp",
+                "cleanup_incomplete"
+              ],
+              "type": "string"
+            },
+            "Warnings": {
+              "description": "Warnings of one outcome, at most one per code.",
+              "items": {
+                "$ref": "#/$defs/Warning"
+              },
+              "type": "array"
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "oneOf": [
+            {
+              "properties": {
+                "command": {
+                  "const": "identity.init"
+                },
+                "data": {
+                  "$ref": "#/$defs/IdentityInitData"
+                },
+                "error": {
+                  "type": "null"
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "not_applicable"
+                    },
+                    "persistence": {
+                      "const": "applied"
+                    },
+                    "publication": {
+                      "const": "not_applicable"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "ok"
+                }
+              },
+              "title": "success"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "identity.init"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "invalid_arguments",
+                        "internal_error",
+                        "identity_exists",
+                        "store_unwritable"
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "not_applicable"
+                        },
+                        "persistence": {
+                          "const": "not_applicable"
+                        },
+                        "publication": {
+                          "const": "not_applicable"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "not_applicable"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "not_applicable"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "not_applicable"
+                        },
+                        "persistence": {
+                          "const": "failed"
+                        },
+                        "publication": {
+                          "const": "not_applicable"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "type": "null"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "invalid_arguments"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "unknown"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "not_attempted"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure before the command was resolved"
+            }
+          ],
+          "properties": {
+            "command": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meta": {
+              "$ref": "#/$defs/ExecutionMeta"
+            },
+            "schema_version": {
+              "const": "1"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "error"
+              ]
+            },
+            "warnings": {
+              "$ref": "#/$defs/Warnings"
+            }
+          },
+          "required": [
+            "schema_version",
+            "command",
+            "status",
+            "data",
+            "error",
+            "warnings",
+            "meta"
+          ],
+          "title": "identity.init outcome",
+          "type": "object"
+        },
+        "required_configuration": []
+      },
+      {
+        "name": "identity.show",
+        "cli_path": [
+          "identity",
+          "show"
+        ],
+        "output_modes": [
+          "human",
+          "json"
+        ],
+        "input_schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DaemonAcceptance": {
+              "enum": [
+                "unknown",
+                "accepted",
+                "rejected",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "ErrorCode": {
+              "enum": [
+                "invalid_arguments",
+                "output_not_supported",
+                "configuration_missing",
+                "configuration_invalid",
+                "relay_connection_failed",
+                "relay_read_failed",
+                "read_timeout",
+                "read_limit_exceeded",
+                "internal_error",
+                "identity_missing",
+                "identity_unreadable"
+              ],
+              "type": "string"
+            },
+            "ErrorInfo": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/ErrorCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "ExecutionMeta": {
+              "description": "Execution stages and optional snapshot evidence of one outcome.",
+              "properties": {
+                "daemon_acceptance": {
+                  "$ref": "#/$defs/DaemonAcceptance"
+                },
+                "persistence": {
+                  "$ref": "#/$defs/Persistence"
+                },
+                "publication": {
+                  "$ref": "#/$defs/Publication"
+                },
+                "snapshot": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "publication",
+                "daemon_acceptance",
+                "persistence",
+                "snapshot"
+              ],
+              "type": "object"
+            },
+            "IdentityShowData": {
+              "description": "The identity of the existing store.",
+              "properties": {
+                "identity_pubkey": {
+                  "description": "The identity public key, lowercase hex.",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "last_trade_index": {
+                  "description": "The last trade index recorded in the store; `0` before the first trade.\nThe next order or take uses the one after it.",
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "identity_pubkey",
+                "last_trade_index"
+              ],
+              "type": "object"
+            },
+            "Persistence": {
+              "enum": [
+                "not_attempted",
+                "applied",
+                "failed",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Publication": {
+              "enum": [
+                "not_attempted",
+                "unknown",
+                "published",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Warning": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/WarningCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "WarningCode": {
+              "enum": [
+                "invalid_event_timestamp",
+                "cleanup_incomplete"
+              ],
+              "type": "string"
+            },
+            "Warnings": {
+              "description": "Warnings of one outcome, at most one per code.",
+              "items": {
+                "$ref": "#/$defs/Warning"
+              },
+              "type": "array"
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "oneOf": [
+            {
+              "properties": {
+                "command": {
+                  "const": "identity.show"
+                },
+                "data": {
+                  "$ref": "#/$defs/IdentityShowData"
+                },
+                "error": {
+                  "type": "null"
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "not_applicable"
+                    },
+                    "persistence": {
+                      "const": "not_applicable"
+                    },
+                    "publication": {
+                      "const": "not_applicable"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "ok"
+                }
+              },
+              "title": "success"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "identity.show"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "invalid_arguments",
+                        "internal_error",
+                        "identity_missing",
+                        "identity_unreadable"
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "not_applicable"
+                    },
+                    "persistence": {
+                      "const": "not_applicable"
+                    },
+                    "publication": {
+                      "const": "not_applicable"
+                    },
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "type": "null"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "invalid_arguments"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "unknown"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "not_attempted"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure before the command was resolved"
+            }
+          ],
+          "properties": {
+            "command": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meta": {
+              "$ref": "#/$defs/ExecutionMeta"
+            },
+            "schema_version": {
+              "const": "1"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "error"
+              ]
+            },
+            "warnings": {
+              "$ref": "#/$defs/Warnings"
+            }
+          },
+          "required": [
+            "schema_version",
+            "command",
+            "status",
+            "data",
+            "error",
+            "warnings",
+            "meta"
+          ],
+          "title": "identity.show outcome",
+          "type": "object"
+        },
+        "required_configuration": []
       },
       {
         "name": "maintenance.cancel-pending",
@@ -1655,8 +2862,9 @@
           "additionalProperties": false,
           "properties": {
             "invoice": {
-              "description": "Your invoice (BOLT-11 or Lightning address) for the sats",
-              "type": "string"
+              "description": "Your invoice (BOLT-11 or Lightning address) for the sats; `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+              "type": "string",
+              "x-stdin": "-"
             },
             "order": {
               "description": "Id of the order the node asked an invoice for",
@@ -1664,11 +2872,7 @@
             },
             "yes": {
               "description": "Send the invoice without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -2090,6 +3294,32 @@
                       "$ref": "#/$defs/ErrorInfo"
                     }
                   ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "invalid_arguments"
+                        },
+                        "reason": {
+                          "enum": [
+                            "invalid_invoice"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "code": {
                       "enum": [
@@ -2111,7 +3341,7 @@
                       ]
                     },
                     "reason": {
-                      "description": "The node's refusal reason; present only on node_refused.",
+                      "description": "The node's refusal reason on node_refused; on invalid_arguments, invalid_invoice when the program refused the invoice value itself.",
                       "pattern": "^[a-z][a-z0-9_]{0,63}$",
                       "type": "string"
                     }
@@ -2353,11 +3583,7 @@
             },
             "yes": {
               "description": "Send the request without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -2576,8 +3802,7 @@
               "enum": [
                 "invalid_event_timestamp",
                 "cleanup_incomplete",
-                "local_status_stale",
-                "trade_index_not_recorded"
+                "local_status_stale"
               ],
               "type": "string"
             },
@@ -2669,6 +3894,20 @@
                   "allOf": [
                     {
                       "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
                     }
                   ],
                   "properties": {
@@ -2986,11 +4225,7 @@
             },
             "yes": {
               "description": "Send the request without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -3209,8 +4444,7 @@
               "enum": [
                 "invalid_event_timestamp",
                 "cleanup_incomplete",
-                "local_status_stale",
-                "trade_index_not_recorded"
+                "local_status_stale"
               ],
               "type": "string"
             },
@@ -3302,6 +4536,20 @@
                   "allOf": [
                     {
                       "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
                     }
                   ],
                   "properties": {
@@ -3615,7 +4863,11 @@
           "properties": {
             "order": {
               "description": "Order id to ask about; repeat the option for several orders",
-              "type": "string"
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
             }
           },
           "required": [
@@ -3967,6 +5219,20 @@
                   "allOf": [
                     {
                       "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
                     }
                   ],
                   "properties": {
@@ -4749,6 +6015,389 @@
         ]
       },
       {
+        "name": "order.mine",
+        "cli_path": [
+          "order",
+          "mine"
+        ],
+        "output_modes": [
+          "human",
+          "json"
+        ],
+        "input_schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DaemonAcceptance": {
+              "enum": [
+                "unknown",
+                "accepted",
+                "rejected",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "ErrorCode": {
+              "enum": [
+                "invalid_arguments",
+                "output_not_supported",
+                "configuration_missing",
+                "configuration_invalid",
+                "relay_connection_failed",
+                "relay_read_failed",
+                "read_timeout",
+                "read_limit_exceeded",
+                "internal_error",
+                "identity_missing",
+                "store_unreadable"
+              ],
+              "type": "string"
+            },
+            "ErrorInfo": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/ErrorCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "ExecutionMeta": {
+              "description": "Execution stages and optional snapshot evidence of one outcome.",
+              "properties": {
+                "daemon_acceptance": {
+                  "$ref": "#/$defs/DaemonAcceptance"
+                },
+                "persistence": {
+                  "$ref": "#/$defs/Persistence"
+                },
+                "publication": {
+                  "$ref": "#/$defs/Publication"
+                },
+                "snapshot": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "publication",
+                "daemon_acceptance",
+                "persistence",
+                "snapshot"
+              ],
+              "type": "object"
+            },
+            "MineOrder": {
+              "description": "One order row of the local store.",
+              "properties": {
+                "id": {
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                "side": {
+                  "enum": [
+                    "buy",
+                    "sell"
+                  ],
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The local status, as the store records it.",
+                  "enum": [
+                    "active",
+                    "canceled",
+                    "canceled-by-admin",
+                    "settled-by-admin",
+                    "completed-by-admin",
+                    "dispute",
+                    "expired",
+                    "fiat-sent",
+                    "settled-hold-invoice",
+                    "pending",
+                    "success",
+                    "waiting-buyer-invoice",
+                    "waiting-payment",
+                    "waiting-taker-bond",
+                    "waiting-maker-bond",
+                    "cooperatively-canceled",
+                    "in-progress"
+                  ],
+                  "type": "string"
+                },
+                "trade_index": {
+                  "description": "The index of the order's trade key; null when it is not among the\nderived indexes or the row has no key.",
+                  "maxLength": 20,
+                  "pattern": "^(0|-?[1-9][0-9]*)$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "trade_pubkey": {
+                  "description": "The public key of the order's trade key; null when the row has none.",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "side",
+                "status",
+                "trade_index",
+                "trade_pubkey"
+              ],
+              "type": "object"
+            },
+            "OrderMineData": {
+              "description": "The orders of the local store, newest first.",
+              "properties": {
+                "orders": {
+                  "items": {
+                    "$ref": "#/$defs/MineOrder"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "orders"
+              ],
+              "type": "object"
+            },
+            "Persistence": {
+              "enum": [
+                "not_attempted",
+                "applied",
+                "failed",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Publication": {
+              "enum": [
+                "not_attempted",
+                "unknown",
+                "published",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Warning": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/WarningCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "WarningCode": {
+              "enum": [
+                "invalid_event_timestamp",
+                "cleanup_incomplete",
+                "trade_keys_limited"
+              ],
+              "type": "string"
+            },
+            "Warnings": {
+              "description": "Warnings of one outcome, at most one per code.",
+              "items": {
+                "$ref": "#/$defs/Warning"
+              },
+              "type": "array"
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "oneOf": [
+            {
+              "properties": {
+                "command": {
+                  "const": "order.mine"
+                },
+                "data": {
+                  "$ref": "#/$defs/OrderMineData"
+                },
+                "error": {
+                  "type": "null"
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "not_applicable"
+                    },
+                    "persistence": {
+                      "const": "not_applicable"
+                    },
+                    "publication": {
+                      "const": "not_applicable"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "ok"
+                }
+              },
+              "title": "success"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "order.mine"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "invalid_arguments",
+                        "internal_error",
+                        "identity_missing",
+                        "store_unreadable"
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "not_applicable"
+                    },
+                    "persistence": {
+                      "const": "not_applicable"
+                    },
+                    "publication": {
+                      "const": "not_applicable"
+                    },
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "type": "null"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "invalid_arguments"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "unknown"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "not_attempted"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure before the command was resolved"
+            }
+          ],
+          "properties": {
+            "command": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meta": {
+              "$ref": "#/$defs/ExecutionMeta"
+            },
+            "schema_version": {
+              "const": "1"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "error"
+              ]
+            },
+            "warnings": {
+              "$ref": "#/$defs/Warnings"
+            }
+          },
+          "required": [
+            "schema_version",
+            "command",
+            "status",
+            "data",
+            "error",
+            "warnings",
+            "meta"
+          ],
+          "title": "order.mine outcome",
+          "type": "object"
+        },
+        "required_configuration": []
+      },
+      {
         "name": "order.new",
         "cli_path": [
           "order",
@@ -4770,6 +6419,10 @@
               "description": "Days until the pending order expires; 0 uses the node's default",
               "type": "string"
             },
+            "expires-in": {
+              "description": "Seconds until the pending order expires (1 to 31536000), instead of --expiration-days; the node lowers it to its own maximum",
+              "type": "string"
+            },
             "fiat-amount": {
               "description": "Fiat amount; with --fiat-amount-max, the range minimum",
               "type": "string"
@@ -4779,8 +6432,9 @@
               "type": "string"
             },
             "invoice": {
-              "description": "Lightning invoice, when the order needs one",
-              "type": "string"
+              "description": "Lightning invoice, when the order needs one; `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+              "type": "string",
+              "x-stdin": "-"
             },
             "payment-method": {
               "description": "Payment method text",
@@ -4805,11 +6459,7 @@
             },
             "yes": {
               "description": "Create the order without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -5196,6 +6846,32 @@
                       "$ref": "#/$defs/ErrorInfo"
                     }
                   ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "invalid_arguments"
+                        },
+                        "reason": {
+                          "enum": [
+                            "invalid_invoice"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "code": {
                       "enum": [
@@ -5216,7 +6892,7 @@
                       ]
                     },
                     "reason": {
-                      "description": "The node's refusal reason; present only on node_refused.",
+                      "description": "The node's refusal reason on node_refused; on invalid_arguments, invalid_invoice when the program refused the invoice value itself.",
                       "pattern": "^[a-z][a-z0-9_]{0,63}$",
                       "type": "string"
                     }
@@ -5245,6 +6921,19 @@
                         },
                         "persistence": {
                           "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "rejected"
+                        },
+                        "persistence": {
+                          "const": "applied"
                         },
                         "publication": {
                           "const": "published"
@@ -5481,14 +7170,496 @@
       {
         "name": "order.rate",
         "cli_path": [
+          "order",
           "rate"
         ],
         "output_modes": [
-          "human"
+          "human",
+          "json"
         ],
-        "input_schema": null,
-        "output_schema": null,
-        "required_configuration": null
+        "input_schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "order": {
+              "description": "Id of the finished order whose counterparty you rate",
+              "type": "string"
+            },
+            "rating": {
+              "description": "The rating, from 1 to 5",
+              "type": "string"
+            },
+            "yes": {
+              "description": "Send the rating without asking (required with --output json)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "order",
+            "rating"
+          ],
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DaemonAcceptance": {
+              "enum": [
+                "unknown",
+                "accepted",
+                "rejected",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "ErrorCode": {
+              "enum": [
+                "invalid_arguments",
+                "output_not_supported",
+                "configuration_missing",
+                "configuration_invalid",
+                "relay_connection_failed",
+                "relay_read_failed",
+                "read_timeout",
+                "read_limit_exceeded",
+                "internal_error",
+                "identity_missing",
+                "identity_unreadable",
+                "protocol_unsupported",
+                "pow_required",
+                "request_rejected",
+                "node_refused",
+                "order_declined",
+                "store_unwritable",
+                "order_unknown",
+                "reply_timeout",
+                "reply_malformed"
+              ],
+              "type": "string"
+            },
+            "ErrorInfo": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/ErrorCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "ExecutionMeta": {
+              "description": "Execution stages and optional snapshot evidence of one outcome.",
+              "properties": {
+                "daemon_acceptance": {
+                  "$ref": "#/$defs/DaemonAcceptance"
+                },
+                "persistence": {
+                  "$ref": "#/$defs/Persistence"
+                },
+                "publication": {
+                  "$ref": "#/$defs/Publication"
+                },
+                "snapshot": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "publication",
+                "daemon_acceptance",
+                "persistence",
+                "snapshot"
+              ],
+              "type": "object"
+            },
+            "Persistence": {
+              "enum": [
+                "not_attempted",
+                "applied",
+                "failed",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "Publication": {
+              "enum": [
+                "not_attempted",
+                "unknown",
+                "published",
+                "not_applicable"
+              ],
+              "type": "string"
+            },
+            "RateData": {
+              "description": "The rating the node received.",
+              "properties": {
+                "node_pubkey": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "order_id": {
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                "rating": {
+                  "description": "The rating, from 1 to 5, as the node acknowledged it.",
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "trade_pubkey": {
+                  "description": "The public key of the order's trade key.",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "node_pubkey",
+                "order_id",
+                "rating",
+                "trade_pubkey"
+              ],
+              "type": "object"
+            },
+            "Warning": {
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/WarningCode"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "message"
+              ],
+              "type": "object"
+            },
+            "WarningCode": {
+              "enum": [
+                "invalid_event_timestamp",
+                "cleanup_incomplete"
+              ],
+              "type": "string"
+            },
+            "Warnings": {
+              "description": "Warnings of one outcome, at most one per code.",
+              "items": {
+                "$ref": "#/$defs/Warning"
+              },
+              "type": "array"
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "oneOf": [
+            {
+              "properties": {
+                "command": {
+                  "const": "order.rate"
+                },
+                "data": {
+                  "$ref": "#/$defs/RateData"
+                },
+                "error": {
+                  "type": "null"
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "accepted"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "published"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "ok"
+                }
+              },
+              "title": "success"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "order.rate"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "invalid_arguments",
+                        "configuration_missing",
+                        "configuration_invalid",
+                        "relay_connection_failed",
+                        "relay_read_failed",
+                        "internal_error",
+                        "identity_missing",
+                        "identity_unreadable",
+                        "protocol_unsupported",
+                        "pow_required",
+                        "request_rejected",
+                        "node_refused",
+                        "order_declined",
+                        "store_unwritable",
+                        "order_unknown"
+                      ]
+                    },
+                    "reason": {
+                      "description": "The node's refusal reason; present only on node_refused.",
+                      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "not_attempted"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "rejected"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "const": "order.rate"
+                },
+                "data": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/RateData"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "enum": [
+                        "reply_timeout",
+                        "reply_malformed",
+                        "request_rejected",
+                        "relay_read_failed",
+                        "pow_required"
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "unknown"
+                        },
+                        "persistence": {
+                          "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "unknown"
+                        }
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "snapshot": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "const": "uncertain"
+                }
+              },
+              "title": "uncertain outcome of the resolved command"
+            },
+            {
+              "properties": {
+                "command": {
+                  "type": "null"
+                },
+                "data": {
+                  "type": "null"
+                },
+                "error": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "properties": {
+                    "code": {
+                      "const": "invalid_arguments"
+                    }
+                  }
+                },
+                "meta": {
+                  "$ref": "#/$defs/ExecutionMeta",
+                  "properties": {
+                    "daemon_acceptance": {
+                      "const": "unknown"
+                    },
+                    "persistence": {
+                      "const": "not_attempted"
+                    },
+                    "publication": {
+                      "const": "not_attempted"
+                    },
+                    "snapshot": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "status": {
+                  "const": "error"
+                }
+              },
+              "title": "failure before the command was resolved"
+            }
+          ],
+          "properties": {
+            "command": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "meta": {
+              "$ref": "#/$defs/ExecutionMeta"
+            },
+            "schema_version": {
+              "const": "1"
+            },
+            "status": {
+              "enum": [
+                "ok",
+                "error",
+                "uncertain"
+              ]
+            },
+            "warnings": {
+              "$ref": "#/$defs/Warnings"
+            }
+          },
+          "required": [
+            "schema_version",
+            "command",
+            "status",
+            "data",
+            "error",
+            "warnings",
+            "meta"
+          ],
+          "title": "order.rate outcome",
+          "type": "object"
+        },
+        "required_configuration": [
+          "MOSTRO_PUBKEY",
+          "RELAYS"
+        ]
       },
       {
         "name": "order.release",
@@ -5510,11 +7681,7 @@
             },
             "yes": {
               "description": "Send the request without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -5733,8 +7900,7 @@
               "enum": [
                 "invalid_event_timestamp",
                 "cleanup_incomplete",
-                "local_status_stale",
-                "trade_index_not_recorded"
+                "local_status_stale"
               ],
               "type": "string"
             },
@@ -5826,6 +7992,20 @@
                   "allOf": [
                     {
                       "$ref": "#/$defs/ErrorInfo"
+                    }
+                  ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
                     }
                   ],
                   "properties": {
@@ -6868,11 +9048,7 @@
             },
             "yes": {
               "description": "Take the order without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -7287,6 +9463,20 @@
                       "$ref": "#/$defs/ErrorInfo"
                     }
                   ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "code": {
                       "enum": [
@@ -7336,6 +9526,19 @@
                         },
                         "persistence": {
                           "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "rejected"
+                        },
+                        "persistence": {
+                          "const": "applied"
                         },
                         "publication": {
                           "const": "published"
@@ -7588,8 +9791,9 @@
               "type": "string"
             },
             "invoice": {
-              "description": "Your invoice (BOLT-11 or Lightning address) for the sats; without one the node asks for it next",
-              "type": "string"
+              "description": "Your invoice (BOLT-11 or Lightning address) for the sats; without one the node asks for it next. `-` reads it from standard input: one line, then close standard input; needs --yes, and stdin must not be a terminal",
+              "type": "string",
+              "x-stdin": "-"
             },
             "order": {
               "description": "Id of the sell order to take",
@@ -7597,11 +9801,7 @@
             },
             "yes": {
               "description": "Take the order without asking (required with --output json)",
-              "enum": [
-                "true",
-                "false"
-              ],
-              "type": "string"
+              "type": "boolean"
             }
           },
           "required": [
@@ -8016,6 +10216,32 @@
                       "$ref": "#/$defs/ErrorInfo"
                     }
                   ],
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "node_refused"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "invalid_arguments"
+                        },
+                        "reason": {
+                          "enum": [
+                            "invalid_invoice"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "reason": false
+                      }
+                    }
+                  ],
                   "properties": {
                     "code": {
                       "enum": [
@@ -8036,7 +10262,7 @@
                       ]
                     },
                     "reason": {
-                      "description": "The node's refusal reason; present only on node_refused.",
+                      "description": "The node's refusal reason on node_refused; on invalid_arguments, invalid_invoice when the program refused the invoice value itself.",
                       "pattern": "^[a-z][a-z0-9_]{0,63}$",
                       "type": "string"
                     }
@@ -8065,6 +10291,19 @@
                         },
                         "persistence": {
                           "const": "not_attempted"
+                        },
+                        "publication": {
+                          "const": "published"
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "daemon_acceptance": {
+                          "const": "rejected"
+                        },
+                        "persistence": {
+                          "const": "applied"
                         },
                         "publication": {
                           "const": "published"
@@ -8394,6 +10633,14 @@
                 "executable_version": {
                   "type": "string"
                 },
+                "global_options": {
+                  "description": "The options accepted at any command depth, sorted by name: `name`, the\noption's schema property (`type`, `enum`, `description`), `default` when\nit has one and `applies_to`, the canonical names it takes effect on.",
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
                 "schema_dialect": {
                   "type": "string"
                 },
@@ -8405,7 +10652,8 @@
                 "schema_version",
                 "executable_version",
                 "schema_dialect",
-                "commands"
+                "commands",
+                "global_options"
               ],
               "type": "object"
             },
@@ -8687,6 +10935,56 @@
           "type": "object"
         },
         "required_configuration": []
+      }
+    ],
+    "global_options": [
+      {
+        "applies_to": [
+          "bond.add-invoice",
+          "dispute.open",
+          "identity.init",
+          "identity.show",
+          "message.list",
+          "order.add-invoice",
+          "order.cancel",
+          "order.fiat-sent",
+          "order.info",
+          "order.list",
+          "order.mine",
+          "order.new",
+          "order.rate",
+          "order.release",
+          "order.sync",
+          "order.take-buy",
+          "order.take-sell",
+          "schema"
+        ],
+        "description": "Output format, accepted at any command depth. Defaults to `human`; only migrated commands support `json`",
+        "enum": [
+          "human",
+          "json"
+        ],
+        "name": "output",
+        "type": "string"
+      },
+      {
+        "applies_to": [
+          "bond.add-invoice",
+          "dispute.open",
+          "order.add-invoice",
+          "order.cancel",
+          "order.fiat-sent",
+          "order.info",
+          "order.new",
+          "order.rate",
+          "order.release",
+          "order.take-buy",
+          "order.take-sell"
+        ],
+        "default": "15",
+        "description": "Seconds to wait for the node's reply (5 to 300, default 15), accepted at any command depth. Applies to the migrated commands that wait for a reply; the public reads keep their own limits and the legacy commands ignore it",
+        "name": "reply-timeout",
+        "type": "string"
       }
     ]
   },
