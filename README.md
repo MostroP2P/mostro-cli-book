@@ -48,6 +48,6 @@ python3 scripts/validate_examples.py
 python3 scripts/gen_examples_page.py
 ```
 
-Documented version: **mostro-cli 0.16.3, JSON contract `schema_version` "1"**, generated on
-2026-11-06 from the `main` branch (`9cbdb57`). The JSON interface is merged on `main` but not
-yet in a release: the v0.16.3 release predates it.
+Documented version: **mostro-cli 0.17.0, JSON contract `schema_version` "1"**, the first
+release with the JSON interface; schemas and captured examples checked against the `v0.17.0`
+binary on 2026-11-07.

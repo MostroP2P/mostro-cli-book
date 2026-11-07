@@ -50,7 +50,7 @@ What you see is the **result**, already decoded, typed and checked.
 | Item | Value |
 | --- | --- |
 | JSON contract | `schema_version` `"1"` |
-| Documented executable | mostro-cli 0.16.3 as built from `main` (`9cbdb57`, 2026-11-06) |
+| Documented executable | mostro-cli 0.17.0 (release `v0.17.0`, 2026-11-07) |
 | Schema dialect | JSON Schema Draft 2020-12 |
 | Node protocol | Mostro protocol v2 (NIP-44 kind-14); v1 nodes are refused |
 
@@ -59,6 +59,5 @@ optional additions are allowed (a new command, a new code scoped to a new comman
 renamed command, a changed type or a changed meaning requires `schema_version` `"2"`.
 Reject documents whose `schema_version` you do not know.
 
-> The JSON interface is merged on `main` but not yet in a release: the v0.16.3 release
-> predates it, although a build of `main` still reports 0.16.3. Check
-> `mostro-cli --output json schema` on your binary.
+> mostro-cli 0.17.0 is the first release with the JSON interface; 0.16.3 and earlier have
+> none. Check `mostro-cli --output json schema` on your binary.

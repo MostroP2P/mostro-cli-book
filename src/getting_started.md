@@ -2,17 +2,17 @@
 
 ## Install
 
-The JSON interface is on `main` but not in a release yet: `cargo install mostro-cli`
-installs the v0.16.3 release, which predates it and has no `schema` command. Install the
-documented revision from source (Rust 1.94 or later):
+mostro-cli 0.17.0 is the first release with the JSON interface. Install it from crates.io
+(Rust 1.94 or later), or take a binary from the
+[release page](https://github.com/MostroP2P/mostro-cli/releases/tag/v0.17.0):
 
 ```sh
-cargo install --locked --git https://github.com/MostroP2P/mostro-cli --rev 9cbdb57fe95a856d0ab68c6fc0b41bca93671aab
-mostro-cli --version              # mostro-cli 0.16.3
+cargo install --locked mostro-cli
+mostro-cli --version              # mostro-cli 0.17.0
 ```
 
-The version number does not tell this build from the release: both report 0.16.3. Check
-with `mostro-cli --output json schema`, which only a build with the JSON interface answers.
+0.16.3 and earlier have no JSON interface: `mostro-cli --output json schema` is the check,
+since only a build that has it answers.
 
 ## Discover what your binary supports
 

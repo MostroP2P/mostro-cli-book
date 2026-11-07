@@ -1,7 +1,7 @@
 # Python
 
 `wrappers/python/mostro_cli.py` — standard library only, Python 3.8+. Tested against
-mostro-cli 0.16.3 (offline outcomes).
+mostro-cli 0.17.0 (offline outcomes).
 
 ```python
 from mostro_cli import MostroCli, TransportError

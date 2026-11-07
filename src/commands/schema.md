@@ -33,7 +33,7 @@ at wrapper start-up and cache it keyed by `executable_version`.
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `schema_version` | string | Contract version, `"1"` |
-| `executable_version` | string | Package version of the binary, e.g. `"0.16.3"` |
+| `executable_version` | string | Package version of the binary, e.g. `"0.17.0"` |
 | `schema_dialect` | string | `"https://json-schema.org/draft/2020-12/schema"` |
 | `commands` | array of `CommandDescriptor` | Sorted by `name`; JSON-capable and human-only commands alike |
 | `global_options` | array of `GlobalOption` | The options accepted at any command depth (`output`, `reply-timeout`), sorted by `name` |

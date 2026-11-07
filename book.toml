@@ -9,8 +9,8 @@ language = "en"
 src = "src"
 
 [output.html]
-git-repository-url = "https://github.com/arkanoider/mostro-cli-book"
-edit-url-template = "https://github.com/arkanoider/mostro-cli-book/edit/main/{path}"
+git-repository-url = "https://github.com/MostroP2P/mostro-cli-book"
+edit-url-template = "https://github.com/MostroP2P/mostro-cli-book/edit/main/{path}"
 default-theme = "light"
 preferred-dark-theme = "navy"
 
