@@ -72,7 +72,8 @@ Reject documents whose `schema_version` you do not know.
 > [mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)).
 > With 0.17.0, pass them as options or environment variables.
 
-> After 0.17.0, not yet released: the human-only commands that talk to the node read the
-> config file too, with the same precedence ([Human-only commands](commands/legacy.md);
+> After 0.17.0, not yet released: the human-only commands, except the gRPC operator
+> commands, read the config file too, with the same precedence
+> ([Human-only commands](commands/legacy.md);
 > [mostro-cli#CLI_PR_config_file_legacy](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_legacy)).
 > With 0.17.0, pass their settings as options or environment variables.

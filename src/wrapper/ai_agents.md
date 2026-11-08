@@ -40,8 +40,8 @@ Agent hosts usually run each command in a fresh process, so an `export` from an 
 is gone. Put the node settings in the [config file](../getting_started.md#the-config-file)
 when deploying, next to `identity init`: each process then finds `MOSTRO_PUBKEY`, `RELAYS`
 and, when needed, `POW` without `-m`, `-r` or `-p`. The [human-only commands](../commands/legacy.md)
-that talk to the node read it too. (After 0.17.0, not yet released; with 0.17.0, set them in
-the environment the tool layer gives each process.)
+read it too, except the gRPC operator commands. (After 0.17.0, not yet released; with
+0.17.0, set them in the environment the tool layer gives each process.)
 
 Never put secrets there: the file takes only the four node settings and refuses any other
 key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`).

@@ -175,8 +175,10 @@ range, default and the commands they apply to (`data.global_options`).
 
 The CLI makes no promise about two write commands running at the same time against one
 data directory (both may reserve trade indexes and update rows). Run write commands
-**one at a time** per data directory; queue them in your wrapper. Every command that talks
-to the node, JSON-capable or [human-only](commands/legacy.md), reads `$MCLI_DIR/config` (the
-[config file](getting_started.md#the-config-file)) and never writes it. `order list` reads
-nothing else in the data directory and `schema` never touches it; `order info`,
-`message list`, `order mine` and `identity show` only read it. `identity init` creates it.
+**one at a time** per data directory; queue them in your wrapper. Every command,
+JSON-capable or [human-only](commands/legacy.md), except the local ones (`schema`,
+`identity init`, `identity show`, `order mine`) and the gRPC operator commands reads
+`$MCLI_DIR/config` (the [config file](getting_started.md#the-config-file)) and never writes
+it. `order list` reads nothing else in the data directory and `schema` never touches it;
+`order info`, `message list`, `order mine` and `identity show` only read it. `identity init`
+creates it.

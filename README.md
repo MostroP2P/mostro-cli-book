@@ -57,5 +57,6 @@ node settings file of [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/i
 ([mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read),
 read by the JSON-capable commands, and
 [mostro-cli#CLI_PR_config_file_legacy](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_legacy),
-read by the human-only commands too), from the branches stacked on `main`, not yet released;
+read by the human-only commands too, except the gRPC operator commands), from the branches
+stacked on `main`, not yet released;
 schemas refreshed from `feat/config-file-legacy` on 2026-11-08.

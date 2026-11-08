@@ -41,7 +41,8 @@ _`general/output_not_supported_secret` · exit 2 · fixture_
 Note the stages `not_attempted / unknown / not_attempted`: the command was resolved but
 not executed.
 
-In human mode the ones that talk to the node also read the
+In human mode every one of them except the gRPC operator commands (`admsetmaintenance`,
+`admmaintenancestatus`, `admcancelpending`), which never read it, also reads the
 [config file](../getting_started.md#the-config-file) (after 0.17.0, not yet released; with
 0.17.0, set `MOSTRO_PUBKEY` and `RELAYS` in the environment or with `-m` and `-r`):
 
@@ -51,8 +52,9 @@ In human mode the ones that talk to the node also read the
   environment.
 - The file is read right after the root options are applied, before `ADMIN_NSEC` is read and
   before `mcli.db` is created. A refused file (the same refusals as for the JSON-capable
-  commands) stops the command there with exit 1 and one line on stderr naming the file and
-  the problem, and the line when a line is at fault, never the file's content:
+  commands) stops the command there, even when the options give every value, with exit 1
+  and one line on stderr naming the file and the problem, and the line when a line is at
+  fault, never the file's content:
 
   ```text
   Invalid config file /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
@@ -62,8 +64,6 @@ In human mode the ones that talk to the node also read the
   `$MCLI_DIR/config` (else `~/.mcli/config`) as a third way to give it, next to the option
   and the environment variable.
 - `ADMIN_NSEC`, which the admin commands need, stays in the environment: the file refuses it.
-- The gRPC operator commands (`admsetmaintenance`, `admmaintenancestatus`,
-  `admcancelpending`) never read the file.
 
 A wrapper that needs one of these today has to run it in human mode and treat its output
 as text for a person, not as data. Do not scrape it; its wording is not a contract.
