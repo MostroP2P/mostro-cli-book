@@ -79,8 +79,8 @@ With JSON selected, a controlled outcome is:
   option) a command adds one line such as `verbose: order.take-sell ok` or
   `verbose: order.release reply_timeout`. Diagnostics never contain keys, invoices, relay
   URLs or argument values. A refused [config file](getting_started.md#the-config-file) adds
-  one line `hint: <path>: <problem>` naming the file and the line, never its content. Do
-  not parse stderr.
+  one line `hint: <path>: <problem>` naming the file and the problem (and the line, for a
+  bad line), never the file's content. Do not parse stderr.
 - **stdin**: read only for `--invoice -` (above); otherwise never read.
 
 ## Exit codes

@@ -57,9 +57,9 @@ pipe stdin as in step 2 below.
 
 ## Testing a wrapper without a node
 
-Many outcomes can be produced offline. Point `MCLI_DIR` at an empty directory, so that no
-[config file](../getting_started.md#the-config-file) supplies values (except where a row
-writes one there):
+Many outcomes can be produced offline. Point `MCLI_DIR` at a directory of the test's own
+with no `config` in it, so that no [config file](../getting_started.md#the-config-file)
+supplies values (except where a row writes one there):
 
 | Outcome | How |
 | --- | --- |

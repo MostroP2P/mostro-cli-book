@@ -46,8 +46,8 @@ Never put secrets there: the file takes only the four node settings and refuses 
 key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`).
 
 Hand `configuration_missing` and `configuration_invalid` to the human together with the
-stderr `hint:` line, when there is one: it names the config file and the line at fault,
-never its content.
+stderr `hint:` line, when there is one: it names the config file and the problem (and the
+line at fault, for a bad line), never the file's content.
 
 ## Consent: `--yes` belongs to the human
 
