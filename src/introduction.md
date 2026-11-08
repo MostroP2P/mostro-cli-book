@@ -66,3 +66,8 @@ Reject documents whose `schema_version` you do not know.
 > (up to 20 bits) instead of failing with `pow_required`, which now carries `error.required`
 > and `error.configured` ([Proof of work](errors.md#proof-of-work)). With 0.17.0, set `--pow` /
 > `POW` to the node's value yourself.
+
+> After 0.17.0, not yet released: the JSON-capable commands that talk to the node also read
+> the node settings from `$MCLI_DIR/config` ([The config file](getting_started.md#the-config-file);
+> [mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)).
+> With 0.17.0, pass them as options or environment variables.

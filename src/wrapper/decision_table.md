@@ -11,7 +11,7 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 | 5 | `status == "uncertain"` | `uncertain` | **no** | [Check first](../flows/uncertain.md) |
 | 6 | `error.code == "invalid_arguments"` | `caller_bug` | no | Fix the call (missing `--yes`? bad UUID? window range?) |
 | 7 | `error.code == "output_not_supported"` | `unsupported` | no | Command is human-only |
-| 8 | `configuration_missing`, `configuration_invalid` | `config` | after fixing | Ask for node key / relays |
+| 8 | `configuration_missing`, `configuration_invalid` | `config` | after fixing | Ask for node key / relays. They come from the options, the environment or `$MCLI_DIR/config`; a bad line in that file is `configuration_invalid` too, and the stderr `hint:` names the file and the line |
 | 9 | `identity_missing`, `identity_unreadable` | `identity` | after fixing | Create or restore the identity; check `MCLI_DIR` |
 | 10 | `store_unwritable`, `store_unreadable` | `storage` | after fixing | Disk, permissions, locked database |
 | 11 | `order_unknown` | `not_local` | after `order sync` | Wrong id, other data directory, or a range child: run `order sync` |

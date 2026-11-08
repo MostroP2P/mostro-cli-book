@@ -78,7 +78,9 @@ With JSON selected, a controlled outcome is:
 - **stderr**: optional diagnostics in fixed English prose. With `--verbose` (`-v`, a root
   option) a command adds one line such as `verbose: order.take-sell ok` or
   `verbose: order.release reply_timeout`. Diagnostics never contain keys, invoices, relay
-  URLs or argument values. Do not parse stderr.
+  URLs or argument values. A refused [config file](getting_started.md#the-config-file) adds
+  one line `hint: <path>: <problem>` naming the file and the line, never its content. Do
+  not parse stderr.
 - **stdin**: read only for `--invoice -` (above); otherwise never read.
 
 ## Exit codes
@@ -173,6 +175,8 @@ range, default and the commands they apply to (`data.global_options`).
 
 The CLI makes no promise about two write commands running at the same time against one
 data directory (both may reserve trade indexes and update rows). Run write commands
-**one at a time** per data directory; queue them in your wrapper. `order list` and
-`schema` never touch the data directory; `order info`, `message list`, `order mine` and
-`identity show` only read it. `identity init` creates it.
+**one at a time** per data directory; queue them in your wrapper. The JSON-capable commands
+that talk to the node read `$MCLI_DIR/config` (the [config file](getting_started.md#the-config-file))
+and never write it. `order list` reads nothing else in the data directory and `schema` never
+touches it; `order info`, `message list`, `order mine` and `identity show` only read it.
+`identity init` creates it.

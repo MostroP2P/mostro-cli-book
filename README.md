@@ -52,4 +52,8 @@ Documented version: **mostro-cli 0.17.0, JSON contract `schema_version` "1"**, t
 release with the JSON interface; schemas and captured examples checked against the `v0.17.0`
 binary on 2026-11-07. Also documented: the advertised proof of work of
 [mostro-cli#247](https://github.com/MostroP2P/mostro-cli/pull/247), on `main` after 0.17.0 and not
-yet released; the schemas were refreshed from that branch on 2026-11-08.
+yet released; the schemas were refreshed from that branch on 2026-11-08. Also documented: the
+node settings file of [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/issues/244)
+([mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)),
+from the branches stacked on `main`, not yet released; schemas refreshed from
+`feat/config-file-read` on 2026-11-08.

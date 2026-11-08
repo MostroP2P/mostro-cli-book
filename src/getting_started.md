@@ -59,12 +59,16 @@ them.
 | Relays | `RELAYS` | `--relays URL[,URL...]` (`-r`) | yes | Comma-separated `wss://` URLs |
 | Proof of work | `POW` | `--pow BITS` (`-p`) | no | The least PoW put on requests, 0-255, default 0. The commands raise it to what the node advertises, up to 20 bits, so you rarely need it ([Proof of work](errors.md#proof-of-work)) |
 | Transport | `TRANSPORT` | `--transport nip44` (`-t`) | no | Only `nip44` (protocol v2) is supported |
-| Data directory | `MCLI_DIR` | — | no | Where `mcli.db` lives; default `~/.mcli` |
+| Data directory | `MCLI_DIR` | — | no | Where `mcli.db` and the [config file](#the-config-file) live; default `~/.mcli` |
 
-A root option overrides its environment variable. An **empty or invalid** option does not
-fall back to the environment: it fails with `configuration_invalid`. Root options go
-**before** the command (`mostro-cli --relays wss://a order list`), while `--output` may go
-anywhere.
+Each of the first four settings comes from its root option, even an empty one; else from its
+environment variable when that is set, even to an empty value; else from the
+[config file](#the-config-file). A value given in one place never falls back to the next.
+An **empty** value counts as not given: an empty node key or relay list is
+`configuration_missing`, an empty `POW` is 0 and an empty `TRANSPORT` means detect. An
+**invalid** value (an unparsable key or relay URL, a `POW` outside 0-255, a transport other
+than `nip44`) is `configuration_invalid`. Root options go **before** the command
+(`mostro-cli --relays wss://a order list`), while `--output` may go anywhere.
 
 ```sh
 export MOSTRO_PUBKEY=<hex public key of the Mostro node you trade with>
@@ -72,7 +76,59 @@ export RELAYS=wss://relay.example.com,wss://relay2.example.com
 mostro-cli --output json order list
 ```
 
-The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported.
+The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported or in the config
+file.
+
+### The config file
+
+> After 0.17.0, not yet released: mostro-cli 0.17.0 reads no config file.
+
+The JSON-capable commands that talk to the node (every one except `schema`,
+`identity init`, `identity show` and `order mine`) also read the four node settings from
+`config` in the data directory: `$MCLI_DIR/config`, else `~/.mcli/config`
+(`%USERPROFILE%\.mcli\config` on Windows). A program that runs each command in a fresh
+process, as coding agents and MCP hosts do, can write the settings there once instead of
+passing `-m`, `-r` and `-p` on every call.
+
+```sh
+mkdir -m 700 -p ~/.mcli
+cat > ~/.mcli/config <<'EOF'
+# node settings of mostro-cli
+MOSTRO_PUBKEY=<hex public key of the Mostro node you trade with>
+RELAYS=wss://relay.example.com,wss://relay2.example.com
+EOF
+chmod 600 ~/.mcli/config
+mostro-cli --output json order list
+```
+
+The format:
+
+- One `KEY=VALUE` per line, with the variable names as keys. Blank lines and lines
+  starting with `#` are skipped, an `export ` prefix is dropped, key and value are trimmed
+  and one pair of matching `"` or `'` quotes around the value is removed. LF or CRLF; a
+  leading byte order mark is ignored.
+- No inline comments (a `#` after a value is part of the value), escapes or variable
+  expansion.
+- An empty value means unset. When a key is repeated, its last line wins.
+- Only `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT`. Any other key, `ADMIN_NSEC` and
+  `MOSTRO_RPC_TOKEN` included, refuses the file, so secrets stay in the environment.
+- Every value is checked as the commands check it: a key in hex or `npub`, `ws://` or
+  `wss://` relay URLs, 0-255, `nip44`, no control character.
+
+A file with another key, a line that is not `KEY=VALUE`, a value its setting refuses, or a
+`config` that is not a readable UTF-8 file is refused **as a whole**: the command fails with
+`configuration_invalid` (exit 1) before it touches the identity, the store or the network,
+even when the options give every value. Stderr then has one line naming the file and the
+line, never its content:
+
+```text
+hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
+```
+
+When the file or the data directory does not exist, or the process may not look into the
+directory, there is no file and nothing changes. Reading the file never creates the data
+directory or anything in it. The [human-only commands](commands/legacy.md) do not read it
+yet: give them `MOSTRO_PUBKEY` and `RELAYS` in the environment or with `-m` and `-r`.
 
 ## Create an identity
 

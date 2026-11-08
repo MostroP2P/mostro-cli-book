@@ -10,8 +10,8 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | --- | --- | --- | --- |
 | `invalid_arguments` | 2 | The command arguments are invalid. | A missing, unknown or malformed option; an out-of-range value; a removed spelling; a write in JSON mode without `--yes`; an unusable `--invoice -` input. Nothing was done. Fix the call. The offending value is never echoed. When the program refused an invoice value itself (given literally or read with `--invoice -`), `error.reason` is `invalid_invoice`. |
 | `output_not_supported` | 2 | This command does not support JSON output. | A human-only command was asked for JSON. Nothing ran. |
-| `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` (or their options) unset or empty. |
-| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport`. |
+| `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` unset, or empty where it is taken from: the option, else a set environment variable, else the [config file](getting_started.md#the-config-file). |
+| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport` (or `POW`, `TRANSPORT`); or a [config file](getting_started.md#the-config-file) that is unreadable, has a line that is not `KEY=VALUE`, has another key or has a value its setting refuses. For the file, stderr has one `hint:` line naming the file and the line. Nothing was sent. |
 | `relay_connection_failed` | 1 | A configured relay could not be connected. | Within 10 s. Check the network and relay list; safe to retry. |
 | `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. |
 | `read_timeout` | 1 | The public order read did not complete before its deadline. | Not every relay sent EOSE within 15 s. No partial data is returned. Retry, maybe with fewer or faster relays. |
@@ -21,7 +21,7 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `identity_unreadable` | 1 | The local identity store cannot be read. | The database exists but cannot be opened or holds no valid mnemonic. |
 | `identity_exists` | 1 | A local identity already exists, so nothing was changed. | Only `identity init`: `mcli.db` (or its `-journal`, `-wal` or `-shm` file) is already in the data directory. Nothing was touched; use `identity show`. |
 | `protocol_unsupported` | 1 | The node speaks a protocol version this program does not support. | The node advertises protocol v1 (gift wrap). Nothing sent. |
-| `pow_required` | 1 | The node requires more proof of work than is configured. | The program mines what the node advertises on its own, up to 20 bits, so this means the node asks for more. `error.required` is the node's value and `error.configured` the `--pow` / `POW` floor: set `--pow <required>` to mine it (see [Proof of work](#proof-of-work)). Usually found before sending (`error`, nothing published); when found only after a timeout, it is `uncertain`. |
+| `pow_required` | 1 | The node requires more proof of work than is configured. | The program mines what the node advertises on its own, up to 20 bits, so this means the node asks for more. `error.required` is the node's value and `error.configured` the `--pow` / `POW` / config-file floor: set `--pow <required>` to mine it (see [Proof of work](#proof-of-work)). Usually found before sending (`error`, nothing published); when found only after a timeout, it is `uncertain`. |
 | `request_rejected` | 1 | No relay confirmed accepting the request. | `publication: not_attempted` ⇒ every relay refused the event, provably nothing sent (`error`). `publication: unknown` ⇒ a relay failed ambiguously; for a write this is `uncertain`. |
 | `reply_timeout` | 1 | The node did not answer before the deadline. | Published, no correlated reply before the deadline (`--reply-timeout`, 15 s by default). For `order info` an `error` (repeatable); for writes `uncertain`. |
 | `node_refused` | 1 | The node refused the request. | The node answered `cant-do`. `error.reason` carries its reason when it is a snake_case word. The node did not act. |
@@ -73,14 +73,15 @@ before it sends anything and mines what the request needs:
 | `order rate` | the trade key of a finished order | the higher of `pow` and `pow_first_contact` |
 | `order add-invoice`, `bond add-invoice`, `order fiat-sent`, `order release`, `order cancel`, `dispute open` | the trade key of an order the node holds open | `pow` |
 
-`--pow` / `POW` is a floor: the program never mines less than it, and mines more when the node
-asks for more. With no info event, or one without these tags, it mines the floor only.
+`--pow`, `POW` or the `POW` line of the [config file](getting_started.md#the-config-file) is a
+floor: the program never mines less than it, and mines more when the node asks for more. With
+no info event, or one without these tags, it mines the floor only.
 
 The program raises the work on its own only up to **20 bits** (about a million hashes: a
 second or two on a laptop). A node that asks for more gets nothing, and the command fails with
 `pow_required` before publishing. `error.required` says how many bits the node wants, and
-`error.configured` how many were configured. Setting `--pow` (or `POW`) to `error.required` or
-more mines it, however long that takes.
+`error.configured` how many were configured. Setting `--pow` (or `POW`, or the config file's
+`POW`) to `error.required` or more mines it, however long that takes.
 
 `pow_required` can also come after the request was published: the node did not answer, and it
 advertises more work than was sent (it changed its value, or did not know a key the program
