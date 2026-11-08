@@ -54,6 +54,8 @@ binary on 2026-11-07. Also documented: the advertised proof of work of
 [mostro-cli#247](https://github.com/MostroP2P/mostro-cli/pull/247), on `main` after 0.17.0 and not
 yet released; the schemas were refreshed from that branch on 2026-11-08. Also documented: the
 node settings file of [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/issues/244)
-([mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)),
-from the branches stacked on `main`, not yet released; schemas refreshed from
-`feat/config-file-read` on 2026-11-08.
+([mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read),
+read by the JSON-capable commands, and
+[mostro-cli#CLI_PR_config_file_legacy](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_legacy),
+read by the human-only commands too), from the branches stacked on `main`, not yet released;
+schemas refreshed from `feat/config-file-legacy` on 2026-11-08.
