@@ -37,8 +37,14 @@
               ]
             },
             "message": { "type": "string", "description": "Fixed English prose chosen by the code. Never match on it." },
-            "reason": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$", "description": "On node_refused, the node's reason; on invalid_arguments, invalid_invoice when the program refused the invoice value itself." }
-          }
+            "reason": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$", "description": "On node_refused, the node's reason; on invalid_arguments, invalid_invoice when the program refused the invoice value itself." },
+            "required": { "type": "integer", "minimum": 0, "maximum": 255, "description": "On pow_required only: the proof of work the node advertises for the request, in bits. Absent from mostro-cli 0.17.0." },
+            "configured": { "type": "integer", "minimum": 0, "maximum": 255, "description": "On pow_required only: the --pow / POW floor, in bits. Absent from mostro-cli 0.17.0." }
+          },
+          "anyOf": [
+            { "properties": { "code": { "const": "pow_required" } } },
+            { "properties": { "required": false, "configured": false } }
+          ]
         }
       ]
     },

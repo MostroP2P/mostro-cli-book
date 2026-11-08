@@ -57,7 +57,7 @@ them.
 | --- | --- | --- | --- | --- |
 | Node public key | `MOSTRO_PUBKEY` | `--mostro-pubkey KEY` (`-m`) | yes | The Mostro daemon to trade with, hex or `npub` |
 | Relays | `RELAYS` | `--relays URL[,URL...]` (`-r`) | yes | Comma-separated `wss://` URLs |
-| Proof of work | `POW` | `--pow BITS` (`-p`) | no | Bits of PoW to put on requests, 0-255, default 0 |
+| Proof of work | `POW` | `--pow BITS` (`-p`) | no | The least PoW put on requests, 0-255, default 0. The commands raise it to what the node advertises, up to 20 bits, so you rarely need it ([Proof of work](errors.md#proof-of-work)) |
 | Transport | `TRANSPORT` | `--transport nip44` (`-t`) | no | Only `nip44` (protocol v2) is supported |
 | Data directory | `MCLI_DIR` | — | no | Where `mcli.db` lives; default `~/.mcli` |
 

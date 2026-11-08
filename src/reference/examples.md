@@ -82,7 +82,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.info/node_refused` — The node refused with reason too_many_requests | `order.info` | error | `node_refused` | 1 | fixture |
 | `order.info/not_found_success` — The node knows none of the ids: still ok, with a warning | `order.info` | ok |  | 0 | fixture |
 | `order.info/own_trade_in_progress` — One of your own orders mid-trade, with both trade keys known | `order.info` | ok |  | 0 | authored |
-| `order.info/pow_required` — The node asks for more proof of work than --pow / POW | `order.info` | error | `pow_required` | 1 | authored |
+| `order.info/pow_required` — The node asks for more than the 20 bits mined on their own, POW unset: nothing sent | `order.info` | error | `pow_required` | 1 | authored |
 | `order.info/protocol_unsupported` — The node advertises protocol v1 (gift wrap): nothing is published | `order.info` | error | `protocol_unsupported` | 1 | authored |
 | `order.info/removed_spelling` — The removed ordersinfo spelling: unresolved command, command is null | `None` | error | `invalid_arguments` | 2 | fixture |
 | `order.info/reply_malformed` — A correlated answer with an unusable payload | `order.info` | error | `reply_malformed` | 1 | authored |
@@ -115,7 +115,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.new/node_refused` — The node refused with reason invalid_amount | `order.new` | error | `node_refused` | 1 | fixture |
 | `order.new/order_declined` — The outcome of answering n at the human prompt; a JSON caller never sees it because JSON requires --yes | `order.new` | error | `order_declined` | 1 | fixture |
 | `order.new/order_not_saved_uncertain` — The node created the order but the local row could not be written; data is present | `order.new` | uncertain | `order_not_saved` | 1 | fixture |
-| `order.new/pow_required` — Not enough proof of work configured: nothing sent | `order.new` | error | `pow_required` | 1 | authored |
+| `order.new/pow_required` — The node asks for 21 bits, above what is mined on its own, POW unset: nothing sent | `order.new` | error | `pow_required` | 1 | authored |
 | `order.new/range_created` — A range order 100-300 USD | `order.new` | ok |  | 0 | fixture |
 | `order.new/relay_read_failed_uncertain` — Published, then the relays dropped the wait; the trade index stays spent | `order.new` | uncertain | `relay_read_failed` | 1 | authored |
 | `order.new/removed_spelling` — The removed neworder spelling | `None` | error | `invalid_arguments` | 2 | fixture |
