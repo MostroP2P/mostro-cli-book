@@ -44,7 +44,7 @@ at wrapper start-up and cache it keyed by `executable_version`.
 | --- | --- | --- |
 | `name` | string | Canonical dotted name, as in the `command` field of outcomes |
 | `cli_path` | array of string | Tokens to type today, e.g. `["order", "take-sell"]`, `["getdmuser"]` |
-| `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
+| `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for the JSON-capable commands, `["human"]` for the [human-only](legacy.md) ones: the legacy commands and `order chat` |
 | `input_schema` | object or null | JSON Schema of the options; `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
 | `required_configuration` | array of string or null | Environment variables read (`["MOSTRO_PUBKEY", "RELAYS"]`); `[]` for the local commands (`schema`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |

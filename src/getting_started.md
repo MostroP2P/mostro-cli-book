@@ -111,7 +111,7 @@ shows complete code.
 
 ## What is not in JSON yet
 
-Chat, the dispute conversation, `restore`, user info and the admin commands are human-only
-today.
+The peer chat (`order chat`, and the older `getdmuser` and `dmtouser`), the dispute
+conversation, `restore`, user info and the admin commands are human-only today.
 Asking them for JSON returns `output_not_supported` (exit 2) before anything runs. See
 [Human-only commands](commands/legacy.md).

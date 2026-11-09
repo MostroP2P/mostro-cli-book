@@ -66,3 +66,9 @@ Reject documents whose `schema_version` you do not know.
 > (up to 20 bits) instead of failing with `pow_required`, which now carries `error.required`
 > and `error.configured` ([Proof of work](errors.md#proof-of-work)). With 0.17.0, set `--pow` /
 > `POW` to the node's value yourself.
+
+> After 0.17.0, not yet released: `order chat --order <id> [--message <text>]` reads the
+> peer chat of an order you hold and sends one message without the counterparty's key, in
+> human output only for now ([`order chat`](commands/legacy.md#order-chat);
+> [mostro-cli#CLI_PR_order_chat_command](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_chat_command)).
+> With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.
