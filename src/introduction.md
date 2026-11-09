@@ -103,6 +103,6 @@ informative, not a stable identifier.
 
 > After 0.17.0, not yet released: the seller's copy of `fiat-sent-ok` asks `next_step`
 > `release`, with its human "👉 Next:" line, when the local order row says the user is the
-> seller ([`message list`](commands/message_list.md#next_step); [mostro-cli#CLI_PR_release_step](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_release_step)).
+> seller ([`message list`](commands/message_list.md#next_step); [mostro-cli#266](https://github.com/MostroP2P/mostro-cli/pull/266)).
 > `message list` and `order watch` read the order rows before contacting a relay; rows that
 > cannot be read are `store_unreadable`. 0.17.0 reports the message with `next_step: null`.
