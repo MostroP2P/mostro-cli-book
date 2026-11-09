@@ -15,7 +15,7 @@ export type Persistence = "not_attempted" | "applied" | "failed" | "not_applicab
 
 export type ErrorCode =
   | "invalid_arguments" | "output_not_supported"
-  | "configuration_missing" | "configuration_invalid"
+  | "configuration_missing" | "configuration_invalid" | "configuration_unwritable"
   | "relay_connection_failed" | "relay_read_failed" | "read_timeout" | "read_limit_exceeded"
   | "internal_error" | "identity_missing" | "identity_unreadable" | "identity_exists"
   | "protocol_unsupported" | "pow_required" | "request_rejected" | "reply_timeout"
@@ -176,7 +176,7 @@ export class MostroCli {
   }
 
   /** Runs `mostro-cli --output json ...args`. `write` marks commands that publish a change. */
-  run<D = unknown>(args: string[], write = false): Promise<Envelope<D> & { exitCode: number }> {
+  run<D = unknown>(args: string[], write = false): Promise<Envelope<D> & { exitCode: number; stderr: string }> {
     const argv = ["--output", "json", ...args];
     return new Promise((resolve, reject) => {
       const child = execFile(this.binary, argv, { env: this.env, timeout: this.timeoutMs, maxBuffer: 16 << 20 },
@@ -197,7 +197,7 @@ export class MostroCli {
           if (envelope.schema_version !== "1") {
             return reject(new Error(`unsupported schema_version ${String(envelope.schema_version)}`));
           }
-          resolve({ ...envelope, exitCode });
+          resolve({ ...envelope, exitCode, stderr });
         });
       child.stdin?.end(); // invoices are passed literally; the CLI reads stdin only for --invoice -
     });
