@@ -38,7 +38,8 @@ from other authors are not included; the peer chat of an order is read with
 [`order chat`](order_chat.md).
 
 Poll it: there is no push. Typical intervals are 10 to 30 seconds during an active trade.
-Deduplicate by `event_id`.
+Deduplicate by `event_id`. To follow one order live, with its chat, a person can run
+[`order watch`](legacy.md#order-watch) (human output for now).
 
 ## Success data: `MessageListData`
 
