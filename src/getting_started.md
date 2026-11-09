@@ -25,6 +25,7 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 
 ```text
 "bond.add-invoice"
+"config.set"
 "dispute.open"
 "identity.init"
 "identity.show"
@@ -48,10 +49,10 @@ See [schema](commands/schema.md) for the full document.
 
 ## Configure the node
 
-Every command except `schema`, `identity init`, `identity show` and `order mine` needs the
-node's public key and the relays. `order list`, `message list` and `order sync` only read
-events from the relays; the other commands also send the node one signed request through
-them.
+Every command except `schema`, `config set`, `identity init`, `identity show` and
+`order mine` needs the node's public key and the relays. `order list`, `message list` and
+`order sync` only read events from the relays; the other commands also send the node one
+signed request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -92,6 +93,19 @@ commands (`schema`, `identity init`, `identity show`, `order mine`) and the gRPC
 commands (`admsetmaintenance`, `admmaintenancestatus`, `admcancelpending`) never read it.
 A program that runs each command in a fresh process, as coding agents and MCP hosts do, can
 write the settings there once instead of passing `-m`, `-r` and `-p` on every call.
+
+[`config set`](commands/config_set.md) writes one setting at a time. It checks the value as
+the commands do, creates the data directory owner-only, and rewrites the file owner-only as
+`NAME=value` lines, keeping the other settings and dropping comments. It leaves a file the
+commands refuse untouched (`configuration_invalid`, with the `hint:` line below).
+
+```sh
+mostro-cli --output json config set mostro-pubkey <hex public key of the Mostro node you trade with>
+mostro-cli --output json config set relays wss://relay.example.com,wss://relay2.example.com
+mostro-cli --output json order list
+```
+
+Or write the file by hand:
 
 ```sh
 mkdir -m 700 -p ~/.mcli
@@ -137,9 +151,9 @@ message (exit 1) instead of `configuration_invalid` and the `hint:` line (see th
 
 ## Create an identity
 
-Commands that act for you (everything except `order list` and `schema`) need a local
-identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one trade key per
-order are derived. Only [`identity init`](commands/identity_init.md) creates it; the
+Commands that act for you (everything except `order list`, `schema` and `config set`)
+need a local identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one
+trade key per order are derived. Only [`identity init`](commands/identity_init.md) creates it; the
 other commands that need it fail with `identity_missing` instead. Create it once:
 
 ```sh

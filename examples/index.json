@@ -3202,6 +3202,111 @@
         "date": "2026-11-07",
         "note": "Run offline against the binary: no node, no identity."
       }
+    },
+    {
+      "id": "config.set/saved",
+      "file": "config.set/saved.json",
+      "command": "config.set",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "set",
+        "relays",
+        "wss://relay.example"
+      ],
+      "title": "RELAYS written next to a stored node key",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "set_saved"
+      }
+    },
+    {
+      "id": "config.set/invalid_value",
+      "file": "config.set/invalid_value.json",
+      "command": "config.set",
+      "exit_code": 2,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "set",
+        "pow",
+        "256"
+      ],
+      "title": "A value the setting refuses: nothing written, the value not echoed",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "set_invalid_value"
+      }
+    },
+    {
+      "id": "config.set/configuration_invalid",
+      "file": "config.set/configuration_invalid.json",
+      "command": "config.set",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "set",
+        "pow",
+        "3"
+      ],
+      "title": "The existing file is refused (stderr names the file and the line): left untouched",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "set_configuration_invalid"
+      }
+    },
+    {
+      "id": "config.set/configuration_unwritable",
+      "file": "config.set/configuration_unwritable.json",
+      "command": "config.set",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "set",
+        "pow",
+        "3"
+      ],
+      "title": "The data directory, the lock or the temporary file cannot be created: nothing written",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "set_configuration_unwritable"
+      }
+    },
+    {
+      "id": "config.set/configuration_unwritable_failed",
+      "file": "config.set/configuration_unwritable_failed.json",
+      "command": "config.set",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "set",
+        "pow",
+        "3"
+      ],
+      "title": "The write or the rename failed: the old file is intact",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "set_configuration_unwritable_failed"
+      }
     }
   ]
 }

@@ -6,6 +6,7 @@ must already exist; only `identity init` creates it.
 | CLI path | `command` | Kind | Network | Identity | Local write | `--yes` | Statuses |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [`schema`](schema.md) | `schema` | offline | none | no | no | no | ok, error |
+| [`config set`](config_set.md) | `config.set` | local write | none | no | `config` | no | ok, error |
 | [`identity init`](identity_init.md) | `identity.init` | local write | none | creates it | `mcli.db` | no | ok, error |
 | [`identity show`](identity_show.md) | `identity.show` | local read | none | yes (read) | no | no | ok, error |
 | [`order mine`](order_mine.md) | `order.mine` | local read | none | yes (read) | no | no | ok, error |
@@ -25,9 +26,9 @@ must already exist; only `identity init` creates it.
 | [`order rate`](order_rate.md) | `order.rate` | write | 1 signed request | yes | none | **yes** | ok, error, uncertain |
 
 All of them need `MOSTRO_PUBKEY` and `RELAYS` (root option, environment or
-[config file](../getting_started.md#the-config-file)) except `schema`, `identity init`,
-`identity show` and `order mine`, which only use the local data directory (`MCLI_DIR`,
-else `~/.mcli`) or nothing at all.
+[config file](../getting_started.md#the-config-file)) except `schema`, `config set`,
+`identity init`, `identity show` and `order mine`, which only use the local data directory
+(`MCLI_DIR`, else `~/.mcli`) or nothing at all.
 
 ## Which key signs what
 
@@ -47,8 +48,17 @@ The input and output schemas quoted are in `schemas/<command>.input.json` and
 ## Input schemas
 
 The discovery document gives an `input_schema` per command, generated from the argument
-parser: one property per long option (`fiat-amount`, `yes`...). Values are typed as
-strings because they are command-line tokens, except the flag `yes`, a boolean, and the
-repeatable `order info --order`, an array of strings. A wrapper can use it to build forms or
-LLM tool definitions, then turn the object into `argv`: `{"order": "…", "yes": true}` →
-`--order … --yes`; an array gives the option once per value.
+parser: one property per long option (`fiat-amount`, `yes`...), except the positional
+arguments described below. Values are typed as strings because they are command-line
+tokens, except the flag `yes`, a boolean, and the repeatable `order info --order`, an array
+of strings. A wrapper can use it to build forms or LLM tool definitions, then turn the
+object into `argv`: `{"order": "…", "yes": true}` → `--order … --yes`; an array gives the
+option once per value.
+
+A property marked `"x-positional": N` is a positional argument, not an option. Today these
+are `key` (0) and `value` (1) of [`config set`](config_set.md) (after 0.17.0, not yet
+released). Pass them after the command path in the order of `N` (0-based), with the
+global options before the command path, and put `--` before them when a value could start
+with `-`: `{"key": "pow", "value": "3"}` → `config set -- pow 3`. A wrapper that ignores the
+keyword passes them as options (`--key pow`) and gets `invalid_arguments` (exit 2), with
+nothing written.

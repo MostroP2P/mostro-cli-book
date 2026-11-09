@@ -45,9 +45,9 @@ connects. Call it once at wrapper start-up and cache it keyed by `executable_ver
 | `name` | string | Canonical dotted name, as in the `command` field of outcomes |
 | `cli_path` | array of string | Tokens to type today, e.g. `["order", "take-sell"]`, `["getdmuser"]` |
 | `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
-| `input_schema` | object or null | JSON Schema of the options; `null` for human-only commands |
+| `input_schema` | object or null | JSON Schema of the options (and of the positional arguments, marked `x-positional`); `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
-| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
+| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `config set`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
 
 Example descriptor (trimmed):
 
@@ -71,11 +71,15 @@ Example descriptor (trimmed):
 }
 ```
 
-Input schemas use two extension keywords: `"x-case-insensitive": true` on enums that accept
-any letter case (`side`, `status` of `order list`), and `"x-stdin": "-"` on the options
+Input schemas use three extension keywords: `"x-case-insensitive": true` on enums that
+accept any letter case (`side`, `status` of `order list`), `"x-stdin": "-"` on the options
 that read their value from standard input when given `-` (`invoice` of `order new`,
 `order take-sell`, `order add-invoice` and `bond add-invoice`; see
-[Invoice on standard input](../invocation.md#invoice-on-standard-input)).
+[Invoice on standard input](../invocation.md#invoice-on-standard-input)), and
+`"x-positional": N` on the properties passed as positional arguments, in the order of `N`
+(0-based), after the command path (`key` and `value` of [config set](config_set.md); see
+[Positional arguments](../invocation.md#positional-arguments)). `x-positional` is after
+0.17.0, not yet released.
 
 ### GlobalOption
 
