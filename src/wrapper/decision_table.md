@@ -36,14 +36,16 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 
 ## next_step dispatch
 
+For `message.list` and `order.watch`, dispatch on the `next_step` of each entry in `data.messages`.
+
 | Source | `next_step` | Action |
 | --- | --- | --- |
 | `order.new` | `wait_for_taker` | `order watch --order <id> --after <cursor>` |
-| `order.new`, `order.take-*`, `message.list` | `pay_bond_invoice` | Pay the bond invoice (`data.payment_request` or payload `invoice`) |
-| `order.take-buy`, `message.list` | `pay_hold_invoice` | Pay the hold invoice |
-| `order.take-sell`, `message.list` | `add_invoice` | `order add-invoice` |
+| `order.new`, `order.take-*`, `message.list`, `order.watch` | `pay_bond_invoice` | Pay the bond invoice (`data.payment_request` or payload `invoice`) |
+| `order.take-buy`, `message.list`, `order.watch` | `pay_hold_invoice` | Pay the hold invoice |
+| `order.take-sell`, `message.list`, `order.watch` | `add_invoice` | `order add-invoice` |
 | `order.take-sell` | `wait_for_seller_payment` | `order watch --order <id> --after <cursor>` |
-| `message.list` | `add_bond_invoice` | `bond add-invoice` |
+| `message.list`, `order.watch` | `add_bond_invoice` | `bond add-invoice` |
 | `order.fiat-sent` | `wait_for_release` | `order watch --order <id> --after <cursor>` |
 | `order.cancel` | `wait_for_peer_cancel` | `order watch --order <id> --after <cursor>`; the peer must cancel too |
 | `order.release` | `sync_child_order` | `order sync` |
