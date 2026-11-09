@@ -55,6 +55,6 @@ binary on 2026-11-07. Also documented: the advertised proof of work of
 yet released; the schemas were refreshed from that branch on 2026-11-08.
 
 Also documented: `order chat` of [mostro-cli#245](https://github.com/MostroP2P/mostro-cli/issues/245)
-in human mode ([mostro-cli#CLI_PR_order_chat_command](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_chat_command)),
+in human mode ([mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)),
 from the branches stacked on `main`, not yet released; `schemas/discovery.json` refreshed from
 `feat/order-chat-command` on 2026-11-09.

@@ -70,5 +70,5 @@ Reject documents whose `schema_version` you do not know.
 > After 0.17.0, not yet released: `order chat --order <id> [--message <text>]` reads the
 > peer chat of an order you hold and sends one message without the counterparty's key, in
 > human output only for now ([`order chat`](commands/legacy.md#order-chat);
-> [mostro-cli#CLI_PR_order_chat_command](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_chat_command)).
+> [mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)).
 > With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.
