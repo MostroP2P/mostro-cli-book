@@ -54,9 +54,12 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
    `next_step: wait_for_release`.
 
 6. **Wait for the release.** The order goes to `settled-hold-invoice` and then `success`
-   when your invoice is paid. If the payment to your invoice fails, the node may ask for a
-   new invoice (`next_step: add_invoice` again); `order add-invoice` then answers
-   `invoice_updated`.
+   when your invoice is paid. If the payment to your invoice fails, the node first sends a
+   `payment-failed` message (payload [`payment_failed`](../commands/message_list.md#payment_failed):
+   the retries left and their interval) with `next_step: null`, and retries on its own. It asks
+   for a new invoice (`add-invoice`, `next_step: add_invoice`) only if every retry fails; with
+   `payment_attempts` `"0"` it does not retry and the `payment-failed` record itself has
+   `next_step: add_invoice`. `order add-invoice` then answers `invoice_updated`.
 
 ## If something goes wrong
 

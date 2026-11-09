@@ -61,6 +61,11 @@ if (!validate(envelope)) console.error(validate.errors);
 `strict: false` is needed with Ajv because input schemas use the extension keywords
 `x-case-insensitive`, `x-stdin` and `x-positional`.
 
+The files in `schemas/` list only the `next_step` values and payload kinds of the binary they
+were generated from; both enums are open within version 1 ([Envelope](../envelope.md)). To
+validate a newer binary's `message.list` or `order.watch` output, use that binary's
+`mostro-cli --output json schema`, or allow unknown values of those two enums.
+
 ## Drift
 
 The CLI repository checks its own copies (`docs/schemas/*-v1.json`) against the generator

@@ -298,6 +298,27 @@
       }
     },
     {
+      "id": "message.list/payment_failed",
+      "file": "message.list/payment_failed.json",
+      "command": "message.list",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "message",
+        "list",
+        "--since",
+        "60"
+      ],
+      "title": "A failed payout the node retries: payment_failed with two attempts left, next_step null",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/021-next-steps/contracts/examples.json",
+        "case": "payment_failed_while_the_node_retries"
+      }
+    },
+    {
       "id": "message.list/payload_kinds",
       "file": "message.list/payload_kinds.json",
       "command": "message.list",
@@ -311,7 +332,7 @@
         "--since",
         "1440"
       ],
-      "title": "A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request and a new-order to a fresh key",
+      "title": "A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request, a new-order to a fresh key and a payment_failed the node will not retry",
       "source": {
         "kind": "authored",
         "note": "Written for this book and validated against the generated schema; synthetic values."

@@ -6,7 +6,7 @@ type the output of a different runner). Tested (`node --experimental-strip-types
 Node 22 against a pre-release build and with Node 24 against mostro-cli 0.17.0.
 
 ```ts
-import { MostroCli, TransportError } from "./mostroCli.ts";
+import { MostroCli, TransportError, isKnownPayload } from "./mostroCli.ts";
 
 const cli = new MostroCli({ env: { MOSTRO_PUBKEY: "<node hex>", RELAYS: "wss://relay.example.com" } });
 
@@ -20,6 +20,7 @@ if (book.status === "ok" && book.data) {
 
 const inbox = await cli.messageList({ since: 60 });
 for (const m of inbox.data?.messages ?? []) {
+  if (!isKnownPayload(m.payload)) continue;                     // a newer kind: read only `kind`
   if (m.payload.kind === "payment_request") {
     console.log(`${m.next_step}: pay ${m.payload.invoice}`);   // narrowed by kind
   }

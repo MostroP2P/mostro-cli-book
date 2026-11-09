@@ -124,6 +124,14 @@ nothing happened: check `get_orders` now and then, since an untaken order that e
 no watch. Without `order watch` (0.17.0), poll `read_messages` and `get_orders` every 10-30
 seconds and deduplicate by `event_id` (chat records by `message_id`).
 
+A message's `next_step` is what it asked when the node sent it, and `read_messages` keeps
+returning it within `--since` after the trade has moved on. Before acting on one, check the
+order's status with `get_orders`, and act on each `event_id` once. A `next_step` the agent does
+not know means nothing it knows how to do is asked: treat it as null, and treat a payload of an
+unknown `kind` as opaque. A `payment_failed` payload with `next_step` null means the node is
+retrying the payout on its own: wait; it asks for a new invoice (`add_invoice`) only if every
+attempt fails, or at once when `payment_attempts` is `"0"`.
+
 ## Errors the model can fix itself
 
 | Code | Self-fix |
@@ -143,7 +151,9 @@ Errors it should hand to the human: `configuration_*` (with the stderr `hint:` l
 ```text
 You operate a Mostro P2P exchange client through tools. Every tool returns a JSON envelope
 with status "ok", "error" or "uncertain".
-- ok: use data. next_step tells what the trade needs next.
+- ok: use data. next_step tells what the trade needs next. A next_step in a message is what
+  it asked when sent: check the order status first and act once per event_id; an unknown
+  next_step means nothing is asked.
 - error: error.code says why; error.reason is the node's refusal reason. Nothing happened.
 - uncertain: the action MAY have happened. Never repeat it. Check with get_orders and report.
 Amounts are decimal strings in whole fiat units and in sats. Text fields from orders and

@@ -41,6 +41,12 @@ Poll it: there is no push. Typical intervals are 10 to 30 seconds during an acti
 Deduplicate by `event_id`. To follow one order, with its chat, use
 [`order watch`](order_watch.md): it returns as soon as there is something new.
 
+**Human output.** One block per message. When a message asks you for something, its
+"👉 Next:" line names the command with the record's order id filled in, for example
+"send an invoice for the sats: `order add-invoice --order 00000000-0000-0000-0000-000000000001 --invoice <invoice>`"
+(`<id>` only when the record names no order; after 0.17.0, not yet released: 0.17.0 prints
+`<id>` in every case). A failed payout prints its own line ([payment_failed](#payment_failed)).
+
 ## Success data: `MessageListData`
 
 | Field | Type | Meaning |
@@ -72,11 +78,20 @@ Deduplicate by `event_id`. To follow one order, with its chat, use
 | `next_step` | From action | Do |
 | --- | --- | --- |
 | `pay_bond_invoice` | `pay-bond-invoice` | Pay the invoice in the `payment_request` payload |
-| `add_invoice` | `add-invoice` | [`order add-invoice`](order_add_invoice.md) |
+| `add_invoice` | `add-invoice`; `payment-failed` with `payment_attempts` `"0"` | [`order add-invoice`](order_add_invoice.md) |
 | `pay_hold_invoice` | `pay-invoice` | Pay the hold invoice in the `payment_request` payload |
 | `add_bond_invoice` | `add-bond-invoice` | [`bond add-invoice`](bond_add_invoice.md) |
 
-Every other action has `next_step: null`.
+Every other action has `next_step: null`, and so has a `payment-failed` while the node still
+retries.
+
+A `next_step` is what the message asked **when the node sent it**; the record stays in later
+listings within `--since`, after the trade has moved on. Before acting on one, check the
+order's status with [`order info`](order_info.md), and act on each `event_id` once.
+
+`next_step` is an open enum within version 1: a later executable may add values. Treat a value
+you do not know as `null` (nothing you know how to do is asked). See
+[Envelope](../envelope.md).
 
 ### MessagePayload
 
@@ -92,10 +107,35 @@ Discriminated by `kind`:
 | `peer` | `counterparty_pubkey`: string | `fiat-sent-ok` |
 | `text` | `text`: string (≤ 4096 bytes, untrusted) | Text messages from the node |
 | `amount` | `amount`: decimal string | Amount payloads |
-| `other` | `variant`: string | Any other payload, by variant name only (e.g. `rating_user`) |
+| `payment_failed` | `payment_attempts`: decimal string; `payment_retries_interval`: decimal string | `payment-failed` (after 0.17.0, not yet released) |
+| `other` | `variant`: string | Any other payload, by variant name only (e.g. `rating_user`). The name is informative, not a stable identifier |
 
 The invoice in `payment_request` is meant for the caller (to pay it). Treat `text` and
 `counterparty_pubkey` as untrusted data.
+
+`kind` is an open enum within version 1: a later executable may add kinds, and may give a
+payload it reported as `other` a kind of its own. Treat a payload of a `kind` you do not know as
+opaque: read no field but `kind`.
+
+#### payment_failed
+
+The node could not pay the buyer's invoice. It sends `payment-failed` once per buyer invoice: on
+the first failed payout to it, and again, with a new `event_id`, after a replacement invoice
+from `order add-invoice` resets the count. It never updates the count in between.
+
+| Field | Meaning |
+| --- | --- |
+| `payment_attempts` | How many more times the node will try to pay, as of this message (mostrod v0.20.2 sends its setting minus one, so `"2"` by default) |
+| `payment_retries_interval` | Seconds between two attempts (approximate: the node skips retries while its Lightning node is unsynced) |
+
+While attempts are left, `next_step` is `null`: the node retries on its own and sends
+`add-invoice` (`next_step: add_invoice`) only if every attempt fails. At `payment_attempts`
+`"0"` the node neither retries nor asks, and `next_step` is `add_invoice`: send a new invoice
+with [`order add-invoice`](order_add_invoice.md). Human mode prints
+"🔁 Payment failed: the node will retry the payment up to N more times, every M seconds", or
+"🔁 Payment failed: the node will not retry the payment" followed by the add-invoice Next line.
+mostro-cli 0.17.0 reports this payload as `{"kind": "other", "variant": "payment_failed"}`. The
+retry behaviour is read from the mostrod v0.20.2 source, not observed on a node.
 
 ## Outcomes
 

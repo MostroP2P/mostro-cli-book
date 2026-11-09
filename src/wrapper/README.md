@@ -39,7 +39,10 @@ pipe stdin as in step 2 below.
    local users in the process list.
 4. **Parse stdout, ignore stderr** (log it, do not parse it).
 5. **Branch on `status`, then `error.code`.** Never on `message`. Keep a default branch for
-   codes you do not know (within v1 new commands can add codes).
+   codes you do not know (within v1 new commands can add codes). In message records
+   (`message.list`, `order.watch`), map a `next_step` you do not know to null and treat a
+   payload of a `kind` you do not know as opaque (read only `kind`): both enums are open
+   within v1.
 6. **Keep decimal strings as strings** or parse them as big integers.
 7. **Never retry `uncertain` or a write transport failure automatically.** See
    [Recovering](../flows/uncertain.md).
@@ -47,7 +50,9 @@ pipe stdin as in step 2 below.
 9. **Discover once**: call `schema` at start-up; check every command you need is present
    with `"json"` in `output_modes`.
 10. **Validate optionally**: the per-command output schemas are strict; validating in tests
-    (or in debug builds) catches drift between your wrapper and a new binary.
+    (or in debug builds) catches drift between your wrapper and a new binary. A stored schema
+    lists only the `next_step` values and payload kinds of the binary it came from, so a newer
+    binary's message records can fail it; validate against the running binary's `schema`.
 
 ## Surfacing results to a UI
 

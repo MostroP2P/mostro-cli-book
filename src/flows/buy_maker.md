@@ -25,7 +25,11 @@ You publish a **buy** order: you pay fiat and receive sats.
    `order fiat-sent --order <id> --yes` → `wait_for_release`. Agree on the payment details
    with the seller in [`order chat`](../commands/order_chat.md).
 
-5. **Wait for the release** (`settled-hold-invoice`, then `success`).
+5. **Wait for the release** (`settled-hold-invoice`, then `success`). If the payment to
+   your invoice fails, a `payment-failed` record (payload
+   [`payment_failed`](../commands/message_list.md#payment_failed)) says how many more times the
+   node will retry, with `next_step: null`; it asks for a new invoice (`next_step: add_invoice`)
+   only if every retry fails, or at once when `payment_attempts` is `"0"`.
 
 For a **buy range order**, `fiat-sent` is the step that carries your next trade key; the
 child order arrives when the seller releases. See [Range orders](range_orders.md).
