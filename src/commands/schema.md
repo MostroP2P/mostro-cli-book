@@ -44,10 +44,10 @@ connects. Call it once at wrapper start-up and cache it keyed by `executable_ver
 | --- | --- | --- |
 | `name` | string | Canonical dotted name, as in the `command` field of outcomes |
 | `cli_path` | array of string | Tokens to type today, e.g. `["order", "take-sell"]`, `["getdmuser"]` |
-| `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
+| `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for the JSON-capable commands, `["human"]` for the [human-only](legacy.md) ones: the legacy commands and `order chat` |
 | `input_schema` | object or null | JSON Schema of the options (and of the positional arguments, marked `x-positional`); `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
-| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `config set`, `config show`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
+| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `config set`, `config show`, `identity init`, `identity show`, `order mine`); `null` when not modeled (the human-only commands) |
 
 Example descriptor (trimmed):
 

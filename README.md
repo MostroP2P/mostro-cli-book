@@ -65,3 +65,8 @@ the `config show` command that reports it, which completes the issue, and
 [mostro-cli#254](https://github.com/MostroP2P/mostro-cli/pull/254),
 their review fixes), from the branches stacked on `main`, not yet released; schemas
 refreshed from `feat/config-review-fixes` on 2026-11-09.
+
+Also documented: `order chat` of [mostro-cli#245](https://github.com/MostroP2P/mostro-cli/issues/245)
+in human mode ([mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)),
+on `main`, not yet released; `schemas/discovery.json` refreshed from `main` after that merge on
+2026-11-09.

@@ -146,7 +146,7 @@ generated schema of `identity init` allows the same combinations, for `mcli.db`.
 | Situation | Stages |
 | --- | --- |
 | `command: null` (unknown command, removed spelling) | `not_attempted / unknown / not_attempted` |
-| Legacy command with `--output json` (`output_not_supported`) | `not_attempted / unknown / not_attempted` |
+| [Human-only command](commands/legacy.md) (legacy, or `order chat`) with `--output json` (`output_not_supported`) | `not_attempted / unknown / not_attempted` |
 
 ## Reading stages in a wrapper
 

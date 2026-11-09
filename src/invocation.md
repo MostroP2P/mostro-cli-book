@@ -167,7 +167,8 @@ The JSON-capable commands replaced old spellings (`listorders`, `neworder`, `tak
 
 With the default reply deadline, a wrapper timeout of **45 seconds** per run is comfortably
 above the worst case; add whatever you add to `--reply-timeout`. If you kill the process
-earlier, treat a write as uncertain.
+earlier, treat a write as uncertain. [`order chat`](commands/legacy.md#order-chat), human
+output only for now, takes longer: up to 52 s, or 78 s with `--message`.
 
 ### `--reply-timeout SECONDS`
 

@@ -100,3 +100,9 @@ Reject documents whose `schema_version` you do not know.
 > [human-only commands](commands/legacy.md) a blank `MOSTRO_PUBKEY` or `-m` now prints
 > `MOSTRO_PUBKEY not set`, and that message and `RELAYS not set` say that a variable that is
 > set, even empty, wins over the file.
+
+> After 0.17.0, not yet released: `order chat --order <id> [--message <text>]` reads the
+> peer chat of an order you hold and sends one message without the counterparty's key, in
+> human output only for now ([`order chat`](commands/legacy.md#order-chat);
+> [mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)).
+> With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.
