@@ -68,6 +68,6 @@ was written from `feat/order-watch-schema` on 2026-11-09.
 
 Also documented: the typed `payment_failed` payload, the order id in the human "👉 Next:" lines and
 the open `next_step` and payload `kind` enums of version 1, part of
-[mostro-cli#243](https://github.com/MostroP2P/mostro-cli/issues/243) ([mostro-cli#CLI_PR_payment_failed_payload](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_payment_failed_payload)), from the branches
+[mostro-cli#243](https://github.com/MostroP2P/mostro-cli/issues/243) ([mostro-cli#264](https://github.com/MostroP2P/mostro-cli/pull/264)), from the branches
 stacked on `main`, not yet released; the schemas were refreshed from `feat/payment-failed-payload`
 on 2026-11-09.

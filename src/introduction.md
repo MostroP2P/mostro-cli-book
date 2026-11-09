@@ -91,6 +91,6 @@ informative, not a stable identifier.
 
 > After 0.17.0, not yet released: a failed payout to the buyer is the payload kind
 > `payment_failed`, with the retries left and their interval
-> ([`message list`](commands/message_list.md#messagepayload); [mostro-cli#CLI_PR_payment_failed_payload](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_payment_failed_payload)).
+> ([`message list`](commands/message_list.md#messagepayload); [mostro-cli#264](https://github.com/MostroP2P/mostro-cli/pull/264)).
 > 0.17.0 reports it as `{"kind": "other", "variant": "payment_failed"}`. The human "👉 Next:"
 > lines name the record's order id instead of `<id>`.
