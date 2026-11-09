@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 162 outcomes, each in its own file with the exact command line, all
+- **many examples**: 163 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -128,3 +128,9 @@ informative, not a stable identifier.
 > ([`message list`](commands/message_list.md#messagepayload); [mostro-cli#264](https://github.com/MostroP2P/mostro-cli/pull/264)).
 > 0.17.0 reports it as `{"kind": "other", "variant": "payment_failed"}`. The human "👉 Next:"
 > lines name the record's order id instead of `<id>`.
+
+> After 0.17.0, not yet released: `hold-invoice-payment-accepted` asks the buyer `next_step`
+> `fiat_sent` and `rate` asks both sides `next_step` `rate`, with their human "👉 Next:" lines
+> ([`message list`](commands/message_list.md#next_step); [mostro-cli#265](https://github.com/MostroP2P/mostro-cli/pull/265)).
+> `order watch` ends at `rate` too, and an update that ends a completed trade waits up to 10 s
+> for it. 0.17.0 reports both messages with `next_step: null`.

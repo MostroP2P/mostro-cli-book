@@ -46,6 +46,10 @@ Deduplicate by `event_id`. To follow one order, with its chat, use
 "send an invoice for the sats: `order add-invoice --order 00000000-0000-0000-0000-000000000001 --invoice <invoice>`"
 (`<id>` only when the record names no order; after 0.17.0, not yet released: 0.17.0 prints
 `<id>` in every case). A failed payout prints its own line ([payment_failed](#payment_failed)).
+After 0.17.0, not yet released: `hold-invoice-payment-accepted` prints
+"send the fiat, then: `order fiat-sent --order <order-id>`" and `rate` prints
+"rate your counterparty: `order rate --order <order-id> --rating <1-5>`"; 0.17.0 prints no
+"👉 Next:" line for either.
 
 ## Success data: `MessageListData`
 
@@ -81,13 +85,19 @@ Deduplicate by `event_id`. To follow one order, with its chat, use
 | `add_invoice` | `add-invoice`; `payment-failed` with `payment_attempts` `"0"` | [`order add-invoice`](order_add_invoice.md) |
 | `pay_hold_invoice` | `pay-invoice` | Pay the hold invoice in the `payment_request` payload |
 | `add_bond_invoice` | `add-bond-invoice` | [`bond add-invoice`](bond_add_invoice.md) |
+| `fiat_sent` | `hold-invoice-payment-accepted` (to the buyer only, once the seller's hold invoice is paid) | Send the fiat, then [`order fiat-sent`](order_fiat_sent.md); only while `order info` says `active` |
+| `rate` | `rate` (to both sides, right after `purchase-completed` for the buyer or `hold-invoice-payment-settled` for the seller) | [`order rate`](order_rate.md); once the order is `success` (a seller may rate from `settled-hold-invoice`) |
+
+`fiat_sent` and `rate` come after 0.17.0 and are not yet released; 0.17.0 reports both messages
+with `next_step: null`.
 
 Every other action has `next_step: null`, and so has a `payment-failed` while the node still
 retries.
 
 A `next_step` is what the message asked **when the node sent it**; the record stays in later
 listings within `--since`, after the trade has moved on. Before acting on one, check the
-order's status with [`order info`](order_info.md), and act on each `event_id` once.
+order's status with [`order info`](order_info.md), and act on each `event_id` once: an old
+`fiat_sent` record still says `fiat_sent` after you ran `order fiat-sent`.
 
 `next_step` is an open enum within version 1: a later executable may add values. Treat a value
 you do not know as `null` (nothing you know how to do is asked). See

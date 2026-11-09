@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-162 examples: 118 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+163 examples: 119 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -58,6 +58,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `message.list/relay_connection_failed` — No relay could be connected | `message.list` | error | `relay_connection_failed` | 1 | fixture |
 | `message.list/removed_getdm` — The removed getdm spelling | `None` | error | `invalid_arguments` | 2 | fixture |
 | `message.list/store_unreadable` — The local database cannot be read | `message.list` | error | `store_unreadable` | 1 | fixture |
+| `message.list/trade_steps` — A buyer's trade steps: hold-invoice-payment-accepted asks fiat_sent, fiat-sent-ok asks nothing, rate asks rate | `message.list` | ok |  | 0 | fixture |
 | `message.list/truncated_and_keys_limited` — More keys and messages than were read: truncated with a warning | `message.list` | ok |  | 0 | fixture |
 | `message.list/window_out_of_range` — --since above 10080 minutes | `message.list` | error | `invalid_arguments` | 2 | fixture |
 | `order.add-invoice/invoice_updated` — A replacement invoice (for example after a failed payment) was stored | `order.add-invoice` | ok |  | 0 | fixture |

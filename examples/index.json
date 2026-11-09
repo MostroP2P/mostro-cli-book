@@ -319,6 +319,27 @@
       }
     },
     {
+      "id": "message.list/trade_steps",
+      "file": "message.list/trade_steps.json",
+      "command": "message.list",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "message",
+        "list",
+        "--since",
+        "60"
+      ],
+      "title": "A buyer's trade steps: hold-invoice-payment-accepted asks fiat_sent, fiat-sent-ok asks nothing, rate asks rate",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/021-next-steps/contracts/examples.json",
+        "case": "messages_of_the_trade_steps"
+      }
+    },
+    {
       "id": "message.list/payload_kinds",
       "file": "message.list/payload_kinds.json",
       "command": "message.list",

@@ -57,7 +57,9 @@ waiting-buyer-invoice / active ──(buyer: fiat-sent)──► fiat-sent ─�
 
    `data.result` is `released`. This is irreversible.
 
-6. **Rate** the buyer: [`order rate`](../commands/order_rate.md).
+6. **Rate** the buyer: right after `hold-invoice-payment-settled` the node sends a `rate`
+   message with `next_step: rate` (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`); run
+   [`order rate`](../commands/order_rate.md).
 
 ## If something goes wrong
 

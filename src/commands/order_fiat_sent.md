@@ -30,6 +30,11 @@ Replaces `fiatsent -o ...`.
 
 ## Behavior
 
+The node asks for this step with the buyer's `hold-invoice-payment-accepted` message, which
+[`message list`](message_list.md) and [`order watch`](order_watch.md) report with `next_step`
+`fiat_sent` (after 0.17.0, not yet released; 0.17.0: `null`). Run it only while the order is
+`active`, and once.
+
 Looks up the order's trade key, publishes `fiat-sent`, waits for `fiat-sent-ok`, records
 the local status. If you are the **maker of a buy range order** with room left, the request
 also carries a fresh trade key at the next index for the child order the node will create

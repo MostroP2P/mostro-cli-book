@@ -43,6 +43,8 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
 4. **Wait until the order is `active`** (seller paid the hold invoice and your invoice is
    in). `order add-invoice` already tells you with `result: payment_accepted` when the
    seller had paid first; otherwise wait with `order watch --order <id>` and check `order info`.
+   The node's `hold-invoice-payment-accepted` message has `next_step: fiat_sent`
+   (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`).
 
 5. **Pay the fiat** to the seller through the method agreed in
    [`order chat`](../commands/order_chat.md), then:
@@ -60,6 +62,9 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
    for a new invoice (`add-invoice`, `next_step: add_invoice`) only if every retry fails; with
    `payment_attempts` `"0"` it does not retry and the `payment-failed` record itself has
    `next_step: add_invoice`. `order add-invoice` then answers `invoice_updated`.
+
+7. **Rate** the seller: right after `purchase-completed` the node sends a `rate` message with
+   `next_step: rate` (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`); run [`order rate`](../commands/order_rate.md).
 
 ## If something goes wrong
 

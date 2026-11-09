@@ -27,7 +27,9 @@ WRITE_COMMANDS = {
 }
 
 # next_step values of message records this wrapper knows; the enum is open within v1.
-MESSAGE_NEXT_STEPS = {"pay_bond_invoice", "add_invoice", "pay_hold_invoice", "add_bond_invoice"}
+MESSAGE_NEXT_STEPS = {
+    "pay_bond_invoice", "add_invoice", "pay_hold_invoice", "add_bond_invoice", "fiat_sent", "rate",
+}
 
 
 def message_next_step(record: Dict[str, Any]) -> Optional[str]:

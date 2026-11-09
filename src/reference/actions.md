@@ -15,7 +15,7 @@ the ones this book refers to, with how the CLI presents them.
 | `bond-payout-completed` | Your share of a slashed bond was paid | — | `order` (amount: your share) |
 | `bond-slashed` | A bond was slashed | — | `order` (amount: the slashed bond) |
 | `waiting-seller-to-pay` | Your invoice is in; the seller has to pay | — | `none` |
-| `hold-invoice-payment-accepted` | The seller locked the sats; the trade is active | — | (varies) |
+| `hold-invoice-payment-accepted` | The seller locked the sats; the trade is active (sent to the buyer only) | `fiat_sent` (after 0.17.0, not yet released; 0.17.0: —) | (varies) |
 | `fiat-sent-ok` | The buyer's `fiat-sent` was accepted | — | `peer` |
 | `hold-invoice-payment-settled`, `released` | The seller's release went through | — | (varies) |
 | `canceled` | The order was canceled | — | `none` |
@@ -23,6 +23,7 @@ the ones this book refers to, with how the CLI presents them.
 | `cooperative-cancel-accepted` | The cooperative cancel completed | — | (varies) |
 | `invoice-updated` | A replacement buyer invoice was stored | — | (varies) |
 | `payment-failed` | You are the buyer: the node could not pay your invoice (once per invoice) | `add_invoice` at `payment_attempts` `"0"`, else — | `payment_failed` (after 0.17.0, not yet released; 0.17.0: `other`) |
+| `rate` | The trade is over: sent to both sides right after `purchase-completed` (buyer) or `hold-invoice-payment-settled` (seller) | `rate` (after 0.17.0, not yet released; 0.17.0: —) | `none` |
 | `rate-received` | Your rating was recorded | — | `other` (`rating_user`) |
 | `cant-do` | The node refused something | — | `cant_do` |
 

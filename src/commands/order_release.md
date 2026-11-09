@@ -36,7 +36,9 @@ Looks up the trade key, publishes `release`, waits for `hold-invoice-payment-set
 `released`, records `settled-hold-invoice`. If you are the **maker of a sell range order**
 with room left, the request carries a fresh trade key at the next index; the node creates
 a child order for the rest of the range and announces it to that key, and the outcome says
-`next_step: sync_child_order`.
+`next_step: sync_child_order`. The `rate` message the node sends afterwards is visible with
+[`message list`](message_list.md), with `next_step` `rate` (after 0.17.0, not yet released;
+0.17.0: `null`).
 
 ## Success data: `StepData`
 

@@ -28,6 +28,10 @@ You take someone's **buy** order: you lock sats, receive fiat, then release.
    mostro-cli --output json order release --order <id> --yes
    ```
 
+6. **Rate** the buyer: right after `hold-invoice-payment-settled` the node sends a `rate`
+   message with `next_step: rate` (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`); run
+   [`order rate`](../commands/order_rate.md).
+
 ## If something goes wrong
 
 | Situation | What to do |
