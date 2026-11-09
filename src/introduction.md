@@ -87,7 +87,7 @@ Reject documents whose `schema_version` you do not know.
 > After 0.17.0, not yet released: [`config show`](commands/config_show.md) reports the config
 > file's path and the node settings stored in it, read-only, and the missing-setting messages
 > of the human-only commands name `config set` and `config show`
-> ([mostro-cli#CLI_PR_config_show](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_show)).
+> ([mostro-cli#251](https://github.com/MostroP2P/mostro-cli/pull/251)).
 > This completes the config file of
 > [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/issues/244).
 > With 0.17.0, pass the settings as options or environment variables.

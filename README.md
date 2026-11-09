@@ -60,6 +60,6 @@ read by the JSON-capable commands, and
 read by the human-only commands too, except the gRPC operator commands,
 [mostro-cli#250](https://github.com/MostroP2P/mostro-cli/pull/250),
 the `config set` command that writes it, and
-[mostro-cli#CLI_PR_config_show](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_show),
+[mostro-cli#251](https://github.com/MostroP2P/mostro-cli/pull/251),
 the `config show` command that reports it, which completes the issue), from the branches
 stacked on `main`, not yet released; schemas refreshed from `feat/config-show` on 2026-11-08.
