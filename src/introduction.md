@@ -69,17 +69,17 @@ Reject documents whose `schema_version` you do not know.
 
 > After 0.17.0, not yet released: the JSON-capable commands that talk to the node also read
 > the node settings from `$MCLI_DIR/config` ([The config file](getting_started.md#the-config-file);
-> [mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)).
+> [mostro-cli#248](https://github.com/MostroP2P/mostro-cli/pull/248)).
 > With 0.17.0, pass them as options or environment variables.
 
 > After 0.17.0, not yet released: the human-only commands, except the gRPC operator
 > commands, read the config file too, with the same precedence
 > ([Human-only commands](commands/legacy.md);
-> [mostro-cli#CLI_PR_config_file_legacy](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_legacy)).
+> [mostro-cli#249](https://github.com/MostroP2P/mostro-cli/pull/249)).
 > With 0.17.0, pass their settings as options or environment variables.
 
 > After 0.17.0, not yet released: [`config set`](commands/config_set.md) writes one node
 > setting to the config file. It brings the error code `configuration_unwritable`, which only
 > it emits, and the discovery keyword `x-positional` for its two positional arguments
-> ([mostro-cli#CLI_PR_config_set](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_set)).
+> ([mostro-cli#250](https://github.com/MostroP2P/mostro-cli/pull/250)).
 > With 0.17.0, pass the settings as options or environment variables.

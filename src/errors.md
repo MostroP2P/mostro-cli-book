@@ -82,7 +82,10 @@ The program raises the work on its own only up to **20 bits** (about a million h
 second or two on a laptop). A node that asks for more gets nothing, and the command fails with
 `pow_required` before publishing. `error.required` says how many bits the node wants, and
 `error.configured` how many were configured. Setting `--pow` (or `POW`, or the config file's
-`POW`) to `error.required` or more mines it, however long that takes.
+`POW`) to `error.required` or more mines it, however long that takes. Raise it where the
+value is actually taken from: an option beats a set `POW` variable, which beats the file, so
+a `POW` set in the environment (even `0` or empty) hides the file's line. Unset it, or change
+it too.
 
 `pow_required` can also come after the request was published: the node did not answer, and it
 advertises more work than was sent (it changed its value, or did not know a key the program
