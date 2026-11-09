@@ -35,7 +35,8 @@ Every JSON run prints one **envelope**. Its shape is the same for every command;
 Rules that hold for every document:
 
 - **Every key is always present.** A missing value is `null` (or `[]` for arrays); keys are
-  never omitted. The one exception is `error.reason`, present only on `node_refused`.
+  never omitted. The exceptions are in the error object: `error.reason`, present only on
+  `node_refused`, and `error.required` and `error.configured`, present only on `pow_required`.
 - **Key order is not significant.** The CLI writes the envelope keys in the order above, but
   the fixture files in this book are sometimes alphabetical. Parse, do not compare text.
 - **No extra keys today**, but within version 1 optional fields may be added. Ignore keys you
@@ -54,6 +55,12 @@ Rules that hold for every document:
 | `code` | string | Stable snake_case code. **The only thing to branch on.** See [Error codes](errors.md). |
 | `message` | string | Fixed English sentence chosen by the code. For logs and humans. It never contains data from the node, the arguments, keys or URLs. Not stable for matching. |
 | `reason` | string, only with `node_refused` | The node's own refusal reason (`cant-do` reason in the protocol), as a snake_case word matching `^[a-z][a-z0-9_]{0,63}$`. Absent when the node gave none or gave something that is not such a word. |
+| `required` | integer 0-255, only with `pow_required` | The proof of work the node advertises for this request, in bits. On the timeout path (`uncertain`), the highest advertised value above the work that was sent. |
+| `configured` | integer 0-255, only with `pow_required` | The `--pow` / `POW` floor, in bits (0 when unset). |
+
+```json
+{ "code": "pow_required", "message": "The node requires more proof of work than is configured.", "required": 21, "configured": 0 }
+```
 
 On `uncertain`, `error.code` says *why* the outcome is uncertain (`reply_timeout`,
 `order_not_saved`...), not that the operation failed.

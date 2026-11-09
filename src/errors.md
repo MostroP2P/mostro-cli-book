@@ -21,7 +21,7 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `identity_unreadable` | 1 | The local identity store cannot be read. | The database exists but cannot be opened or holds no valid mnemonic. |
 | `identity_exists` | 1 | A local identity already exists, so nothing was changed. | Only `identity init`: `mcli.db` (or its `-journal`, `-wal` or `-shm` file) is already in the data directory. Nothing was touched; use `identity show`. |
 | `protocol_unsupported` | 1 | The node speaks a protocol version this program does not support. | The node advertises protocol v1 (gift wrap). Nothing sent. |
-| `pow_required` | 1 | The node requires more proof of work than is configured. | Raise `--pow` / `POW` to the node's value. Usually found before sending (`error`); when found only after a timeout, it is `uncertain`. |
+| `pow_required` | 1 | The node requires more proof of work than is configured. | The program mines what the node advertises on its own, up to 20 bits, so this means the node asks for more. `error.required` is the node's value and `error.configured` the `--pow` / `POW` floor: set `--pow <required>` to mine it (see [Proof of work](#proof-of-work)). Usually found before sending (`error`, nothing published); when found only after a timeout, it is `uncertain`. |
 | `request_rejected` | 1 | No relay confirmed accepting the request. | `publication: not_attempted` ⇒ every relay refused the event, provably nothing sent (`error`). `publication: unknown` ⇒ a relay failed ambiguously; for a write this is `uncertain`. |
 | `reply_timeout` | 1 | The node did not answer before the deadline. | Published, no correlated reply before the deadline (`--reply-timeout`, 15 s by default). For `order info` an `error` (repeatable); for writes `uncertain`. |
 | `node_refused` | 1 | The node refused the request. | The node answered `cant-do`. `error.reason` carries its reason when it is a snake_case word. The node did not act. |
@@ -54,6 +54,37 @@ tests and probes:
 
 The [protocol book](https://mostro.network/protocol/) has the daemon's full list of
 `cant-do` reasons.
+
+## Proof of work
+
+A node can ask for NIP-13 proof of work on the requests it receives. It advertises how much in
+its info event (kind 38385), with two tags:
+
+- `pow` applies to every request;
+- `pow_first_contact` applies on top of it to a key the node does not know yet.
+
+The node drops an under-mined request without answering, so the program reads those tags
+before it sends anything and mines what the request needs:
+
+| Request | Key that signs | Work mined |
+| --- | --- | --- |
+| `order new`, `order take-sell`, `order take-buy` | a fresh trade key | the higher of `pow` and `pow_first_contact` |
+| `order info` | the identity key | the higher of `pow` and `pow_first_contact` |
+| `order rate` | the trade key of a finished order | the higher of `pow` and `pow_first_contact` |
+| `order add-invoice`, `bond add-invoice`, `order fiat-sent`, `order release`, `order cancel`, `dispute open` | the trade key of an order the node holds open | `pow` |
+
+`--pow` / `POW` is a floor: the program never mines less than it, and mines more when the node
+asks for more. With no info event, or one without these tags, it mines the floor only.
+
+The program raises the work on its own only up to **20 bits** (about a million hashes: a
+second or two on a laptop). A node that asks for more gets nothing, and the command fails with
+`pow_required` before publishing. `error.required` says how many bits the node wants, and
+`error.configured` how many were configured. Setting `--pow` (or `POW`) to `error.required` or
+more mines it, however long that takes.
+
+`pow_required` can also come after the request was published: the node did not answer, and it
+advertises more work than was sent (it changed its value, or did not know a key the program
+took for known). That outcome is `uncertain`, with the same two fields.
 
 ## Which command emits which code
 

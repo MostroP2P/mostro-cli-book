@@ -61,3 +61,8 @@ Reject documents whose `schema_version` you do not know.
 
 > mostro-cli 0.17.0 is the first release with the JSON interface; 0.16.3 and earlier have
 > none. Check `mostro-cli --output json schema` on your binary.
+
+> After 0.17.0, not yet released: the commands mine the proof of work the node advertises
+> (up to 20 bits) instead of failing with `pow_required`, which now carries `error.required`
+> and `error.configured` ([Proof of work](errors.md#proof-of-work)). With 0.17.0, set `--pow` /
+> `POW` to the node's value yourself.

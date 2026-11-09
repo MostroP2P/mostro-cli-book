@@ -45,7 +45,7 @@ Local checks only catch what is cheap and certain. The node remains the authorit
 
 1. Validate, read configuration and identity, check the store is writable.
 2. **Reserve** the next trade index and derive its key.
-3. Connect, probe the node (protocol, PoW), publish the request, wait for the reply (`--reply-timeout`, 15 s by default).
+3. Connect, probe the node (protocol, PoW), mine the request with the PoW the node advertises for a first contact (up to 20 bits, never below `--pow`), publish it, wait for the reply (`--reply-timeout`, 15 s by default).
 4. On acceptance, save the order row (with trade key and index) in one transaction.
 
 The trade index is **spent** whenever the request was published and not provably refused,

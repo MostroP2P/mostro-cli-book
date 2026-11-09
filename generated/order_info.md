@@ -72,7 +72,7 @@ mostro-cli --output json order info --order 00000000-0000-0000-0000-000000000001
 {{#include ../examples/order.info/node_refused.json}}
 ```
 
-### The node asks for more proof of work than --pow / POW
+### The node asks for more than the 20 bits mined on their own, POW unset: nothing sent
 
 _`order.info/pow_required` · status error · `pow_required` · exit 1 · authored_
 

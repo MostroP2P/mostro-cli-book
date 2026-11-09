@@ -1143,7 +1143,7 @@
         "--order",
         "00000000-0000-0000-0000-000000000001"
       ],
-      "title": "The node asks for more proof of work than --pow / POW",
+      "title": "The node asks for more than the 20 bits mined on their own, POW unset: nothing sent",
       "source": {
         "kind": "authored",
         "note": "Written for this book and validated against the generated schema; synthetic values."
@@ -1781,7 +1781,7 @@
         "Zelle",
         "--yes"
       ],
-      "title": "Not enough proof of work configured: nothing sent",
+      "title": "The node asks for 21 bits, above what is mined on its own, POW unset: nothing sent",
       "source": {
         "kind": "authored",
         "note": "Written for this book and validated against the generated schema; synthetic values."

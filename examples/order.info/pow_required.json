@@ -5,7 +5,9 @@
   "data": null,
   "error": {
     "code": "pow_required",
-    "message": "The node requires more proof of work than is configured."
+    "message": "The node requires more proof of work than is configured.",
+    "required": 21,
+    "configured": 0
   },
   "warnings": [],
   "meta": {

@@ -141,6 +141,7 @@ The JSON-capable commands replaced old spellings (`listorders`, `neworder`, `tak
 | --- | --- |
 | Connect to relays | 10 s |
 | Node-info probe (protocol version, PoW) | 3 s, best effort |
+| Mining the request with the PoW the node advertises | milliseconds at 6 bits; at the 20-bit ceiling about 1.6 s on average and 5 s at worst on a laptop CPU, more on a slower machine |
 | Public read until every relay sent EOSE | 15 s |
 | Wait for the node's reply to a request | `--reply-timeout`, 15 s by default |
 | Relay cleanup | 1 s (overrun is only a warning) |

@@ -30,8 +30,9 @@ Replaces `ordersinfo --orderids ...`.
 ## Behavior
 
 Validates arguments → reads configuration → reads the identity (read-only) → connects
-(10 s) → probes the node's protocol version and PoW (3 s, best effort) → publishes one
-request → waits for the reply correlated by request id (`--reply-timeout`, 15 s by
+(10 s) → probes the node's protocol version and PoW (3 s, best effort) → mines the request
+with the PoW the node advertises for a first contact (up to 20 bits, never below `--pow`) →
+publishes it → waits for the reply correlated by request id (`--reply-timeout`, 15 s by
 default) → cleans up (1 s).
 Nothing is retried. The node answers only about orders it is willing to show to this
 identity; others come back in `not_returned` without a reason.

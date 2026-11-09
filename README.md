@@ -50,4 +50,6 @@ python3 scripts/gen_examples_page.py
 
 Documented version: **mostro-cli 0.17.0, JSON contract `schema_version` "1"**, the first
 release with the JSON interface; schemas and captured examples checked against the `v0.17.0`
-binary on 2026-11-07.
+binary on 2026-11-07. Also documented: the advertised proof of work of
+[mostro-cli#247](https://github.com/MostroP2P/mostro-cli/pull/247), on `main` after 0.17.0 and not
+yet released; the schemas were refreshed from that branch on 2026-11-08.

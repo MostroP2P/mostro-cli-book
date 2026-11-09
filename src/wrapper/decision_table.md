@@ -16,7 +16,7 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 | 10 | `store_unwritable`, `store_unreadable` | `storage` | after fixing | Disk, permissions, locked database |
 | 11 | `order_unknown` | `not_local` | after `order sync` | Wrong id, other data directory, or a range child: run `order sync` |
 | 12 | `protocol_unsupported` | `node_incompatible` | no | The node runs protocol v1 |
-| 13 | `pow_required` | `config` | after raising `--pow` | |
+| 13 | `pow_required` | `config` | after setting `--pow` to `error.required` | The node asks for more than the 20 bits the program mines on its own; mining it can take a long time, so let the human decide |
 | 14 | `node_refused` | `refused` | depends on `reason` | Show `reason`; `too_many_requests` → back off; status reasons → refresh with `order info` |
 | 15 | `relay_connection_failed`, `relay_read_failed`, `read_timeout`, `request_rejected`, `reply_timeout`, `reply_malformed` (as `error`) | `transient` | yes, with backoff | Nothing happened, or it was a read |
 | 16 | `read_limit_exceeded` | `too_much` | after narrowing | Smaller `--since`, or `--order` |

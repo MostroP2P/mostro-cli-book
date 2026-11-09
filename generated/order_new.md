@@ -144,7 +144,7 @@ mostro-cli order new --side sell --currency USD --fiat-amount 100 --payment-meth
 {{#include ../examples/order.new/order_declined.json}}
 ```
 
-### Not enough proof of work configured: nothing sent
+### The node asks for 21 bits, above what is mined on its own, POW unset: nothing sent
 
 _`order.new/pow_required` · status error · `pow_required` · exit 1 · authored_
 
