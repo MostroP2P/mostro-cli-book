@@ -16,6 +16,7 @@ TERMINAL = {"success", "canceled", "cooperatively-canceled", "canceled-by-admin"
 def main(order_id: str) -> None:
     cli = MostroCli()
     seen = set()
+    rating_suggested = False
     while True:
         try:
             info = cli.order_info(order_id)
@@ -67,8 +68,12 @@ def main(order_id: str) -> None:
                 elif step == "rate":
                     # The node takes a seller's rating from settled-hold-invoice, a buyer's at success.
                     print(f"    -> run: order rate --order {order_id} --rating <1-5> --yes")
+                    rating_suggested = True
 
         if status in TERMINAL:
+            if status == "success" and not rating_suggested:
+                # The node sends rate after purchase-completed; it may not be on the relays yet.
+                print(f"    -> you can rate the counterparty: order rate --order {order_id} --rating <1-5> --yes")
             return
         time.sleep(20)
 
