@@ -93,11 +93,15 @@ mostro-cli order watch --order <order-id> --since 120 --timeout 3600
   chat message as `order chat` shows it, escaped, under "💬 Chat:". A line follows when the
   counterparty is learned and one when older messages may be missing. Each update is
   written whole and flushed. The last line is "🏁 The trade ended: <action>", or at
-  `--timeout` "⏰ Stopped at the watch deadline; the trade has not ended."; both exit 0.
-  Ctrl-C stops it, with no exit status promised.
-- **Errors** go to stderr as `error: <fixed message>`, never with an argument's value
-  (exit 1, 2 for arguments). A stdout that cannot be written stops the watch with
-  `error: the watch could not be written` (exit 1). The read warnings are not printed in
+  `--timeout` "⏰ Stopped at the watch deadline; no ending message was seen. Run
+  `order info` to check the order."; both exit 0. Ctrl-C stops it, with no exit status
+  promised.
+- **Errors** after parsing go to stderr as one `error: <fixed message>` line, never with an
+  argument's value (exit 1, 2 for a bad value); an argument the parser rejects gets its
+  fixed description and a `--help` hint (exit 2). A stdout that cannot be written stops the
+  watch with `error: the watch could not be written` (exit 1). On Unix, a reader that
+  closes stdout while the watch is idle (`| head -n 5`, a closed pager) stops it the same
+  way; elsewhere the watch notices at its next write. The read warnings are not printed in
   human mode.
 - **Not used:** `--pow` and `--transport`, not even an invalid value, and `--reply-timeout`
   (an invalid `--reply-timeout` still exits 2): nothing goes to the node. Timing: 10 s to connect, 15 s for the replay, 15 s more when the
