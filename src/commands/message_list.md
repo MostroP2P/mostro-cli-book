@@ -43,7 +43,7 @@ Deduplicate by `event_id`. To follow one order, with its chat, use
 
 After 0.17.0, not yet released: the local order rows are read once, before any relay is
 contacted, to know your side of each trade (for [`release`](#next_step)); rows that cannot be
-read give `store_unreadable`, and nothing is sent.
+read give `store_unreadable`, and no relay is contacted.
 
 **Human output.** One block per message. When a message asks you for something, its
 "👉 Next:" line names the command with the record's order id filled in, for example
@@ -104,7 +104,7 @@ seller (its order kind and whether you made or took the order), the message must
 the key stored for that order, and it must answer no request (the buyer's copy echoes the
 `request_id` of the buyer's `fiat-sent`). Without a local row (a trade made in another client,
 after a restore from the mnemonic, or a range child before [`order sync`](order_sync.md)), with
-a row written by 0.16.3 or earlier for an order you took (those rows say "made" for every
+a row that does not record whether you made the order, with a row written by 0.16.3 or earlier for an order you took (those rows say "made" for every
 order), or on another key, the record has `next_step: null`: check the trade with
 [`order info`](order_info.md) yourself. Never release on the record alone: it repeats the
 buyer's claim, not a proof that the fiat arrived.
