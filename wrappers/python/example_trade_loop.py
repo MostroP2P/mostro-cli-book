@@ -48,10 +48,14 @@ def main(order_id: str) -> None:
                 if step in ("pay_hold_invoice", "pay_bond_invoice"):
                     print("    -> pay this invoice with your wallet:", payload["invoice"])
                 elif step == "add_invoice":
-                    # The payload is "order" after add-invoice, "payment_failed" after a payout
-                    # the node will not retry; order info has the amount in both cases.
-                    sats = info.data["orders"][0]["sats_amount"]
-                    print(f"    -> run: order add-invoice --order {order_id} --invoice <invoice for {sats} sats> --yes")
+                    # After add-invoice the "order" payload carries the amount to invoice (the
+                    # order's sats minus the Mostro fee). A payment_failed payload carries none,
+                    # and order info's sats_amount still includes the fee.
+                    if payload["kind"] == "order":
+                        invoice = f"<invoice for {payload['order']['sats_amount']} sats>"
+                    else:
+                        invoice = "<invoice for the order's sats minus the Mostro fee>"
+                    print(f"    -> run: order add-invoice --order {order_id} --invoice {invoice} --yes")
                 elif step == "add_bond_invoice":
                     print(f"    -> run: bond add-invoice --order {order_id} --invoice <bolt11> --yes")
 

@@ -45,7 +45,8 @@ Rules that hold for every document:
   `next_step` and its payload's `kind` may gain values within version 1, and a payload reported
   as `other` may get a `kind` of its own. Treat an unknown `next_step` as `null` and a payload of
   an unknown `kind` as opaque (read only `kind`). The `variant` of `other` is not a stable
-  identifier. Every other enum changes only with a new `schema_version`.
+  identifier. Other enums follow the versioning rule in
+  [Versions](introduction.md#versions).
 - `status`, `data` and `error` always agree. You can rely on: `ok ⇒ error == null`,
   `error ⇒ data == null`, `uncertain ⇒ error != null`.
 
