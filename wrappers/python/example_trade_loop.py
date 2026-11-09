@@ -58,6 +58,12 @@ def main(order_id: str) -> None:
                     print(f"    -> run: order add-invoice --order {order_id} --invoice {invoice} --yes")
                 elif step == "add_bond_invoice":
                     print(f"    -> run: bond add-invoice --order {order_id} --invoice <bolt11> --yes")
+                elif step == "fiat_sent" and status == "active":
+                    print("    -> send the fiat, then run:"
+                          f" order fiat-sent --order {order_id} --yes")
+                elif step == "rate" and status in ("success", "settled-hold-invoice"):
+                    # The node takes a seller's rating from settled-hold-invoice, a buyer's at success.
+                    print(f"    -> run: order rate --order {order_id} --rating <1-5> --yes")
 
         if status in TERMINAL:
             return

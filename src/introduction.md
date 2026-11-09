@@ -94,3 +94,9 @@ informative, not a stable identifier.
 > ([`message list`](commands/message_list.md#messagepayload); [mostro-cli#264](https://github.com/MostroP2P/mostro-cli/pull/264)).
 > 0.17.0 reports it as `{"kind": "other", "variant": "payment_failed"}`. The human "👉 Next:"
 > lines name the record's order id instead of `<id>`.
+
+> After 0.17.0, not yet released: `hold-invoice-payment-accepted` asks the buyer `next_step`
+> `fiat_sent` and `rate` asks both sides `next_step` `rate`, with their human "👉 Next:" lines
+> ([`message list`](commands/message_list.md#next_step); [mostro-cli#CLI_PR_fiat_sent_and_rate_steps](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_fiat_sent_and_rate_steps)).
+> `order watch` ends at `rate` too, and an update that ends a completed trade waits up to 10 s
+> for it. 0.17.0 reports both messages with `next_step: null`.

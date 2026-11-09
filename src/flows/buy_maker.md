@@ -22,14 +22,18 @@ You publish a **buy** order: you pay fiat and receive sats.
    ```
 
 4. **When the order is `active`**, pay the fiat and run
-   `order fiat-sent --order <id> --yes` → `wait_for_release`. Agree on the payment details
-   with the seller in [`order chat`](../commands/order_chat.md).
+   `order fiat-sent --order <id> --yes` → `wait_for_release`. The node tells you with a
+   `hold-invoice-payment-accepted` message that has `next_step: fiat_sent` (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`).
+   Agree on the payment details with the seller in [`order chat`](../commands/order_chat.md).
 
 5. **Wait for the release** (`settled-hold-invoice`, then `success`). If the payment to
    your invoice fails, a `payment-failed` record (payload
    [`payment_failed`](../commands/message_list.md#payment_failed)) says how many more times the
    node will retry, with `next_step: null`; it asks for a new invoice (`next_step: add_invoice`)
    only if every retry fails, or at once when `payment_attempts` is `"0"`.
+
+6. **Rate** the seller: right after `purchase-completed` the node sends a `rate` message with
+   `next_step: rate` (after 0.17.0, not yet released; 0.17.0 reports it with `next_step: null`); run [`order rate`](../commands/order_rate.md).
 
 For a **buy range order**, `fiat-sent` is the step that carries your next trade key; the
 child order arrives when the seller releases. See [Range orders](range_orders.md).

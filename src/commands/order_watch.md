@@ -67,12 +67,16 @@ within it; when more than 200 records fall within the last minute, a later call 
 of them again. Deduplicate by `event_id` and `message_id`.
 
 **End.** `ended` is true when a returned node message about the order carries
-`purchase-completed`, `hold-invoice-payment-settled`, `canceled`,
+`purchase-completed`, `hold-invoice-payment-settled`, `rate`, `canceled`,
 `cooperative-cancel-accepted` or `admin-canceled`. `admin-settled` ends it only for the
 seller (the order's row says which side you are); the buyer's payout follows and can still
-fail and ask for a new invoice. Stop watching at `ended: true`. `rate` may arrive after the
-end: run [`order rate`](order_rate.md) without waiting for it. `bond-slashed` and
-`add-bond-invoice` may follow too: read them with [`message list --order`](message_list.md).
+fail and ask for a new invoice. Stop watching at `ended: true`. After `purchase-completed`
+(buyer) or `hold-invoice-payment-settled` (seller) the node sends `rate` right away, so the
+update that holds the end waits for it (up to 10 s, never past `--timeout`) and carries it,
+listed after the end even when both carry the same second, with `next_step` `rate`: run
+[`order rate`](order_rate.md). Without it the trade still ends; rate anyway. `bond-slashed`
+and `add-bond-invoice` may follow an end: read them with
+[`message list --order`](message_list.md).
 Some watches never end on their own: an untaken order that expires (the node sends the maker
 nothing) and a trade that ended before the window. Check [`order info`](order_info.md).
 
@@ -81,9 +85,9 @@ invalid `POW` or `TRANSPORT` in the environment is ignored, but a value the argu
 rejects on the command line (`--pow abc`, `--transport bogus`, an out-of-range
 `--reply-timeout`) is still `invalid_arguments`. Timing: 10 s to
 connect, 15 s for the replay, 15 s more when the counterparty is learned (up to 26 s first
-when it must be looked up), then live until a record, the end or `--timeout`, then 1 s of
-cleanup. A JSON call takes at most `--timeout` + 67 s; allow `--timeout` + 70 s (100 s with
-the default).
+when it must be looked up), then live until a record, the end or `--timeout` (an update that ends a completed trade waits
+up to 10 s more for its `rate`, never past `--timeout`), then 1 s of cleanup. A JSON call
+takes at most `--timeout` + 67 s; allow `--timeout` + 70 s (100 s with the default).
 
 **Human output.** "👀 Watching order <id>", the window start and the counterparty (or "not
 known yet; the chat is followed once the escrow is locked"); "📭 Nothing yet; waiting for the
@@ -91,8 +95,9 @@ node or the counterparty..." when the replay is empty; then each update: a node 
 `message list` shows it, with its next step, under "📨 From Mostro:", and a chat message as
 `order chat` shows it, escaped, under "💬 Chat:". A line follows when the counterparty is
 learned and one when older messages may be missing. Each update is written whole and
-flushed. The last line is "🏁 The trade ended: <action>", or at `--timeout` "⏰ Stopped at the
-watch deadline; the trade has not ended."; both exit 0. Ctrl-C stops it, with no exit status
+flushed. The last line is "🏁 The trade ended: <action>" (the end, such as
+`purchase-completed`, not the `rate` printed before it with its "👉 Next:" line), or at
+`--timeout` "⏰ Stopped at the watch deadline; the trade has not ended."; both exit 0. Ctrl-C stops it, with no exit status
 promised. A value the argument parser rejects gets the parser's own message; other errors
 are one `error: <fixed message>` line on stderr (exit 1, 2 for arguments). A stdout that
 cannot be written stops the watch with `error: the watch could not be written` (exit 1).
@@ -142,4 +147,5 @@ It is a read: never `uncertain`, always safe to repeat.
 
 Act on the newest `next_step` (see the [decision table](../wrapper/decision_table.md)), then
 watch again with `--after <cursor>`. At `ended: true`, rate with
-[`order rate`](order_rate.md).
+[`order rate`](order_rate.md): the `rate` record of a completed trade asks it with
+`next_step` `rate`.

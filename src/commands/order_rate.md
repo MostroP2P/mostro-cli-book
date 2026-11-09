@@ -37,6 +37,10 @@ Checks the rating, looks up the order's trade key in the local `orders` table
 checks that it is the rating it sent. Nothing is written locally (the store only has to be
 readable).
 
+The node asks for the rating with a `rate` message to both sides when the trade is over;
+[`message list`](message_list.md) and [`order watch`](order_watch.md) report it with
+`next_step` `rate` (after 0.17.0, not yet released; 0.17.0: `null`).
+
 The node accepts a rating once the order is `success`, or `settled-hold-invoice` when the
 seller rates; otherwise it refuses (`node_refused`, reason `invalid_order_status`). Some
 cases get **no answer** at all: a side that already rated, a counterparty in full-privacy

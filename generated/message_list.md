@@ -60,6 +60,18 @@ mostro-cli --output json message list --since 60
 {{#include ../examples/message.list/payment_failed.json}}
 ```
 
+### A buyer's trade steps: hold-invoice-payment-accepted asks fiat_sent, fiat-sent-ok asks nothing, rate asks rate
+
+_`message.list/trade_steps` · status ok · exit 0 · fixture_
+
+```sh
+mostro-cli --output json message list --since 60
+```
+
+```json
+{{#include ../examples/message.list/trade_steps.json}}
+```
+
 ### More keys and messages than were read: truncated with a warning
 
 _`message.list/truncated_and_keys_limited` · status ok · exit 0 · fixture_
