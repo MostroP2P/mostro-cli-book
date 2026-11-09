@@ -24,6 +24,7 @@ fails like an unknown command: `invalid_arguments`, exit 2, `command: null`.
 | — | `order mine` (new) |
 | — | `identity init`, `identity show` (new) |
 | — | `config set KEY VALUE` (new; after 0.17.0, not yet released) |
+| — | `config show` (new; after 0.17.0, not yet released) |
 | — | `schema` (new) |
 
 Behaviour changes that matter to wrappers:
@@ -47,6 +48,7 @@ Behaviour changes that matter to wrappers:
   `configuration_invalid`, even when the options give every value. The
   [human-only commands](../commands/legacy.md), except the gRPC operator commands, read it
   the same way; a broken file stops them with `Invalid config file <path>: <problem>` (exit 1)
-  before `mcli.db` is created. `config set KEY VALUE` writes one setting to the file.
+  before `mcli.db` is created. `config set KEY VALUE` writes one setting to the file and
+  `config show` reports what it holds.
 
 The short root options (`-m`, `-r`, `-p`, `-s`, `-t`, `-v`) still exist.

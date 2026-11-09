@@ -17,6 +17,7 @@
 - [Command index](commands/README.md)
 - [schema](commands/schema.md)
 - [config set](commands/config_set.md)
+- [config show](commands/config_show.md)
 - [identity init](commands/identity_init.md)
 - [identity show](commands/identity_show.md)
 - [order list](commands/order_list.md)

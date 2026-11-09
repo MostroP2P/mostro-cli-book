@@ -69,8 +69,9 @@ No command removes a setting: delete its line from the file by hand.
    `ADMIN_NSEC`, a line that is not `KEY=VALUE`, a refused value, not a readable UTF-8
    file), or one the process cannot reach (a data directory it may not look into), is
    `configuration_invalid` (exit 1) with one stderr line naming the file and the problem,
-   and the line when a line is at fault, never the file's content. The file and the data
-   directory are left as they were. A missing file or data directory is not a problem.
+   and the line when a line is at fault, never the file's content; control characters in
+   the path are escaped. The file and the data directory are left as they were. A missing
+   file or data directory is not a problem.
 
    ```text
    hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
@@ -169,6 +170,7 @@ None. The schema's shared `WarningCode` list names `invalid_event_timestamp` and
 
 ## Next
 
-Once `mostro-pubkey` and `relays` are set, [order list](order_list.md) and the other
-networked commands run without `-m` or `-r`. [identity init](identity_init.md) creates the
-identity the signing commands need.
+[config show](config_show.md) reports what the file holds. Once `mostro-pubkey` and
+`relays` are set, [order list](order_list.md) and the other networked commands run without
+`-m` or `-r`. [identity init](identity_init.md) creates the identity the signing commands
+need.

@@ -47,7 +47,7 @@ connects. Call it once at wrapper start-up and cache it keyed by `executable_ver
 | `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
 | `input_schema` | object or null | JSON Schema of the options (and of the positional arguments, marked `x-positional`); `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
-| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `config set`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
+| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `config set`, `config show`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
 
 Example descriptor (trimmed):
 

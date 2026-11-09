@@ -21,7 +21,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`, `config set`). |
+| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`, `config set`, `config show`). |
 | `not_attempted` | Nothing was published: the command stopped before (bad arguments, no identity, refused PoW...) or every relay explicitly rejected the event. |
 | `published` | At least one relay confirmed accepting the signed request. |
 | `unknown` | No relay confirmed, but at least one failed ambiguously (timeout, dropped connection after the send): the event may be out there. |
@@ -39,7 +39,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`). |
+| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`, `config show`). |
 | `not_attempted` | No write was called for, or the command stopped before writing. |
 | `applied` | The write the outcome calls for was done (an order row, a status update, a reserved trade index). |
 | `failed` | The write was attempted and failed. |
@@ -60,7 +60,7 @@ What "the write" is depends on the command:
 The generated schemas enforce exactly these combinations. The tables read
 `publication / daemon_acceptance / persistence`.
 
-### Reads: `order list`, `message list`, `schema`
+### Reads: `order list`, `message list`, `schema`, `config show`
 
 | status | Stages |
 | --- | --- |

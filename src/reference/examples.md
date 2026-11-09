@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-150 examples: 106 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+153 examples: 109 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -24,6 +24,9 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `config.set/configuration_unwritable_failed` — The write or the rename failed: the old file is intact | `config.set` | error | `configuration_unwritable` | 1 | fixture |
 | `config.set/invalid_value` — A value the setting refuses: nothing written, the value not echoed | `config.set` | error | `invalid_arguments` | 2 | fixture |
 | `config.set/saved` — RELAYS written next to a stored node key | `config.set` | ok |  | 0 | fixture |
+| `config.show/configuration_invalid` — The file is refused (stderr names the file and the line): no values shown | `config.show` | error | `configuration_invalid` | 1 | fixture |
+| `config.show/no_file` — No config file: its path, every value null, nothing created | `config.show` | ok |  | 0 | fixture |
+| `config.show/values` — The file's path and the four values stored in it | `config.show` | ok |  | 0 | fixture |
 | `dispute.open/dispute_opened` — The node opened the dispute; local status dispute | `dispute.open` | ok |  | 0 | fixture |
 | `dispute.open/dispute_opened_status_stale` — Dispute opened, local status not updated: ok with local_status_stale | `dispute.open` | ok |  | 0 | fixture |
 | `dispute.open/no_answer_uncertain` — No answer: the dispute may be open. Check order info before trying again | `dispute.open` | uncertain | `reply_timeout` | 1 | fixture |

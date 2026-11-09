@@ -9,11 +9,11 @@ All in `schemas/`. Regenerate with `scripts/refresh_schemas.sh` from any binary.
 | `<command>.output.json` | `.data.commands[].output_schema` | The envelope of one command, all statuses |
 | `envelope-v1.json` | Written for this book | Any command's envelope; for first-pass checks and legacy rejections |
 
-Commands with schemas: `bond.add-invoice`, `config.set`, `dispute.open`, `identity.init`,
-`identity.show`, `message.list`, `order.add-invoice`, `order.cancel`, `order.fiat-sent`,
-`order.info`, `order.list`, `order.mine`, `order.new`, `order.rate`, `order.release`,
-`order.sync`, `order.take-buy`, `order.take-sell`, `schema`. (`config.set` is after 0.17.0,
-not yet released.)
+Commands with schemas: `bond.add-invoice`, `config.set`, `config.show`, `dispute.open`,
+`identity.init`, `identity.show`, `message.list`, `order.add-invoice`, `order.cancel`,
+`order.fiat-sent`, `order.info`, `order.list`, `order.mine`, `order.new`, `order.rate`,
+`order.release`, `order.sync`, `order.take-buy`, `order.take-sell`, `schema`. (`config.set`
+and `config.show` are after 0.17.0, not yet released.)
 
 ## Anatomy of an output schema
 

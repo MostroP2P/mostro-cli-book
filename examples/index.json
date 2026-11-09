@@ -3307,6 +3307,63 @@
         "file": "specs/018-config-file/contracts/examples.json",
         "case": "set_configuration_unwritable_failed"
       }
+    },
+    {
+      "id": "config.show/values",
+      "file": "config.show/values.json",
+      "command": "config.show",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "show"
+      ],
+      "title": "The file's path and the four values stored in it",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "show_values"
+      }
+    },
+    {
+      "id": "config.show/no_file",
+      "file": "config.show/no_file.json",
+      "command": "config.show",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "show"
+      ],
+      "title": "No config file: its path, every value null, nothing created",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "show_no_file"
+      }
+    },
+    {
+      "id": "config.show/configuration_invalid",
+      "file": "config.show/configuration_invalid.json",
+      "command": "config.show",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "config",
+        "show"
+      ],
+      "title": "The file is refused (stderr names the file and the line): no values shown",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/018-config-file/contracts/examples.json",
+        "case": "show_configuration_invalid"
+      }
     }
   ]
 }

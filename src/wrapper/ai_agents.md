@@ -17,6 +17,7 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `sync_orders(since_minutes?)` | `order sync` | local only |
 | `my_orders()` | `order mine` | no |
 | `show_identity()` | `identity show` | no |
+| `show_config()` | `config show` | no |
 | `create_order(...)` | `order new` | **yes** |
 | `take_sell_order(order_id, invoice?, amount?)` | `order take-sell` | **yes** |
 | `take_buy_order(order_id, amount?)` | `order take-buy` | **yes** |
@@ -62,6 +63,12 @@ wrapper passes it through. The Rust wrapper drops it: read `output.stderr` in it
 you need the hint. `configuration_unwritable`, from `config set` only, goes to the human too:
 the config file or its data directory cannot be written.
 
+After `configuration_missing` or `configuration_invalid`, call `show_config()`
+([`config show`](../commands/config_show.md)) and hand its result to the human as well: it
+gives the file's path and the values stored there, or, for a refused file,
+`configuration_invalid` with the same `hint:` line. It reports only the file, so a value it
+shows may still be overridden by a variable the host sets.
+
 ## Consent: `--yes` belongs to the human
 
 `--yes` is the user's confirmation. The tool layer, not the model, should add it, and only
@@ -70,7 +77,7 @@ amounts). Recommended:
 
 - read tools: run freely;
 - `order sync`: run freely (local, idempotent);
-- `order mine`, `identity show`: run freely (local, read-only);
+- `order mine`, `identity show`, `config show`: run freely (local, read-only);
 - every write: require an explicit confirmation step in the UI each time;
 - `order release`: additionally show that it is irreversible and that the fiat must have
   arrived; never auto-approve.
