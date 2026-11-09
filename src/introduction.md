@@ -93,7 +93,7 @@ Reject documents whose `schema_version` you do not know.
 > With 0.17.0, pass the settings as options or environment variables.
 
 > After 0.17.0, not yet released: review fixes of the config file
-> ([mostro-cli#CLI_PR_config_review_fixes](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_review_fixes)).
+> ([mostro-cli#254](https://github.com/MostroP2P/mostro-cli/pull/254)).
 > On Unix, [`config set`](commands/config_set.md) refuses a `.config.lock` that is a symlink
 > (`configuration_unwritable`). Its owner-only modes are Unix only too: on Windows the data
 > directory and the file keep the ACLs they inherit. In the

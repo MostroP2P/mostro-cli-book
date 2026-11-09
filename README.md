@@ -62,6 +62,6 @@ read by the human-only commands too, except the gRPC operator commands,
 the `config set` command that writes it,
 [mostro-cli#251](https://github.com/MostroP2P/mostro-cli/pull/251),
 the `config show` command that reports it, which completes the issue, and
-[mostro-cli#CLI_PR_config_review_fixes](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_review_fixes),
+[mostro-cli#254](https://github.com/MostroP2P/mostro-cli/pull/254),
 their review fixes), from the branches stacked on `main`, not yet released; schemas
 refreshed from `feat/config-review-fixes` on 2026-11-09.
