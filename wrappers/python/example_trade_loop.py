@@ -38,8 +38,11 @@ def main(order_id: str) -> None:
             for message in inbox.data["messages"]:
                 if message["event_id"] in seen:
                     continue
-                seen.add(message["event_id"])
                 step = message_next_step(message)  # an unknown value reads as None
+                if (step == "fiat_sent" and status != "active") or (
+                        step == "rate" and status not in ("success", "settled-hold-invoice")):
+                    continue  # keep it pending: the status may pass on a later poll
+                seen.add(message["event_id"])
                 payload = message["payload"]
                 print(f"  {message['created_at']} {message['action']} next_step={step}")
                 if payload["kind"] == "payment_failed":
@@ -58,10 +61,10 @@ def main(order_id: str) -> None:
                     print(f"    -> run: order add-invoice --order {order_id} --invoice {invoice} --yes")
                 elif step == "add_bond_invoice":
                     print(f"    -> run: bond add-invoice --order {order_id} --invoice <bolt11> --yes")
-                elif step == "fiat_sent" and status == "active":
+                elif step == "fiat_sent":
                     print("    -> send the fiat, then run:"
                           f" order fiat-sent --order {order_id} --yes")
-                elif step == "rate" and status in ("success", "settled-hold-invoice"):
+                elif step == "rate":
                     # The node takes a seller's rating from settled-hold-invoice, a buyer's at success.
                     print(f"    -> run: order rate --order {order_id} --rating <1-5> --yes")
 
