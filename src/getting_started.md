@@ -96,10 +96,12 @@ A program that runs each command in a fresh process, as coding agents and MCP ho
 write the settings there once instead of passing `-m`, `-r` and `-p` on every call.
 
 [`config set`](commands/config_set.md) writes one setting at a time. It checks the value as
-the commands do, creates the data directory owner-only, and rewrites the file owner-only as
-`NAME=value` lines, keeping the other settings and dropping comments. It leaves a file the
-commands refuse, or one it cannot reach, untouched (`configuration_invalid`, with the
-`hint:` line below).
+the commands do, creates the data directory if needed, and rewrites the file as
+`NAME=value` lines, keeping the other settings and dropping comments. On Unix it makes the
+directory (`0700`) and the file (`0600`) owner-only; on Windows it sets no permissions of
+its own, so the directory keeps the ACLs it inherits from its parent folder and the file
+those it inherits from the directory. It leaves a file the commands refuse, or one it
+cannot reach, untouched (`configuration_invalid`, with the `hint:` line below).
 
 ```sh
 mostro-cli --output json config set mostro-pubkey <hex public key of the Mostro node you trade with>

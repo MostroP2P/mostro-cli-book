@@ -12,7 +12,7 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 | 6 | `error.code == "invalid_arguments"` | `caller_bug` | no | Fix the call (missing `--yes`? bad UUID? window range?) |
 | 7 | `error.code == "output_not_supported"` | `unsupported` | no | Command is human-only |
 | 8 | `configuration_missing`, `configuration_invalid` | `config` | after fixing | Ask for node key / relays. They come from the options, the environment or `$MCLI_DIR/config`; a bad line in that file, or a file that cannot be read, is `configuration_invalid` too, and the stderr `hint:` names the file and the problem. Run `config show` to see what the file holds |
-| 9 | `configuration_unwritable` | `config` | after fixing | Only `config set`: the config file or the data directory cannot be written. The old file is intact; make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk with free space |
+| 9 | `configuration_unwritable` | `config` | after fixing | Only `config set`: the config file or the data directory cannot be written, or (on Unix) `.config.lock` is a symlink. The old file is intact; make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk with free space, with no symlink named `.config.lock` in it |
 | 10 | `identity_missing`, `identity_unreadable` | `identity` | after fixing | Create or restore the identity; check `MCLI_DIR` |
 | 11 | `store_unwritable`, `store_unreadable` | `storage` | after fixing | Disk, permissions, locked database |
 | 12 | `order_unknown` | `not_local` | after `order sync` | Wrong id, other data directory, or a range child: run `order sync` |

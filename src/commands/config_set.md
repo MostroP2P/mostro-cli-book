@@ -9,7 +9,7 @@
 | Kind | Local write |
 | Needs | `MCLI_DIR` or a home directory. No `MOSTRO_PUBKEY`, `RELAYS`, identity, stdin or `--yes` |
 | Publishes | Nothing; contacts no relay or node |
-| Local write | Creates the data directory or makes it owner-only; rewrites `config` and keeps its lock file `.config.lock` beside it; never touches `mcli.db` |
+| Local write | Creates the data directory if needed (on Unix also makes it owner-only); rewrites `config` and keeps its lock file `.config.lock` beside it; never touches `mcli.db` |
 | Statuses | `ok`, `error` |
 | Schemas | `schemas/config.set.input.json`, `schemas/config.set.output.json` |
 
@@ -77,17 +77,22 @@ No command removes a setting: delete its line from the file by hand.
    hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
    ```
 
-3. Creates the data directory, one level deep and owner-only (`0700` on Unix), or makes an
-   existing one owner-only, as `identity init` does. When no data directory can be
-   determined (no `MCLI_DIR` and no home directory) or it cannot be created (its parent does
-   not exist, a file is in its place), the outcome is `configuration_unwritable` and nothing
-   is written.
-4. Takes an exclusive lock on `.config.lock` in the data directory (an empty owner-only
-   file, kept afterwards), reads `config` again and replaces it atomically: an owner-only
-   (`0600` on Unix) temporary file `.config.<pid>.tmp` is written, synced and renamed over
-   `config`. A temporary file of the same name left by an earlier crashed run is removed
-   first. Runs of `config set` at the same time wait for each other's lock, so none of
-   their changes is lost (for one key, the last run wins).
+3. Creates the data directory if it is missing, one level deep, as `identity init` does. On
+   Unix it creates it owner-only (`0700`) or makes an existing one owner-only. When no data
+   directory can be determined (no `MCLI_DIR` and no home directory) or it cannot be created
+   (its parent does not exist, a file is in its place), the outcome is
+   `configuration_unwritable` and nothing is written.
+4. Takes an exclusive lock on `.config.lock` in the data directory (an empty file, kept
+   afterwards; owner-only on Unix), reads `config` again and replaces it atomically: a
+   temporary file `.config.<pid>.tmp` (owner-only, `0600`, on Unix) is written through the
+   handle that created it, synced and renamed over `config`, and then the data directory is
+   synced (on Unix, best effort). A temporary file of the same name left by an earlier
+   crashed run is removed first. Runs of `config set` at the same time wait for each other's
+   lock, so none of their changes is lost (for one key, the last run wins).
+
+   On Unix a `.config.lock` that is a symlink is refused, not followed: the outcome is
+   `configuration_unwritable` with `persistence: not_attempted`, nothing is created where
+   the link points, and `config` is unchanged. Remove the link and run it again.
 5. The new file has one `NAME=value` line per stored setting, in the order
    `MOSTRO_PUBKEY`, `RELAYS`, `POW`, `TRANSPORT`. The other settings keep their values as
    stored (quotes and an `export ` prefix removed); comments, blank lines, a byte order
@@ -95,8 +100,8 @@ No command removes a setting: delete its line from the file by hand.
    regular file; its target is not changed.
 6. When the write or the rename fails, the temporary file is removed and the old `config`
    is intact (`configuration_unwritable`, `persistence: failed`). After either
-   `configuration_unwritable`, the data directory may already have been created or made
-   owner-only, with an empty `.config.lock` in it.
+   `configuration_unwritable`, the data directory may already have been created (or, on
+   Unix, made owner-only), with an empty `.config.lock` in it.
 
 It never opens or creates `mcli.db`, never reads `ADMIN_NSEC` and connects to nothing.
 
@@ -105,7 +110,9 @@ variable gives that setting (see the precedence in
 [Configure the node](../getting_started.md#configure-the-node)).
 
 On Windows the default data directory is `.mcli` in the profile folder (normally
-`%USERPROFILE%\.mcli`), and no Unix file modes are set.
+`%USERPROFILE%\.mcli`). `config set` sets no permissions of its own there: the data
+directory, `.config.lock` and `config` keep the ACLs they inherit (the directory from its
+parent folder). The symlink check on `.config.lock` is Unix only.
 
 The values it writes and returns are ones the commands accept: a key, relay URLs, a number
 or `nip44`. An `nsec` is refused, but this is not a secrecy promise: a private key written
@@ -147,7 +154,7 @@ Values are not normalized: an `npub` stays an `npub`.
 | Setting written | `ok` | | not_applicable / not_applicable / applied |
 | Unknown key, missing or extra argument, refused or empty value | `error` | `invalid_arguments` (exit 2) | not_applicable ×3 |
 | The existing file is refused or cannot be reached (with the `hint:` line); nothing changed | `error` | `configuration_invalid` | not_applicable / not_applicable / not_attempted |
-| No data directory can be determined, or the directory, the lock or the temporary file cannot be created | `error` | `configuration_unwritable` | not_applicable / not_applicable / not_attempted |
+| No data directory can be determined, the directory, the lock or the temporary file cannot be created, or `.config.lock` is a symlink (Unix) | `error` | `configuration_unwritable` | not_applicable / not_applicable / not_attempted |
 | The write or the rename failed; the old file is intact | `error` | `configuration_unwritable` | not_applicable / not_applicable / failed |
 
 ## Errors
@@ -155,9 +162,9 @@ Values are not normalized: an `npub` stays an `npub`.
 `invalid_arguments`, `configuration_invalid`, `configuration_unwritable`, `internal_error`.
 Nothing is published in any case. Only this command emits `configuration_unwritable`
 ([catalogue](../errors.md)): make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk
-with free space, then run it again. After `configuration_invalid`, fix what the `hint:`
-line names (the line at fault, or a file or data directory the process cannot read);
-`config set` never repairs a refused file.
+with free space, with no symlink named `.config.lock` in it, then run it again. After
+`configuration_invalid`, fix what the `hint:` line names (the line at fault, or a file or
+data directory the process cannot read); `config set` never repairs a refused file.
 
 ## Warnings
 
