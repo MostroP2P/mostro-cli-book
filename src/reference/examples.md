@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-147 examples: 103 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+151 examples: 107 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -73,6 +73,10 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.cancel/yes_required` — JSON mode without --yes | `order.cancel` | error | `invalid_arguments` | 2 | captured |
 | `order.chat/conversation_read` — Both sides of the chat, oldest first; nothing sent | `order.chat` | ok |  | 0 | fixture |
 | `order.chat/counterparty_unknown` — No counterparty yet: it is known once the escrow is locked | `order.chat` | error | `counterparty_unknown` | 1 | fixture |
+| `order.chat/message_sent` — Read, then one message published to the relays: it is in sent, not in messages | `order.chat` | ok |  | 0 | fixture |
+| `order.chat/message_without_yes` — --message in JSON mode without --yes: nothing read or sent | `order.chat` | error | `invalid_arguments` | 2 | fixture |
+| `order.chat/relays_refused` — Every relay refused the message: provably nothing sent, a plain error | `order.chat` | error | `request_rejected` | 1 | fixture |
+| `order.chat/send_uncertain` — No relay confirmed and one failed ambiguously: read again and look for sent.message_id before resending | `order.chat` | uncertain | `request_rejected` | 1 | fixture |
 | `order.fiat-sent/fiat_sent` — The buyer confirmed the fiat payment | `order.fiat-sent` | ok |  | 0 | fixture |
 | `order.fiat-sent/node_refused` — Refused with reason invalid_pubkey | `order.fiat-sent` | error | `node_refused` | 1 | fixture |
 | `order.fiat-sent/range_key_sent` — Maker of a buy range order: the step carried the next trade key (index 4) | `order.fiat-sent` | ok |  | 0 | fixture |

@@ -12,6 +12,30 @@ mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001
 {{#include ../examples/order.chat/conversation_read.json}}
 ```
 
+### Read, then one message published to the relays: it is in sent, not in messages
+
+_`order.chat/message_sent` · status ok · exit 0 · fixture_
+
+```sh
+mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001 --message 'Thanks!' --yes
+```
+
+```json
+{{#include ../examples/order.chat/message_sent.json}}
+```
+
+### No relay confirmed and one failed ambiguously: read again and look for sent.message_id before resending
+
+_`order.chat/send_uncertain` · status uncertain · `request_rejected` · exit 1 · fixture_
+
+```sh
+mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001 --message 'Thanks!' --yes
+```
+
+```json
+{{#include ../examples/order.chat/send_uncertain.json}}
+```
+
 ### No counterparty yet: it is known once the escrow is locked
 
 _`order.chat/counterparty_unknown` · status error · `counterparty_unknown` · exit 1 · fixture_
@@ -22,4 +46,28 @@ mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001
 
 ```json
 {{#include ../examples/order.chat/counterparty_unknown.json}}
+```
+
+### Every relay refused the message: provably nothing sent, a plain error
+
+_`order.chat/relays_refused` · status error · `request_rejected` · exit 1 · fixture_
+
+```sh
+mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001 --message 'Thanks!' --yes
+```
+
+```json
+{{#include ../examples/order.chat/relays_refused.json}}
+```
+
+### --message in JSON mode without --yes: nothing read or sent
+
+_`order.chat/message_without_yes` · status error · `invalid_arguments` · exit 2 · fixture_
+
+```sh
+mostro-cli --output json order chat --order 00000000-0000-0000-0000-000000000001 --message 'Thanks!'
+```
+
+```json
+{{#include ../examples/order.chat/message_without_yes.json}}
 ```

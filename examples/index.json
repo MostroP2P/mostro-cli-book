@@ -3225,6 +3225,78 @@
       }
     },
     {
+      "id": "order.chat/message_sent",
+      "file": "order.chat/message_sent.json",
+      "command": "order.chat",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001",
+        "--message",
+        "Thanks!",
+        "--yes"
+      ],
+      "title": "Read, then one message published to the relays: it is in sent, not in messages",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "message_sent"
+      }
+    },
+    {
+      "id": "order.chat/relays_refused",
+      "file": "order.chat/relays_refused.json",
+      "command": "order.chat",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001",
+        "--message",
+        "Thanks!",
+        "--yes"
+      ],
+      "title": "Every relay refused the message: provably nothing sent, a plain error",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "relays_refused"
+      }
+    },
+    {
+      "id": "order.chat/send_uncertain",
+      "file": "order.chat/send_uncertain.json",
+      "command": "order.chat",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001",
+        "--message",
+        "Thanks!",
+        "--yes"
+      ],
+      "title": "No relay confirmed and one failed ambiguously: read again and look for sent.message_id before resending",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "send_uncertain"
+      }
+    },
+    {
       "id": "order.chat/counterparty_unknown",
       "file": "order.chat/counterparty_unknown.json",
       "command": "order.chat",
@@ -3243,6 +3315,29 @@
         "kind": "fixture",
         "file": "specs/019-order-chat/contracts/examples.json",
         "case": "counterparty_unknown"
+      }
+    },
+    {
+      "id": "order.chat/message_without_yes",
+      "file": "order.chat/message_without_yes.json",
+      "command": "order.chat",
+      "exit_code": 2,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001",
+        "--message",
+        "Thanks!"
+      ],
+      "title": "--message in JSON mode without --yes: nothing read or sent",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "message_without_yes"
       }
     }
   ]
