@@ -3202,6 +3202,48 @@
         "date": "2026-11-07",
         "note": "Run offline against the binary: no node, no identity."
       }
+    },
+    {
+      "id": "order.chat/conversation_read",
+      "file": "order.chat/conversation_read.json",
+      "command": "order.chat",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001"
+      ],
+      "title": "Both sides of the chat, oldest first; nothing sent",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "conversation_read"
+      }
+    },
+    {
+      "id": "order.chat/counterparty_unknown",
+      "file": "order.chat/counterparty_unknown.json",
+      "command": "order.chat",
+      "exit_code": 1,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "chat",
+        "--order",
+        "00000000-0000-0000-0000-000000000001"
+      ],
+      "title": "No counterparty yet: it is known once the escrow is locked",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/019-order-chat/contracts/examples.json",
+        "case": "counterparty_unknown"
+      }
     }
   ]
 }

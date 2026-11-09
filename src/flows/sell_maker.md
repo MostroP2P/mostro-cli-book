@@ -44,7 +44,8 @@ waiting-buyer-invoice / active ──(buyer: fiat-sent)──► fiat-sent ─�
 
 4. **Wait for the fiat.** The buyer provides an invoice (if needed) and pays you in fiat
    through the payment method. When they report it, the order status becomes `fiat-sent`
-   and you receive a `fiat-sent-ok` message (payload `peer`).
+   and you receive a `fiat-sent-ok` message (payload `peer`). Agree on the payment details
+   with the buyer in [`order chat`](../commands/order_chat.md).
 
 5. **Check your bank account.** `fiat-sent` is the buyer's claim, not a proof. Only when the
    money is really there:

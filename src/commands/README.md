@@ -12,6 +12,7 @@ must already exist; only `identity init` creates it.
 | [`order list`](order_list.md) | `order.list` | public read | reads relays | no | no | no | ok, error |
 | [`order info`](order_info.md) | `order.info` | request | 1 signed request | yes (read) | no | no | ok, error |
 | [`message list`](message_list.md) | `message.list` | private read | reads relays | yes (read) | no | no | ok, error |
+| [`order chat`](order_chat.md) | `order.chat` | private read (+ chat message) | reads relays; 1 chat message with `--message` | yes (read) | counterparty key cache | with `--message` | ok, error, uncertain |
 | [`order sync`](order_sync.md) | `order.sync` | private read + local write | reads relays | yes | order rows | no | ok, error, uncertain |
 | [`order new`](order_new.md) | `order.new` | write | 1 signed request | yes | index + row | **yes** | ok, error, uncertain |
 | [`order take-sell`](order_take_sell.md) | `order.take-sell` | write | 1 signed request | yes | index + row | **yes** | ok, error, uncertain |
@@ -35,6 +36,7 @@ else `~/.mcli`) or nothing at all.
 | `order info` | Identity key (index 0) |
 | `order new`, `order take-*` | A **new** trade key at the next trade index (reserved locally first) |
 | `order add-invoice`, `bond add-invoice`, `order fiat-sent`, `order release`, `order cancel`, `dispute open`, `order rate` | The trade key stored with the order's local row (hence `order_unknown` when the row is missing) |
+| `order chat --message` | The same trade key; the message goes to the counterparty's trade key, not to the node |
 
 ## Command page layout
 

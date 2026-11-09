@@ -31,6 +31,7 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 "message.list"
 "order.add-invoice"
 "order.cancel"
+"order.chat"
 "order.fiat-sent"
 "order.info"
 "order.list"
@@ -50,8 +51,9 @@ See [schema](commands/schema.md) for the full document.
 
 Every command except `schema`, `identity init`, `identity show` and `order mine` needs the
 node's public key and the relays. `order list`, `message list` and `order sync` only read
-events from the relays; the other commands also send the node one signed request through
-them.
+events from the relays; `order chat` reads them too and, with `--message`, publishes one
+chat message for the counterparty, never a request to the node. The other commands send
+the node one signed request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -60,6 +62,9 @@ them.
 | Proof of work | `POW` | `--pow BITS` (`-p`) | no | The least PoW put on requests, 0-255, default 0. The commands raise it to what the node advertises, up to 20 bits, so you rarely need it ([Proof of work](errors.md#proof-of-work)) |
 | Transport | `TRANSPORT` | `--transport nip44` (`-t`) | no | Only `nip44` (protocol v2) is supported |
 | Data directory | `MCLI_DIR` | — | no | Where `mcli.db` lives; default `~/.mcli` |
+
+`POW` and `TRANSPORT` do not apply to `order chat`, which ignores even an invalid value: its
+message goes to relays, not to the node.
 
 A root option overrides its environment variable. An **empty or invalid** option does not
 fall back to the environment: it fails with `configuration_invalid`. Root options go
@@ -111,7 +116,7 @@ shows complete code.
 
 ## What is not in JSON yet
 
-The peer chat (`order chat`, and the older `getdmuser` and `dmtouser`), the dispute
+The older peer chat commands `getdmuser` and `dmtouser` (use `order chat`), the dispute
 conversation, `restore`, user info and the admin commands are human-only today.
 Asking them for JSON returns `output_not_supported` (exit 2) before anything runs. See
 [Human-only commands](commands/legacy.md).

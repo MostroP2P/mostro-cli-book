@@ -44,6 +44,10 @@ mostro-cli --output json order cancel --order 00000000-0000-0000-0000-0000000000
 `--yes` is the caller's statement that the user consented. An agent should only add it
 after it has obtained that consent (see [Guide for AI agents](wrapper/ai_agents.md)).
 
+`order chat --message` sends a chat message to the counterparty, not a request to the node.
+Human mode sends it without asking; JSON requires `--yes` with it, and `--yes` alone does
+nothing.
+
 `order sync` writes only local rows and publishes nothing; it does not take `--yes`.
 Neither do the local commands `identity init`, `identity show` and `order mine`.
 
@@ -148,8 +152,8 @@ The JSON-capable commands replaced old spellings (`listorders`, `neworder`, `tak
 
 With the default reply deadline, a wrapper timeout of **45 seconds** per run is comfortably
 above the worst case; add whatever you add to `--reply-timeout`. If you kill the process
-earlier, treat a write as uncertain. [`order chat`](commands/legacy.md#order-chat), human
-output only for now, takes longer: up to 52 s, or 78 s with `--message`.
+earlier, treat a write as uncertain. [`order chat`](commands/order_chat.md) takes longer:
+up to 52 s, or 78 s with `--message`; allow it 90 s.
 
 ### `--reply-timeout SECONDS`
 
@@ -176,4 +180,5 @@ The CLI makes no promise about two write commands running at the same time again
 data directory (both may reserve trade indexes and update rows). Run write commands
 **one at a time** per data directory; queue them in your wrapper. `order list` and
 `schema` never touch the data directory; `order info`, `message list`, `order mine` and
-`identity show` only read it. `identity init` creates it.
+`identity show` only read it. `identity init` creates it. `order chat` may write the
+counterparty's key into the order's row: run it one at a time with the write commands.

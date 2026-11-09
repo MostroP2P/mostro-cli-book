@@ -19,7 +19,8 @@ You take someone's **buy** order: you lock sats, receive fiat, then release.
 
 4. **Wait for the buyer's fiat.** The buyer adds an invoice if needed, pays the fiat and
    runs `fiat-sent`; you see the order go to `fiat-sent` (`order info`) and a `fiat-sent-ok`
-   message.
+   message. Agree on the payment details with the buyer in
+   [`order chat`](../commands/order_chat.md).
 
 5. **Check that the money arrived**, then release (irreversible):
 

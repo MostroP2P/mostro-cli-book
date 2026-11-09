@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 145 outcomes, each in its own file with the exact command line, all
+- **many examples**: 147 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -68,7 +68,7 @@ Reject documents whose `schema_version` you do not know.
 > `POW` to the node's value yourself.
 
 > After 0.17.0, not yet released: `order chat --order <id> [--message <text>]` reads the
-> peer chat of an order you hold and sends one message without the counterparty's key, in
-> human output only for now ([`order chat`](commands/legacy.md#order-chat);
-> [mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)).
+> peer chat of an order you hold and sends one message without the counterparty's key, also
+> in JSON (`order.chat`, `--yes` with `--message`; [`order chat`](commands/order_chat.md);
+> [mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255), [mostro-cli#CLI_PR_order_chat_json](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_chat_json)).
 > With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.

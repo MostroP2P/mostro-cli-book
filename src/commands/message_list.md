@@ -35,7 +35,7 @@ Reads the keys of trade indexes 1..last (at most the newest 200), or only the or
 with `--order`. Returns only messages **authored by the configured node** and addressed to
 those keys, decrypted and summarized, **oldest first**, at most 200. Peer chat and messages
 from other authors are not included; the peer chat of an order is read with
-[`order chat`](legacy.md#order-chat), which has human output only for now.
+[`order chat`](order_chat.md).
 
 Poll it: there is no push. Typical intervals are 10 to 30 seconds during an active trade.
 Deduplicate by `event_id`.

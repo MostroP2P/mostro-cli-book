@@ -28,6 +28,7 @@ second order, or (for `release`) act twice on money.
 | `order cancel` | `order info --order <id>` | Status `canceled` / `cooperatively-canceled`, or a cooperative-cancel message in `message list` |
 | `dispute open` | `order info --order <id>` | Status `dispute`. **Do not resend blindly**: the node answers a second dispute on the same order with silence |
 | `order rate` | No command shows it | Assume it may have happened; do not resend (the node does not answer a side that already rated) |
+| `order chat --message` | `order chat --order <id>`, without `--message`; never resend blindly | A record in `data.messages` has `message_id` equal to `data.sent.message_id` |
 | `order sync` | Run `order sync` again | It is idempotent; always safe |
 
 Give the node a little time (tens of seconds) before concluding it did not act: a
