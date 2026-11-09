@@ -95,14 +95,15 @@ mostro-cli order watch --order <order-id> --since 120 --timeout 3600
   written whole and flushed. The last line is "🏁 The trade ended: <action>", or at
   `--timeout` "⏰ Stopped at the watch deadline; the trade has not ended."; both exit 0.
   Ctrl-C stops it, with no exit status promised.
-- **Errors** are one `error: <fixed message>` line on stderr (exit 1, 2 for arguments). A
-  stdout that cannot be written stops the watch with
+- **Errors** go to stderr as `error: <fixed message>`, never with an argument's value
+  (exit 1, 2 for arguments). A stdout that cannot be written stops the watch with
   `error: the watch could not be written` (exit 1). The read warnings are not printed in
   human mode.
-- **Not used:** `--pow`, `--transport` and `--reply-timeout`, not even an invalid value:
-  nothing goes to the node. Timing: 10 s to connect, 15 s for the replay, 15 s more when the
+- **Not used:** `--pow` and `--transport`, not even an invalid value, and `--reply-timeout`
+  (an invalid `--reply-timeout` still exits 2): nothing goes to the node. Timing: 10 s to connect, 15 s for the replay, 15 s more when the
   counterparty is learned (up to 26 s first when it must be looked up), then live until the
   end or `--timeout`, then 1 s of cleanup.
 - `--verbose` adds one line on stderr, `verbose: order.watch <ok|code>`.
 - `--output json` returns `output_not_supported` (exit 2) before any configuration, store or
-  relay access, with the stages shown above.
+  relay access, with the stages shown above. An argument the parser refuses, such as an
+  order id that is not a UUID, is `invalid_arguments` (exit 2) instead.
