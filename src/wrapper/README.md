@@ -12,7 +12,7 @@ pipe stdin as in step 2 below.
 1. argv = [binary, "--output", "json", ...command path, ...options]   # array, no shell
    + "--yes" for the commands that take it, only with the user's consent
 2. spawn with a timeout (≈45 s, plus whatever --reply-timeout adds over 15 s),
-   environment with MOSTRO_PUBKEY/RELAYS
+   MOSTRO_PUBKEY/RELAYS from the options, the environment or $MCLI_DIR/config
    with --invoice - or --invoice=-: pipe stdin, write the invoice line, then close stdin
    otherwise: stdin closed
 3. if spawn failed                     → TransportError(may_have_acted = false)
@@ -65,18 +65,23 @@ pipe stdin as in step 2 below.
 
 ## Testing a wrapper without a node
 
-Many outcomes can be produced offline:
+Many outcomes can be produced offline. Point `MCLI_DIR` at a directory of the test's own
+with no `config` in it, so that no [config file](../getting_started.md#the-config-file)
+supplies values (except where a row writes one there):
 
 | Outcome | How |
 | --- | --- |
-| `invalid_arguments` (exit 2) | `order list --side x` |
+| `invalid_arguments` (exit 2) | `order list --side x`, or `config set pow 256` |
 | `command: null` | an unknown command |
 | `output_not_supported` | any [human-only command](../commands/legacy.md) |
-| `configuration_missing` | unset `MOSTRO_PUBKEY`/`RELAYS` |
-| `configuration_invalid` | `--mostro-pubkey not-a-key` |
+| `configuration_missing` | unset `MOSTRO_PUBKEY`/`RELAYS`, no config file |
+| `configuration_invalid` | `--mostro-pubkey not-a-key`, or a line `ADMIN_NSEC=x` (a key other than the four settings) in `$MCLI_DIR/config` |
 | `identity_missing` | `MCLI_DIR` pointing to an empty directory, valid config |
 | `relay_connection_failed` | `--relays ws://127.0.0.1:1` (with an identity, for identity commands) |
 | `schema` success | `schema` |
+| `config set` success (`persistence: applied`) | `config set pow 0`; it writes `config` into `MCLI_DIR`, creating that directory (one level deep) if needed |
+| `configuration_unwritable` | `config set pow 0` with `MCLI_DIR` pointing at a regular file |
+| `config show` success | `config show`; with no `config` every value is `null`, and it creates nothing |
 
-For the rest, feed your parser the files in `examples/` (all 154 are real-shaped envelopes;
-`examples/index.json` gives the exit code to pair with each).
+For the rest, feed your parser the files in `examples/` (all of them are real-shaped
+envelopes; `examples/index.json` gives the exit code to pair with each).
