@@ -30,17 +30,21 @@ None. Any option of its own is `invalid_arguments` (exit 2). Root options such a
 
 ## Behavior
 
-1. Uses `MCLI_DIR`, else `.mcli` in the home directory. Creates that directory owner-only
-   (`0700` on Unix, one level deep); an existing directory is tightened to owner-only.
+1. Uses `MCLI_DIR`, else `.mcli` in the home directory. Creates that directory if it is
+   missing, one level deep. On Unix it creates it owner-only (`0700`) and tightens an
+   existing one to owner-only.
 2. If `mcli.db` or one of its SQLite companion files (`mcli.db-journal`, `mcli.db-wal`,
    `mcli.db-shm`) already exists, it changes nothing and fails with `identity_exists`. It
    never deletes or repairs a store: move the old files away first.
-3. Creates `mcli.db` owner-only (`0600` on Unix) with the same tables as the legacy first
+3. Creates `mcli.db` (owner-only, `0600`, on Unix) with the same tables as the legacy first
    run and one user row holding a fresh 12-word mnemonic and no trade index.
 4. If the file was created but could not be completed, it is removed again
    (`persistence: failed`).
 
 Two runs at the same time create one store; the other reports `identity_exists`.
+
+On Windows it sets no permissions of its own: the data directory and `mcli.db` keep the
+ACLs they inherit (the directory from its parent folder).
 
 The mnemonic and every private key stay in `mcli.db`. No mode, stream or error shows
 them, and there is no option to reveal them. Back the file up yourself.

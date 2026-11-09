@@ -56,7 +56,7 @@ Rules that hold for every document:
 | `message` | string | Fixed English sentence chosen by the code. For logs and humans. It never contains data from the node, the arguments, keys or URLs. Not stable for matching. |
 | `reason` | string, only with `node_refused` | The node's own refusal reason (`cant-do` reason in the protocol), as a snake_case word matching `^[a-z][a-z0-9_]{0,63}$`. Absent when the node gave none or gave something that is not such a word. |
 | `required` | integer 0-255, only with `pow_required` | The proof of work the node advertises for this request, in bits. On the timeout path (`uncertain`), the highest advertised value above the work that was sent. |
-| `configured` | integer 0-255, only with `pow_required` | The `--pow` / `POW` floor, in bits (0 when unset). |
+| `configured` | integer 0-255, only with `pow_required` | The floor from `--pow`, `POW` or the [config file](getting_started.md#the-config-file), in bits (0 when unset). |
 
 ```json
 { "code": "pow_required", "message": "The node requires more proof of work than is configured.", "required": 21, "configured": 0 }
