@@ -77,5 +77,5 @@ Reject documents whose `schema_version` you do not know.
 > until its trade ends, the node's messages and the peer chat, replayed then live. In JSON
 > (`order.watch`) each call returns one document at the first new records, with a cursor for
 > `--after` ([`order watch`](commands/order_watch.md);
-> [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261), CLI_PR_order_watch_json).
+> [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261), [mostro-cli#CLI_PR_order_watch_json](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_watch_json)).
 > With 0.17.0, poll `message list` and `getdmuser`.

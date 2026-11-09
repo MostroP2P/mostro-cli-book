@@ -60,7 +60,7 @@ from the branches stacked on `main`, not yet released; the schemas were refreshe
 `feat/order-chat-json` on 2026-11-09.
 
 Also documented: `order watch` of [mostro-cli#246](https://github.com/MostroP2P/mostro-cli/issues/246)
-in human mode ([mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)) and with JSON output (CLI_PR_order_watch_json),
+in human mode ([mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)) and with JSON output ([mostro-cli#CLI_PR_order_watch_json](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_watch_json)),
 from the branches stacked on `main`, not yet released; `schemas/discovery.json` and
 `schemas/order.watch.input.json` refreshed from `feat/order-watch-json` on 2026-11-09 (its output
 schema is only in `discovery.json` until its own file lands).

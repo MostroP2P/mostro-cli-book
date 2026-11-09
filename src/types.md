@@ -31,8 +31,8 @@ there and a warning (`invalid_event_timestamp` or `invalid_order_timestamp`) say
 ### Untrusted text
 
 `payment_method`, `fiat_currency`, message `text`, the chat `text` of `order chat` and
-`counterparty_pubkey` are copied from what other people published. They may be empty,
-long, or contain anything printable.
+`order watch`, and `counterparty_pubkey` are copied from what other people published. They
+may be empty, long, or contain anything printable.
 **Never interpolate them into a shell command, a prompt to an LLM as instructions, or a
 terminal without escaping.** JSON values are passed through as received (only bounded in
 length); the CLI escapes them in human output only.

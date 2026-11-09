@@ -25,7 +25,7 @@ the entry in `schemas/discovery.json`.
 
 ```text
 mostro-cli --output json order watch --order UUID [--since MINUTES | --after CURSOR] [--timeout SECONDS]
-mostro-cli order watch --order UUID [--since MINUTES] [--timeout SECONDS]
+mostro-cli order watch --order UUID [--since MINUTES | --after CURSOR] [--timeout SECONDS]
 ```
 
 ## Input
@@ -78,8 +78,10 @@ end: run [`order rate`](order_rate.md) without waiting for it. `bond-slashed` an
 Some watches never end on their own: an untaken order that expires (the node sends the maker
 nothing) and a trade that ended before the window. Check [`order info`](order_info.md).
 
-**Not used:** `--pow`, `--transport` (not even an invalid value) and `--reply-timeout` (an
-out-of-range value is still `invalid_arguments`): nothing goes to the node. Timing: 10 s to
+**Not used:** `--pow`, `--transport` and `--reply-timeout`: nothing goes to the node. An
+invalid `POW` or `TRANSPORT` in the environment is ignored, but a value the argument parser
+rejects on the command line (`--pow abc`, `--transport bogus`, an out-of-range
+`--reply-timeout`) is still `invalid_arguments`. Timing: 10 s to
 connect, 15 s for the replay, 15 s more when the counterparty is learned (up to 26 s first
 when it must be looked up), then live until a record, the end or `--timeout`, then 1 s of
 cleanup. A JSON call takes at most `--timeout` + 67 s; allow `--timeout` + 70 s (100 s with
