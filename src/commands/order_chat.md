@@ -5,7 +5,7 @@
 | `command` | `order.chat` |
 | Kind | Private read; with `--message`, also one chat message to the counterparty |
 | Who | Either party of an order in the local store, once the escrow is locked |
-| Needs | `MOSTRO_PUBKEY`, `RELAYS`, identity, the order's local row; `--yes` with `--message` in JSON mode |
+| Needs | `MOSTRO_PUBKEY` and `RELAYS` (each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file)), identity, the order's local row; `--yes` with `--message` in JSON mode |
 | Publishes | Nothing; with `--message`, one chat message to the relays: the message is signed with the order's trade key, inside a kind-14 envelope signed with a conversation key both parties derive from their trade keys. Never a request to the node |
 | Local write | May save the counterparty's key in the order's row; not reported in the stages |
 | Statuses | `ok`, `error`; `uncertain` only with `--message` |

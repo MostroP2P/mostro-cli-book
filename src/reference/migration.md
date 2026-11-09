@@ -26,6 +26,8 @@ fails like an unknown command: `invalid_arguments`, exit 2, `command: null`. The
 | — | `order sync [--since MINUTES]` (new) |
 | — | `order mine` (new) |
 | — | `identity init`, `identity show` (new) |
+| — | `config set KEY VALUE` (new; after 0.17.0, not yet released) |
+| — | `config show` (new; after 0.17.0, not yet released) |
 | — | `schema` (new) |
 
 Behaviour changes that matter to wrappers:
@@ -47,5 +49,14 @@ Behaviour changes that matter to wrappers:
 - New options with no old spelling: `order new --expires-in SECONDS`, `--invoice -` (the
   invoice read from standard input) and the global `--reply-timeout SECONDS`; see
   [Invoking the CLI](../invocation.md).
+- After 0.17.0, not yet released: the JSON-capable commands that talk to the node take
+  `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT` from `$MCLI_DIR/config` (the
+  [config file](../getting_started.md#the-config-file)) when neither the option nor the
+  environment gives them, and a broken config file fails every one of them with
+  `configuration_invalid`, even when the options give every value. The
+  [human-only commands](../commands/legacy.md), except the gRPC operator commands, read it
+  the same way; a broken file stops them with `Invalid config file <path>: <problem>` (exit 1)
+  before `mcli.db` is created. `config set KEY VALUE` writes one setting to the file and
+  `config show` reports what it holds.
 
 The short root options (`-m`, `-r`, `-p`, `-s`, `-t`, `-v`) still exist.
