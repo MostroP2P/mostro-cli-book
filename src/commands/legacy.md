@@ -65,16 +65,18 @@ mostro-cli order chat --order <order-id> --message "hi, sending now"
 - **Options.** `--since` is 1 to 10080 minutes (default 10080, the seven-day chat window).
   `--message` takes one value, trimmed, 1 to 4096 bytes; a text that starts with `-` is
   written `--message=<text>`. A `--since` out of range or a message that is empty or too long
-  exits 2 with `error: The command arguments are invalid.`; a second `--message` or a bad
-  UUID exits 2 with the argument parser's own message. Both happen before any relay is
-  contacted, and the message text never appears on stderr. The message is sent **without a
-  prompt**, as `dmtouser` does; `--yes` is accepted and changes nothing in human mode.
+  exits 2 with `error: The command arguments are invalid.`; a value the argument parser
+  rejects (a bad UUID, a `--since` that is not a number, a second `--message`) exits 2 with
+  the parser's own message. Both happen before any relay is contacted, and the message text
+  never appears on stderr. The message is sent **without a prompt**, as `dmtouser` does;
+  `--yes` is accepted and changes nothing in human mode.
 - **Counterparty.** The order row's `counterparty_pubkey`, when it parses and is not your own
-  trade key, is used as it is, with no relay contacted. The legacy `getdm` may have stored it
-  and never refreshes it. Otherwise the node's messages to the order's trade key are read
-  once, and only the newest `buyer-took-order` or `hold-invoice-payment-accepted` naming both
-  trade keys, or `fiat-sent-ok` with its peer, names it; the key is then saved in the row (a
-  failed save is not reported). Neither gives exit 1 and
+  trade key, is used as it is, unchecked, with no relay contacted; the removed `getdm` may
+  have stored it, and nothing refreshes it. Otherwise the node's messages to the order's
+  trade key are read once, and only the newest `buyer-took-order` or
+  `hold-invoice-payment-accepted` naming both trade keys, or `fiat-sent-ok` with its peer,
+  names it; the key is then saved in the row (a failed save is not reported). Neither is
+  `counterparty_unknown` (exit 1):
   `error: The counterparty of this order was not found in the node's messages; it is known once the escrow is locked.`
   A trade whose lock-time messages are gone (beyond the newest 50 per relay, or expired after
   the node's `dm_days`) gets it too. Then `getdmuser -p` and `dmtouser -p`, which also need
@@ -84,18 +86,21 @@ mostro-cli order chat --order <order-id> --message "hi, sending now"
   sent only after the read succeeded, so a failed read sends nothing.
 - **Output.** "💬 Order Chat", the order and the counterparty, then "📭 No chat messages" or
   one block per message: the UTC time, "🫵 You" or "👤 Counterparty", and the text indented,
-  with control, format and line separator characters escaped. A line follows when older
-  messages may be missing (the read reached its limit of 200), and
-  "📤 Your message (id ...)" when one was sent.
+  with control characters, format characters (except the zero-width non-joiner and joiner)
+  and line and paragraph separators escaped. A line follows when older messages may be
+  missing (the read reached its limit of 200), and "📤 Your message (id ...)" when one was
+  sent.
 - **Errors** after the argument checks are one `error: <fixed message>` line on stderr and
-  nothing on stdout. A send that no relay confirmed while one failed without a clear answer
-  may have been delivered (exit 1): stderr gets
-  `error: No relay confirmed accepting the request.` and "The message may have reached a
-  relay. Run `order chat --order <id>` and look for your message before sending it again.",
-  and stdout still shows the conversation and the message. It is never resent.
-- **Not used:** `--pow`, `--transport` and `--reply-timeout`. The message goes to relays,
-  never to the node: it mines no proof of work and waits for no reply. The worst case is
-  52 s for a read and 78 s with `--message`.
+  nothing on stdout, even when only the send failed after a good read. A send that no relay
+  confirmed while one failed without a clear answer may have been delivered (exit 1): stderr
+  gets `error: No relay confirmed accepting the request.` and "The message may have reached
+  a relay. Run `order chat --order <id>` and look for your message before sending it
+  again.", and stdout still shows the conversation and the message. It is never resent.
+- **Not used:** `--pow`, `--transport` and `--reply-timeout` (a `--reply-timeout` out of
+  range is still an argument error). The message goes to relays, never to the node: it mines
+  no proof of work and waits for no reply. The worst case is 52 s for a read and 78 s with
+  `--message`.
 - `--verbose` adds one line on stderr, `verbose: order.chat <ok|code>`.
 - `--output json` returns `output_not_supported` (exit 2) before anything runs, with the
-  stages shown above.
+  stages shown above; a call the argument parser rejects (a bad UUID, no `--order`) is
+  `invalid_arguments` instead, also exit 2.

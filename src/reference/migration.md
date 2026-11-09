@@ -1,7 +1,8 @@
 # Migration from old spellings
 
 The JSON-capable commands replaced older spellings **without aliases**. An old spelling
-fails like an unknown command: `invalid_arguments`, exit 2, `command: null`.
+fails like an unknown command: `invalid_arguments`, exit 2, `command: null`. The
+`getdmuser` and `dmtouser` rows are the exception: both commands stay (see below).
 
 | Before | Now |
 | --- | --- |
