@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 155 outcomes, each in its own file with the exact command line, all
+- **many examples**: 159 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book

@@ -96,61 +96,31 @@ took for known). That outcome is `uncertain`, with the same two fields.
 
 `E` = as `error`, `U` = as `uncertain`, `E/U` = either, depending on the stages.
 
-<<<<<<< HEAD
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | identity init | identity show | mine | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | | | | |
-| `read_timeout` | E | | | | | | | | E | E | E | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | E | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | | E | E | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | | E | | |
-| `identity_exists` | | | | | | | | | | | | E | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | | E | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | E | | | | |
-| `store_unreadable` | | | | | | | | | E | E | E | | | E | |
-| `counterparty_unknown` | | | | | | | | | | | E | | | | |
-=======
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | identity init | identity show | mine | config set | config show | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | | | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | | | | E | E | |
-| `configuration_unwritable` | | | | | | | | | | | | | | E | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | | | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | | | | | | |
-| `read_timeout` | E | | | | | | | | E | E | | | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | | | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | | E | E | | | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | | E | | | | |
-| `identity_exists` | | | | | | | | | | | E | | | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | E | | | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | | | | | | |
-| `store_unreadable` | | | | | | | | | E | E | | | E | | | |
-
-`order chat` is not in the table: it emits each code on its [list](commands/order_chat.md#errors),
-`counterparty_unknown` included, as `E`, and `request_rejected` as `E/U`.
->>>>>>> origin/docs/order-chat-json
+| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | identity init | identity show | mine | config set | config show | schema |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | | | | E | E | |
+| `configuration_unwritable` | | | | | | | | | | | | | | | E | | |
+| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | | | | | | |
+| `read_timeout` | E | | | | | | | | E | E | E | | | | | | |
+| `read_limit_exceeded` | E | | | | | | | | E | E | E | | | | | | |
+| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | | E | E | | | |
+| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | | E | | | | |
+| `identity_exists` | | | | | | | | | | | | E | | | | | |
+| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | | |
+| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | | |
+| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | | |
+| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | | |
+| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | | |
+| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | | |
+| `order_declined` | | | E | E | E | E | E | E | | | | | | | | | |
+| `order_not_saved` | | | U | U | | | | | U | | | | | | | | |
+| `store_unwritable` | | | E | E | E | E | E | E | E | | | E | | | | | |
+| `order_unknown` | | | | | E | E | E | E | | E | E | | | | | | |
+| `store_unreadable` | | | | | | | | | E | E | E | | | E | | | |
+| `counterparty_unknown` | | | | | | | | | | | E | | | | | | |
 
 `output_not_supported` is emitted only for [human-only commands](commands/legacy.md).
