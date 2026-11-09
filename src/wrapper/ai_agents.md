@@ -53,7 +53,9 @@ file should supply the settings, unset `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRA
 the environment the tool layer passes on.
 
 Never put secrets there: the file takes only the four node settings and refuses any other
-key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`); `config set` writes it so.
+key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`); on Unix `config set` writes it
+so. On Windows `config set` sets no permissions of its own: the file keeps the ACLs it
+inherits from the data directory.
 
 Hand `configuration_missing` and `configuration_invalid` to the human together with the
 stderr `hint:` line, when there is one: it names the config file and the problem (and the

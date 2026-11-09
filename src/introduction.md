@@ -91,3 +91,12 @@ Reject documents whose `schema_version` you do not know.
 > This completes the config file of
 > [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/issues/244).
 > With 0.17.0, pass the settings as options or environment variables.
+
+> After 0.17.0, not yet released: review fixes of the config file
+> ([mostro-cli#CLI_PR_config_review_fixes](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_review_fixes)).
+> On Unix, [`config set`](commands/config_set.md) refuses a `.config.lock` that is a symlink
+> (`configuration_unwritable`). Its owner-only modes are Unix only too: on Windows the data
+> directory and the file keep the ACLs they inherit. In the
+> [human-only commands](commands/legacy.md) a blank `MOSTRO_PUBKEY` or `-m` now prints
+> `MOSTRO_PUBKEY not set`, and that message and `RELAYS not set` say that a variable that is
+> set, even empty, wins over the file.

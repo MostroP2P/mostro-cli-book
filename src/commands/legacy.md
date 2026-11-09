@@ -63,8 +63,14 @@ In human mode every one of them except the gRPC operator commands (`admsetmainte
 - When `MOSTRO_PUBKEY` or `RELAYS` is missing, the error they print offers, next to the
   option and the environment variable, [`config set`](config_set.md)
   (`mostro-cli config set mostro-pubkey <npub>`, or `config set relays <relay[,relay...]>`),
-  which writes it to `$MCLI_DIR/config` (else `~/.mcli/config`), and suggests checking the
-  file with [`config show`](config_show.md) (`mostro-cli config show`).
+  which writes it to `$MCLI_DIR/config` (else `~/.mcli/config`), suggests checking the
+  file with [`config show`](config_show.md) (`mostro-cli config show`), and says that a
+  variable that is set, even empty, wins over the file (unset it to use the file).
+- A blank value counts as missing, whatever the file holds: an empty `-m`, or a
+  `MOSTRO_PUBKEY` that is set but empty or only whitespace, prints `MOSTRO_PUBKEY not set`
+  with that guidance instead of a key parse error, as an empty `-r` or `RELAYS` prints
+  `RELAYS not set`. Either way the command stops with exit 1 before `mcli.db` is created
+  and before any relay is contacted.
 - `ADMIN_NSEC`, which the admin commands need, stays in the environment: the file refuses it.
 
 A wrapper that needs one of these today has to run it in human mode and treat its output
