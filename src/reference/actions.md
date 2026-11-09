@@ -15,7 +15,7 @@ the ones this book refers to, with how the CLI presents them.
 | `bond-payout-completed` | Your share of a slashed bond was paid | — | `order` (amount: your share) |
 | `bond-slashed` | A bond was slashed | — | `order` (amount: the slashed bond) |
 | `waiting-seller-to-pay` | Your invoice is in; the seller has to pay | — | `none` |
-| `hold-invoice-payment-accepted` | The seller locked the sats; the trade is active (in `message list`, to the buyer only) | `fiat_sent` (after 0.17.0, not yet released; 0.17.0: —) | (varies) |
+| `hold-invoice-payment-accepted` | The seller locked the sats; the trade is active (sent to the buyer only) | `fiat_sent` (after 0.17.0, not yet released; 0.17.0: —) | (varies) |
 | `fiat-sent-ok` | The buyer's `fiat-sent` was accepted | — | `peer` |
 | `hold-invoice-payment-settled`, `released` | The seller's release went through | — | (varies) |
 | `canceled` | The order was canceled | — | `none` |
