@@ -9,7 +9,7 @@
 | Publishes | Nothing |
 | Local write | May save the counterparty's key in the order's row, as [`order chat`](order_chat.md) does; not reported |
 | Statuses | `ok`, `error` |
-| Schemas | `schemas/order.watch.input.json`; the output schema is in the `order.watch` entry of `schemas/discovery.json` |
+| Schemas | `schemas/order.watch.input.json`, `schemas/order.watch.output.json` |
 
 Follows an order you hold until its trade ends: the node's messages to the order's trade key
 and, once the counterparty is known, the order's peer chat. In JSON each call returns one
@@ -17,9 +17,7 @@ document as soon as there is something new, with a cursor, so a program loops wa
 watch instead of polling [`message list`](message_list.md) and [`order chat`](order_chat.md).
 In human mode it streams until the trade ends.
 
-After 0.17.0, not yet released. The per-command output file
-`schemas/order.watch.output.json` comes with a later CLI change; until then validate against
-the entry in `schemas/discovery.json`.
+After 0.17.0, not yet released.
 
 ## Invocation
 

@@ -11,3 +11,15 @@ mostro-cli --output json order watch --order 00000000-0000-0000-0000-00000000000
 ```json
 {{#include ../examples/order.watch/new_records.json}}
 ```
+
+### Nothing new before the 30 s deadline: empty lists, ended false, the same cursor carried forward
+
+_`order.watch/timeout_empty` · status ok · exit 0 · fixture_
+
+```sh
+mostro-cli --output json order watch --order 00000000-0000-0000-0000-000000000001 --after 1792108800:0707070707070707070707070707070707070707070707070707070707070707,2222222222222222222222222222222222222222222222222222222222222222
+```
+
+```json
+{{#include ../examples/order.watch/timeout_empty.json}}
+```
