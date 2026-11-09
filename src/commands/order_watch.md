@@ -93,7 +93,9 @@ takes at most `--timeout` + 67 s; allow `--timeout` + 70 s (100 s with the defau
 known yet; the chat is followed once the escrow is locked"); "📭 Nothing yet; waiting for the
 node or the counterparty..." when the replay is empty; then each update: a node message as
 `message list` shows it, with its next step, under "📨 From Mostro:", and a chat message as
-`order chat` shows it, escaped, under "💬 Chat:". A line follows when the counterparty is
+`order chat` shows it, escaped, under "💬 Chat:".
+The seller's `fiat-sent-ok` carries `next_step` `release` here as in `message list`, from the
+order's row (after 0.17.0, not yet released). A line follows when the counterparty is
 learned and one when older messages may be missing. Each update is written whole and
 flushed. The last line is "🏁 The trade ended: <action>" (the end, such as
 `purchase-completed`, not the `rate` printed before it with its "👉 Next:" line), or at

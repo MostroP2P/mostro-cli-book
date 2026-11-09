@@ -32,6 +32,12 @@ Replaces `release -o ...`.
 
 ## Behavior
 
+Run it only after checking that the fiat is in your account, while `order info` says
+`fiat-sent`. The buyer's `fiat-sent` reaches you as a `fiat-sent-ok` message; in
+[`message list`](message_list.md#next_step) and [`order watch`](order_watch.md) your copy has
+`next_step` `release` when your local order row says you are the seller (after 0.17.0, not yet
+released; 0.17.0: `null`).
+
 Looks up the trade key, publishes `release`, waits for `hold-invoice-payment-settled` or
 `released`, records `settled-hold-invoice`. If you are the **maker of a sell range order**
 with room left, the request carries a fresh trade key at the next index; the node creates

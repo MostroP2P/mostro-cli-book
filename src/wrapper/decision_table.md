@@ -50,6 +50,7 @@ before acting, and act on each `event_id` once.
 | `order.take-sell` | `wait_for_seller_payment` | `order watch --order <id> --after <cursor>` |
 | `message.list`, `order.watch` | `add_bond_invoice` | `bond add-invoice` |
 | `message.list`, `order.watch` | `fiat_sent` | Only while `order info` says `active`: send the fiat, then `order fiat-sent` |
+| `message.list`, `order.watch` | `release` | Only while `order info` says `fiat-sent`, and only after the user confirms the fiat is in the account: `order release` |
 | `message.list`, `order.watch` | `rate` | `order rate` (once the order is `success`; a seller may rate from `settled-hold-invoice`) |
 | `order.fiat-sent` | `wait_for_release` | `order watch --order <id> --after <cursor>` |
 | `order.cancel` | `wait_for_peer_cancel` | `order watch --order <id> --after <cursor>`; the peer must cancel too |

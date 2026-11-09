@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 163 outcomes, each in its own file with the exact command line, all
+- **many examples**: 164 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -134,3 +134,9 @@ informative, not a stable identifier.
 > ([`message list`](commands/message_list.md#next_step); [mostro-cli#265](https://github.com/MostroP2P/mostro-cli/pull/265)).
 > `order watch` ends at `rate` too, and an update that ends a completed trade waits up to 10 s
 > for it. 0.17.0 reports both messages with `next_step: null`.
+
+> After 0.17.0, not yet released: the seller's copy of `fiat-sent-ok` asks `next_step`
+> `release`, with its human "👉 Next:" line, when the local order row says the user is the
+> seller ([`message list`](commands/message_list.md#next_step); [mostro-cli#266](https://github.com/MostroP2P/mostro-cli/pull/266)).
+> `message list` and `order watch` read the order rows before contacting a relay; rows that
+> cannot be read are `store_unreadable`. 0.17.0 reports the message with `next_step: null`.

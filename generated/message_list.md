@@ -60,6 +60,18 @@ mostro-cli --output json message list --since 60
 {{#include ../examples/message.list/payment_failed.json}}
 ```
 
+### The seller's copy of fiat-sent-ok asks release; the copy that echoes the buyer's request id asks nothing
+
+_`message.list/release_for_the_seller` · status ok · exit 0 · fixture_
+
+```sh
+mostro-cli --output json message list --since 60
+```
+
+```json
+{{#include ../examples/message.list/release_for_the_seller.json}}
+```
+
 ### A buyer's trade steps: hold-invoice-payment-accepted asks fiat_sent, fiat-sent-ok asks nothing, rate asks rate
 
 _`message.list/trade_steps` · status ok · exit 0 · fixture_

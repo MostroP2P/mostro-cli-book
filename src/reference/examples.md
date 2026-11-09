@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-163 examples: 119 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+164 examples: 120 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -56,6 +56,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `message.list/payment_failed` — A failed payout the node retries: payment_failed with two attempts left, next_step null | `message.list` | ok |  | 0 | fixture |
 | `message.list/read_timeout` — The relays did not finish in time | `message.list` | error | `read_timeout` | 1 | fixture |
 | `message.list/relay_connection_failed` — No relay could be connected | `message.list` | error | `relay_connection_failed` | 1 | fixture |
+| `message.list/release_for_the_seller` — The seller's copy of fiat-sent-ok asks release; the copy that echoes the buyer's request id asks nothing | `message.list` | ok |  | 0 | fixture |
 | `message.list/removed_getdm` — The removed getdm spelling | `None` | error | `invalid_arguments` | 2 | fixture |
 | `message.list/store_unreadable` — The local database cannot be read | `message.list` | error | `store_unreadable` | 1 | fixture |
 | `message.list/trade_steps` — A buyer's trade steps: hold-invoice-payment-accepted asks fiat_sent, fiat-sent-ok asks nothing, rate asks rate | `message.list` | ok |  | 0 | fixture |
