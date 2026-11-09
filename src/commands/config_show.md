@@ -37,7 +37,8 @@ holds, not which value a command would use.
    `config` in it strictly, as [config set](config_set.md) does.
 2. No file, or no data directory, is not a problem: the outcome is `ok`, `path` names
    where the file would be and every value is `null`. When no data directory can be
-   determined, or its path is not UTF-8, `path` is `null` too.
+   determined, `path` is `null` too. When the data directory's path is not UTF-8, `path`
+   is `null` but the file is still read and its values are reported.
 3. A file the commands refuse (another key such as `ADMIN_NSEC`, a line that is not
    `KEY=VALUE`, a refused value, not a readable UTF-8 file), or one the process cannot
    reach (a data directory it may not look into, a `config` that is a directory), is
@@ -77,8 +78,11 @@ TRANSPORT: not set
 ```
 
 A `null` path prints `Config file: unknown (no data directory, or its path is not UTF-8)`.
-With `--verbose`, stderr adds `verbose: config.show ok` (or the error code). An error prints
-`error: <message>` on stderr, after the `hint:` line when the file was refused.
+With `--verbose`, stderr adds `verbose: config.show ok` (or the error code, as in
+`verbose: config.show configuration_invalid`). An error prints `error: <message>` on
+stderr, after the `hint:` line when the file was refused. An argument or `--yes` prints the
+argument parser's own message instead (`error: unexpected argument found`), which does not
+repeat it, and no `verbose:` line.
 
 ## Success data: `ConfigData`
 
