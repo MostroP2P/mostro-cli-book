@@ -56,7 +56,7 @@ Never let the model pass `--yes` itself through a free-form argument.
 Teach the model this rule in the tool description:
 
 > If a tool returns `status: "uncertain"`, the action may have happened. Do not call the
-> same tool again. Call `get_orders` (or `read_messages`) to find out, and tell the user.
+> same tool again. Call `get_orders` or `read_messages` (after `chat`, `chat` without a message) to find out, and tell the user.
 
 The [decision table](decision_table.md) is a good base for tool-result post-processing.
 

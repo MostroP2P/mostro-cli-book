@@ -36,7 +36,7 @@ else `~/.mcli`) or nothing at all.
 | `order info` | Identity key (index 0) |
 | `order new`, `order take-*` | A **new** trade key at the next trade index (reserved locally first) |
 | `order add-invoice`, `bond add-invoice`, `order fiat-sent`, `order release`, `order cancel`, `dispute open`, `order rate` | The trade key stored with the order's local row (hence `order_unknown` when the row is missing) |
-| `order chat --message` | The same trade key; the message goes to the counterparty's trade key, not to the node |
+| `order chat --message` | The same trade key signs the message; its kind-14 envelope is signed with a conversation key both parties derive from their trade keys. Nothing goes to the node |
 
 ## Command page layout
 

@@ -6,7 +6,7 @@
 | Kind | Private read; with `--message`, also one chat message to the counterparty |
 | Who | Either party of an order in the local store, once the escrow is locked |
 | Needs | `MOSTRO_PUBKEY`, `RELAYS`, identity, the order's local row; `--yes` with `--message` in JSON mode |
-| Publishes | Nothing; with `--message`, one chat message (kind 14) to the relays, signed with the order's trade key. Never a request to the node |
+| Publishes | Nothing; with `--message`, one chat message to the relays: the message is signed with the order's trade key, inside a kind-14 envelope signed with a conversation key both parties derive from their trade keys. Never a request to the node |
 | Local write | May save the counterparty's key in the order's row; not reported in the stages |
 | Statuses | `ok`, `error`; `uncertain` only with `--message` |
 | Schemas | `schemas/order.chat.input.json`, `schemas/order.chat.output.json` |
@@ -21,7 +21,7 @@ After 0.17.0, not yet released.
 
 ```text
 mostro-cli --output json order chat --order UUID [--since MINUTES]
-mostro-cli --output json order chat --order UUID --message TEXT --yes
+mostro-cli --output json order chat --order UUID [--since MINUTES] --message TEXT --yes
 ```
 
 Replaces `getdmuser` and `dmtouser` for an order in the local store. Both stay, human-only,
@@ -63,8 +63,8 @@ CLI never resends it.
 **Not used:** `--pow`, `--transport` and `--reply-timeout` (an out-of-range
 `--reply-timeout` is still `invalid_arguments`). The message goes to relays, never to the
 node: it mines no proof of work and waits for no reply, so relays that require proof of
-work or authentication for chat messages refuse it (`request_rejected`). The worst case is
-52 s for a read and 78 s with `--message`; allow 90 s.
+work for chat messages refuse it (`request_rejected` when every relay does). The worst
+case is 52 s for a read and 78 s with `--message`; allow 90 s.
 
 **Human output.** "💬 Order Chat", the order and the counterparty, then "📭 No chat messages"
 or one block per message: the UTC time, "🫵 You" or "👤 Counterparty", and the text indented,
