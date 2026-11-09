@@ -28,7 +28,8 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `open_dispute(order_id)` | `dispute open` | **yes** |
 | `rate_counterparty(order_id, rating)` | `order rate` | **yes** |
 
-`identity init` is a set-up step for the operator, not a tool: run it once when deploying.
+`identity init` and `config set` are set-up steps for the operator, not tools: run them
+when deploying.
 Pass invoices with `--invoice -` on standard input rather than on the command line.
 
 Return the **whole envelope** to the model (it is compact and self-describing), or a
@@ -38,10 +39,12 @@ reduced form: `status`, `error.code`, `error.reason`, warning codes, `data`.
 
 Agent hosts usually run each command in a fresh process, so an `export` from an earlier call
 is gone. Put the node settings in the [config file](../getting_started.md#the-config-file)
-when deploying, next to `identity init`: each process then finds `MOSTRO_PUBKEY`, `RELAYS`
-and, when needed, `POW` without `-m`, `-r` or `-p`. The [human-only commands](../commands/legacy.md)
-read it too, except the gRPC operator commands. (After 0.17.0, not yet released; with
-0.17.0, set them in the environment the tool layer gives each process.)
+when deploying, next to `identity init`, with [`config set`](../commands/config_set.md)
+(`config set mostro-pubkey <key>`, `config set relays <list>`) or by hand: each process then
+finds `MOSTRO_PUBKEY`, `RELAYS` and, when needed, `POW` without `-m`, `-r` or `-p`. The
+[human-only commands](../commands/legacy.md) read it too, except the gRPC operator
+commands. (After 0.17.0, not yet released; with 0.17.0, set them in the environment the tool
+layer gives each process.)
 
 A variable the host already sets still wins over the file, even an empty one: an empty
 `RELAYS` gives `configuration_missing`, and an old value selects the old relays. When the
@@ -49,14 +52,15 @@ file should supply the settings, unset `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRA
 the environment the tool layer passes on.
 
 Never put secrets there: the file takes only the four node settings and refuses any other
-key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`).
+key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`); `config set` writes it so.
 
 Hand `configuration_missing` and `configuration_invalid` to the human together with the
 stderr `hint:` line, when there is one: it names the config file and the problem (and the
 line at fault, for a bad line), never the file's content. The bundled Python and TypeScript
 wrappers keep stderr next to the envelope (`outcome.stderr`, `result.stderr`), and the shell
 wrapper passes it through. The Rust wrapper drops it: read `output.stderr` in its `run` if
-you need the hint.
+you need the hint. `configuration_unwritable`, from `config set` only, goes to the human too:
+the config file or its data directory cannot be written.
 
 ## Consent: `--yes` belongs to the human
 

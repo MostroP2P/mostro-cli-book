@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "command": "config.set",
+  "status": "error",
+  "data": null,
+  "error": {
+    "code": "configuration_unwritable",
+    "message": "The configuration file cannot be written, so nothing was changed."
+  },
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_attempted",
+    "snapshot": null
+  }
+}

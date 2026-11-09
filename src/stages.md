@@ -21,7 +21,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`). |
+| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`, `config set`). |
 | `not_attempted` | Nothing was published: the command stopped before (bad arguments, no identity, refused PoW...) or every relay explicitly rejected the event. |
 | `published` | At least one relay confirmed accepting the signed request. |
 | `unknown` | No relay confirmed, but at least one failed ambiguously (timeout, dropped connection after the send): the event may be out there. |
@@ -53,6 +53,7 @@ What "the write" is depends on the command:
 | `order fiat-sent`, `order release`, `order cancel` | Update the order's local status; for a range maker, record the next trade index |
 | `bond add-invoice` | Nothing (`not_attempted` on success) |
 | `order sync` | Insert rows for orders the store did not know |
+| `config set` | Rewrite the config file `config` in the data directory |
 
 ## Allowed combinations
 
@@ -127,6 +128,18 @@ index was recorded before publishing. An index that cannot be recorded stops the
 | `ok` | `not_applicable / not_applicable / not_attempted` | Nothing to save |
 | `error` | `not_applicable / not_applicable / not_applicable` or `not_attempted` | Failed before or after reading, before saving |
 | `uncertain` | `not_applicable / not_applicable / failed` | Some rows saved, then one failed (`order_not_saved`) |
+
+### Local write: `config set`
+
+| status | Stages | Typical codes |
+| --- | --- | --- |
+| `ok` | `not_applicable / not_applicable / applied` | |
+| `error` | `not_applicable / not_applicable / not_applicable` | `invalid_arguments` |
+| `error` | `not_applicable / not_applicable / not_attempted` | `configuration_invalid`, `configuration_unwritable` |
+| `error` | `not_applicable / not_applicable / failed` | `configuration_unwritable` (the old file is intact) |
+
+`persistence` is about the config file; after `failed` the old file is intact. The
+generated schema of `identity init` allows the same combinations, for `mcli.db`.
 
 ### Unresolved or rejected before running
 

@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 145 outcomes, each in its own file with the exact command line, all
+- **many examples**: 150 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -77,3 +77,9 @@ Reject documents whose `schema_version` you do not know.
 > ([Human-only commands](commands/legacy.md);
 > [mostro-cli#249](https://github.com/MostroP2P/mostro-cli/pull/249)).
 > With 0.17.0, pass their settings as options or environment variables.
+
+> After 0.17.0, not yet released: [`config set`](commands/config_set.md) writes one node
+> setting to the config file. It brings the error code `configuration_unwritable`, which only
+> it emits, and the discovery keyword `x-positional` for its two positional arguments
+> ([mostro-cli#250](https://github.com/MostroP2P/mostro-cli/pull/250)).
+> With 0.17.0, pass the settings as options or environment variables.

@@ -15,7 +15,7 @@ export type Persistence = "not_attempted" | "applied" | "failed" | "not_applicab
 
 export type ErrorCode =
   | "invalid_arguments" | "output_not_supported"
-  | "configuration_missing" | "configuration_invalid"
+  | "configuration_missing" | "configuration_invalid" | "configuration_unwritable"
   | "relay_connection_failed" | "relay_read_failed" | "read_timeout" | "read_limit_exceeded"
   | "internal_error" | "identity_missing" | "identity_unreadable" | "identity_exists"
   | "protocol_unsupported" | "pow_required" | "request_rejected" | "reply_timeout"

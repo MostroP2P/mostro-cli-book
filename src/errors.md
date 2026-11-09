@@ -11,7 +11,8 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `invalid_arguments` | 2 | The command arguments are invalid. | A missing, unknown or malformed option; an out-of-range value; a removed spelling; a write in JSON mode without `--yes`; an unusable `--invoice -` input. Nothing was done. Fix the call. The offending value is never echoed. When the program refused an invoice value itself (given literally or read with `--invoice -`), `error.reason` is `invalid_invoice`. |
 | `output_not_supported` | 2 | This command does not support JSON output. | A human-only command was asked for JSON. Nothing ran. |
 | `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` unset, or empty where it is taken from: the option, else a set environment variable, else the [config file](getting_started.md#the-config-file). |
-| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport` (or `POW`, `TRANSPORT`) on a command that sends a request; or a [config file](getting_started.md#the-config-file) that is unreadable, has a line that is not `KEY=VALUE`, has another key or has a value its setting refuses. For the file, stderr has one `hint:` line naming the file and the problem (and the line, for a bad line). Nothing was sent. |
+| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport` (or `POW`, `TRANSPORT`) on a command that sends a request; or a [config file](getting_started.md#the-config-file) that is unreadable, has a line that is not `KEY=VALUE`, has another key or has a value its setting refuses. For [`config set`](commands/config_set.md): the existing config file is refused for one of those reasons or cannot be reached, and is left untouched. For the file, stderr has one `hint:` line naming the file and the problem (and the line, for a bad line). Nothing was sent. |
+| `configuration_unwritable` | 1 | The configuration file cannot be written, so nothing was changed. | Only [`config set`](commands/config_set.md) (after 0.17.0, not yet released): no data directory can be determined, the data directory, its lock file `.config.lock` or the temporary file cannot be created (`persistence: not_attempted`), or the write or the rename failed (`failed`). The old config file is intact either way, but the data directory may already have been created or made owner-only, with an empty `.config.lock` in it. Make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk with free space, then run it again. |
 | `relay_connection_failed` | 1 | A configured relay could not be connected. | Within 10 s. Check the network and relay list; safe to retry. |
 | `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. |
 | `read_timeout` | 1 | The public order read did not complete before its deadline. | Not every relay sent EOSE within 15 s. No partial data is returned. Retry, maybe with fewer or faster relays. |
@@ -94,29 +95,30 @@ took for known). That outcome is `uncertain`, with the same two fields.
 
 `E` = as `error`, `U` = as `uncertain`, `E/U` = either, depending on the stages.
 
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | identity init | identity show | mine | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | | | | |
-| `read_timeout` | E | | | | | | | | E | E | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | | E | E | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | | E | | |
-| `identity_exists` | | | | | | | | | | | E | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | E | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | | | | |
-| `store_unreadable` | | | | | | | | | E | E | | | E | |
+| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | identity init | identity show | mine | config set | schema |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | | | | | |
+| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | | | | E | |
+| `configuration_unwritable` | | | | | | | | | | | | | | E | |
+| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | | | | | |
+| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | | | | | |
+| `read_timeout` | E | | | | | | | | E | E | | | | | |
+| `read_limit_exceeded` | E | | | | | | | | E | E | | | | | |
+| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `identity_missing` | | E | E | E | E | E | E | E | E | E | | E | E | | |
+| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | | E | | | |
+| `identity_exists` | | | | | | | | | | | E | | | | |
+| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | |
+| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | |
+| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | |
+| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | |
+| `node_refused` | | E | E | E | E | E | E | E | | | | | | | |
+| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | |
+| `order_declined` | | | E | E | E | E | E | E | | | | | | | |
+| `order_not_saved` | | | U | U | | | | | U | | | | | | |
+| `store_unwritable` | | | E | E | E | E | E | E | E | | E | | | | |
+| `order_unknown` | | | | | E | E | E | E | | E | | | | | |
+| `store_unreadable` | | | | | | | | | E | E | | | E | | |
 
 `output_not_supported` is emitted only for [human-only commands](commands/legacy.md).
