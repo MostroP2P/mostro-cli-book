@@ -39,6 +39,10 @@ elif out.code == "node_refused":
 {{#include ../../wrappers/python/mostro_cli.py}}
 ```
 
+For message records, read the step with `message_next_step(record)`: it returns `None` for a
+`next_step` value the wrapper does not know (the enum is open within contract 1). Read a
+payload's fields only for a `kind` you know.
+
 ## Following a trade
 
 `wrappers/python/example_trade_loop.py` polls `order info` and `message list` for one order

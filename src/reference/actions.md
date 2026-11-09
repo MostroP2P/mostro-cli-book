@@ -22,11 +22,13 @@ the ones this book refers to, with how the CLI presents them.
 | `cooperative-cancel-initiated-by-you` | You started a cooperative cancel | — | (varies) |
 | `cooperative-cancel-accepted` | The cooperative cancel completed | — | (varies) |
 | `invoice-updated` | A replacement buyer invoice was stored | — | (varies) |
+| `payment-failed` | You are the buyer: the node could not pay your invoice (once per invoice) | `add_invoice` at `payment_attempts` `"0"`, else — | `payment_failed` (after 0.17.0, not yet released; 0.17.0: `other`) |
 | `rate-received` | Your rating was recorded | — | `other` (`rating_user`) |
 | `cant-do` | The node refused something | — | `cant_do` |
 
-Only the four `next_step` values ask you to act. Everything else is information; use
-`order info` for the authoritative status.
+Only a non-null `next_step` asks you to act. Everything else is information; use
+`order info` for the authoritative status, also before acting on a `next_step`. A
+`next_step` you do not know counts as null: the enum is open within version 1.
 
 The same action names appear in replies to the write commands, where the CLI maps them to
 `result` values (see [order fiat-sent](../commands/order_fiat_sent.md#success-data-stepdata)

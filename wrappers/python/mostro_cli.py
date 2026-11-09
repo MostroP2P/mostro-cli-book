@@ -26,6 +26,19 @@ WRITE_COMMANDS = {
     "bond.add-invoice", "order.fiat-sent", "order.release", "order.cancel",
 }
 
+# next_step values of message records this wrapper knows; the enum is open within v1.
+MESSAGE_NEXT_STEPS = {"pay_bond_invoice", "add_invoice", "pay_hold_invoice", "add_bond_invoice"}
+
+
+def message_next_step(record: Dict[str, Any]) -> Optional[str]:
+    """The `next_step` of a message record, or None when it asks nothing this wrapper knows.
+
+    `next_step` is an open enum within contract 1: a value a later binary adds reads as None.
+    It is what the message asked when the node sent it; check `order info` before acting.
+    """
+    step = record.get("next_step")
+    return step if step in MESSAGE_NEXT_STEPS else None
+
 
 class TransportError(Exception):
     """No usable envelope: empty or invalid stdout, timeout, or the process could not start.

@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-153 examples: 109 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+154 examples: 110 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -44,7 +44,8 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `message.list/no_messages` — An empty window is a success | `message.list` | ok |  | 0 | fixture |
 | `message.list/one_order` — --order reads only that order's stored key; trade_index is null when it is not among the newest 200 | `message.list` | ok |  | 0 | authored |
 | `message.list/order_unknown` — --order names an order the store does not know | `message.list` | error | `order_unknown` | 1 | fixture |
-| `message.list/payload_kinds` — A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request and a new-order to a fresh key | `message.list` | ok |  | 0 | authored |
+| `message.list/payload_kinds` — A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request, a new-order to a fresh key and a payment_failed the node will not retry | `message.list` | ok |  | 0 | authored |
+| `message.list/payment_failed` — A failed payout the node retries: payment_failed with two attempts left, next_step null | `message.list` | ok |  | 0 | fixture |
 | `message.list/read_timeout` — The relays did not finish in time | `message.list` | error | `read_timeout` | 1 | fixture |
 | `message.list/relay_connection_failed` — No relay could be connected | `message.list` | error | `relay_connection_failed` | 1 | fixture |
 | `message.list/removed_getdm` — The removed getdm spelling | `None` | error | `invalid_arguments` | 2 | fixture |

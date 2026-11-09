@@ -11,7 +11,8 @@
 | Schemas | `schemas/order.add-invoice.input.json`, `schemas/order.add-invoice.output.json` |
 
 Gives the node the **buyer's** invoice for the sats, when it asked for one
-(`next_step: add_invoice`), or replaces it after a failed payment.
+(`next_step: add_invoice`), or replaces it after a failed payment (see
+[`payment_failed`](message_list.md#payment_failed)).
 
 ## Invocation
 

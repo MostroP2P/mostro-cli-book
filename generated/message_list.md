@@ -36,7 +36,7 @@ mostro-cli --output json message list --order 00000000-0000-0000-0000-0000000000
 {{#include ../examples/message.list/one_order.json}}
 ```
 
-### A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request and a new-order to a fresh key
+### A tour of the payload kinds: payment_request, peer, other, none, cant_do, bond_payout_request, a new-order to a fresh key and a payment_failed the node will not retry
 
 _`message.list/payload_kinds` · status ok · exit 0 · authored_
 
@@ -46,6 +46,18 @@ mostro-cli --output json message list --since 1440
 
 ```json
 {{#include ../examples/message.list/payload_kinds.json}}
+```
+
+### A failed payout the node retries: payment_failed with two attempts left, next_step null
+
+_`message.list/payment_failed` · status ok · exit 0 · fixture_
+
+```sh
+mostro-cli --output json message list --since 60
+```
+
+```json
+{{#include ../examples/message.list/payment_failed.json}}
 ```
 
 ### More keys and messages than were read: truncated with a warning

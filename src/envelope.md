@@ -41,6 +41,11 @@ Rules that hold for every document:
   the fixture files in this book are sometimes alphabetical. Parse, do not compare text.
 - **No extra keys today**, but within version 1 optional fields may be added. Ignore keys you
   do not know.
+- **Two open enums.** In the message records of `message.list` and `order.watch`, a record's
+  `next_step` and its payload's `kind` may gain values within version 1, and a payload reported
+  as `other` may get a `kind` of its own. Treat an unknown `next_step` as `null` and a payload of
+  an unknown `kind` as opaque (read only `kind`). The `variant` of `other` is not a stable
+  identifier. Every other enum changes only with a new `schema_version`.
 - `status`, `data` and `error` always agree. You can rely on: `ok ⇒ error == null`,
   `error ⇒ data == null`, `uncertain ⇒ error != null`.
 
@@ -123,3 +128,8 @@ files in `schemas/`). Each output schema is a `oneOf` of up to four branches:
 
 `schemas/envelope-v1.json` (written for this book, not generated) accepts any command's
 envelope, including legacy rejections, and is handy as a first-pass check in a wrapper.
+
+A generated schema lists only the `next_step` values and payload kinds of the binary that wrote
+it. Validate a document against the schema output of the binary that produced it
+(`mostro-cli --output json schema`), or relax those two enums in a stored copy, so a newer
+binary's records do not fail validation.

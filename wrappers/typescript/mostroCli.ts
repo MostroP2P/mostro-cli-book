@@ -115,7 +115,7 @@ export interface SyncData {
   messages_read: Decimal; messages_ignored: Decimal; truncated: boolean;
   keys_read: Decimal; keys_not_read: Decimal;
 }
-export type MessagePayload =
+export type KnownMessagePayload =
   | { kind: "none" }
   | { kind: "order"; order: OrderRecord }
   | { kind: "payment_request"; order: OrderRecord | null; invoice: string; amount: Decimal | null }
@@ -124,11 +124,26 @@ export type MessagePayload =
   | { kind: "peer"; counterparty_pubkey: string }
   | { kind: "text"; text: string }
   | { kind: "amount"; amount: Decimal }
+  | { kind: "payment_failed"; payment_attempts: Decimal; payment_retries_interval: Decimal }
+  /** `variant` is informative, not a stable identifier. */
   | { kind: "other"; variant: string };
+/** The payload `kind` is open within contract 1: a later binary may add kinds. Read only `kind`. */
+export type UnknownMessagePayload = { kind: string };
+export type MessagePayload = KnownMessagePayload | UnknownMessagePayload;
+const KNOWN_PAYLOAD_KINDS: ReadonlySet<string> = new Set([
+  "none", "order", "payment_request", "bond_payout_request", "cant_do", "peer", "text", "amount",
+  "payment_failed", "other",
+]);
+/** Narrow a payload to the kinds this file knows; check it before reading any field but `kind`. */
+export function isKnownPayload(p: MessagePayload): p is KnownMessagePayload {
+  return KNOWN_PAYLOAD_KINDS.has(p.kind);
+}
+export type MessageNextStep = "pay_bond_invoice" | "add_invoice" | "pay_hold_invoice" | "add_bond_invoice";
 export interface MessageRecord {
   event_id: Hex64; created_at: Rfc3339 | null; created_at_unix: Decimal;
   order_id: Uuid | null; request_id: Decimal | null; action: string;
-  next_step: "pay_bond_invoice" | "add_invoice" | "pay_hold_invoice" | "add_bond_invoice" | null;
+  /** Open within contract 1: treat a value you do not know as null. */
+  next_step: MessageNextStep | (string & {}) | null;
   trade_index: Decimal | null; trade_pubkey: Hex64; payload: MessagePayload;
 }
 export interface MessageListData {

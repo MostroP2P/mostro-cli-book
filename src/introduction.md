@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 153 outcomes, each in its own file with the exact command line, all
+- **many examples**: 154 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -59,6 +59,13 @@ optional additions are allowed (a new command, a new code scoped to a new comman
 renamed command, a changed type or a changed meaning requires `schema_version` `"2"`.
 Reject documents whose `schema_version` you do not know.
 
+One exception: two enums of the message records (`message.list`, `order.watch`) are **open**
+within version 1, a record's `next_step` and its payload's `kind`. A later executable may add
+values to them, and may give a payload it reported as `other` a `kind` of its own. Treat an
+unknown `next_step` as `null` (nothing you know how to do is asked) and a payload of an unknown
+`kind` as opaque (read no field but `kind`). The `variant` of an `other` payload is
+informative, not a stable identifier.
+
 > mostro-cli 0.17.0 is the first release with the JSON interface; 0.16.3 and earlier have
 > none. Check `mostro-cli --output json schema` on your binary.
 
@@ -81,3 +88,9 @@ Reject documents whose `schema_version` you do not know.
 > Its output schema file is `schemas/order.watch.output.json`
 > ([mostro-cli#263](https://github.com/MostroP2P/mostro-cli/pull/263)).
 > With 0.17.0, poll `message list` and `getdmuser`.
+
+> After 0.17.0, not yet released: a failed payout to the buyer is the payload kind
+> `payment_failed`, with the retries left and their interval
+> ([`message list`](commands/message_list.md#messagepayload); [mostro-cli#CLI_PR_payment_failed_payload](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_payment_failed_payload)).
+> 0.17.0 reports it as `{"kind": "other", "variant": "payment_failed"}`. The human "👉 Next:"
+> lines name the record's order id instead of `<id>`.

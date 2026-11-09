@@ -7,7 +7,7 @@ It only reads; every write is printed as a suggestion, never executed.
 import sys
 import time
 
-from mostro_cli import MostroCli, TransportError
+from mostro_cli import MostroCli, TransportError, message_next_step
 
 TERMINAL = {"success", "canceled", "cooperatively-canceled", "canceled-by-admin",
             "settled-by-admin", "completed-by-admin", "expired"}
@@ -39,13 +39,18 @@ def main(order_id: str) -> None:
                 if message["event_id"] in seen:
                     continue
                 seen.add(message["event_id"])
-                step = message["next_step"]
+                step = message_next_step(message)  # an unknown value reads as None
                 payload = message["payload"]
                 print(f"  {message['created_at']} {message['action']} next_step={step}")
+                if payload["kind"] == "payment_failed":
+                    print(f"    payout failed; retries left: {payload['payment_attempts']},"
+                          f" every {payload['payment_retries_interval']} s")
                 if step in ("pay_hold_invoice", "pay_bond_invoice"):
                     print("    -> pay this invoice with your wallet:", payload["invoice"])
                 elif step == "add_invoice":
-                    sats = payload["order"]["sats_amount"]
+                    # The payload is "order" after add-invoice, "payment_failed" after a payout
+                    # the node will not retry; order info has the amount in both cases.
+                    sats = info.data["orders"][0]["sats_amount"]
                     print(f"    -> run: order add-invoice --order {order_id} --invoice <invoice for {sats} sats> --yes")
                 elif step == "add_bond_invoice":
                     print(f"    -> run: bond add-invoice --order {order_id} --invoice <bolt11> --yes")
