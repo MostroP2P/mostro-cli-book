@@ -7,6 +7,7 @@ must already exist; only `identity init` creates it.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [`schema`](schema.md) | `schema` | offline | none | no | no | no | ok, error |
 | [`config set`](config_set.md) | `config.set` | local write | none | no | `config` | no | ok, error |
+| [`config show`](config_show.md) | `config.show` | local read | none | no | no | no | ok, error |
 | [`identity init`](identity_init.md) | `identity.init` | local write | none | creates it | `mcli.db` | no | ok, error |
 | [`identity show`](identity_show.md) | `identity.show` | local read | none | yes (read) | no | no | ok, error |
 | [`order mine`](order_mine.md) | `order.mine` | local read | none | yes (read) | no | no | ok, error |
@@ -27,8 +28,8 @@ must already exist; only `identity init` creates it.
 
 All of them need `MOSTRO_PUBKEY` and `RELAYS` (root option, environment or
 [config file](../getting_started.md#the-config-file)) except `schema`, `config set`,
-`identity init`, `identity show` and `order mine`, which only use the local data directory
-(`MCLI_DIR`, else `~/.mcli`) or nothing at all.
+`config show`, `identity init`, `identity show` and `order mine`, which only use the local
+data directory (`MCLI_DIR`, else `~/.mcli`) or nothing at all.
 
 ## Which key signs what
 

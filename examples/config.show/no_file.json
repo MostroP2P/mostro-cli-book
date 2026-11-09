@@ -1,0 +1,20 @@
+{
+  "schema_version": "1",
+  "command": "config.show",
+  "status": "ok",
+  "data": {
+    "mostro_pubkey": null,
+    "path": "/home/user/.mcli/config",
+    "pow": null,
+    "relays": null,
+    "transport": null
+  },
+  "error": null,
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

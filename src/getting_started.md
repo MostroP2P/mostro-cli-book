@@ -26,6 +26,7 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 ```text
 "bond.add-invoice"
 "config.set"
+"config.show"
 "dispute.open"
 "identity.init"
 "identity.show"
@@ -49,10 +50,10 @@ See [schema](commands/schema.md) for the full document.
 
 ## Configure the node
 
-Every command except `schema`, `config set`, `identity init`, `identity show` and
-`order mine` needs the node's public key and the relays. `order list`, `message list` and
-`order sync` only read events from the relays; the other commands also send the node one
-signed request through them.
+Every command except `schema`, `config set`, `config show`, `identity init`,
+`identity show` and `order mine` needs the node's public key and the relays. `order list`,
+`message list` and `order sync` only read events from the relays; the other commands also
+send the node one signed request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -103,8 +104,13 @@ commands refuse, or one it cannot reach, untouched (`configuration_invalid`, wit
 ```sh
 mostro-cli --output json config set mostro-pubkey <hex public key of the Mostro node you trade with>
 mostro-cli --output json config set relays wss://relay.example.com,wss://relay2.example.com
+mostro-cli --output json config show
 mostro-cli --output json order list
 ```
+
+[`config show`](commands/config_show.md) reports the file's path and the values stored in
+it (`null` when absent), read-only. It shows only the file: an option or a set environment
+variable still wins over a value it shows.
 
 Or write the file by hand:
 
@@ -138,26 +144,29 @@ A file with another key, a line that is not `KEY=VALUE`, a value its setting ref
 `configuration_invalid` (exit 1) after its own argument checks (an `invalid_arguments`
 comes first) and before it touches the identity, the store or the network, even when the
 options give every value. Stderr then has one line naming the file and the problem, with
-the line number when a line is at fault, never the file's content:
+the line number when a line is at fault, never the file's content (control characters in
+the path are escaped, as in human output):
 
 ```text
 hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
 ```
 
 When the file or the data directory does not exist, or the process may not look into the
-directory, there is no file and nothing changes. `config set` is stricter: it refuses a data
-directory it may not look into (`configuration_invalid`, with the `hint:` line), so that it
-never replaces a file it could not read. Reading the file never creates the data directory or
-anything in it. A [human-only command](commands/legacy.md) takes the settings
+directory, there is no file and nothing changes. `config set` and `config show` are
+stricter: they refuse a data directory they may not look into (`configuration_invalid`,
+with the `hint:` line), so that `config set` never replaces a file it could not read and
+`config show` never reports such a file as empty. Reading the file never creates the data
+directory or anything in it. A [human-only command](commands/legacy.md) takes the settings
 with the same precedence and refuses the same files, but stops with its own one-line
 message (exit 1) instead of `configuration_invalid` and the `hint:` line (see that page).
 
 ## Create an identity
 
-Commands that act for you (everything except `order list`, `schema` and `config set`)
-need a local identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one
-trade key per order are derived. Only [`identity init`](commands/identity_init.md) creates it; the
-other commands that need it fail with `identity_missing` instead. Create it once:
+Commands that act for you (everything except `order list`, `schema`, `config set` and
+`config show`) need a local identity: a BIP-39 mnemonic in `mcli.db` from which the
+identity key and one trade key per order are derived. Only
+[`identity init`](commands/identity_init.md) creates it; the other commands that need it
+fail with `identity_missing` instead. Create it once:
 
 ```sh
 mostro-cli --output json identity init   # creates $MCLI_DIR (else ~/.mcli) and mcli.db

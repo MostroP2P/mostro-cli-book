@@ -45,8 +45,8 @@ mostro-cli --output json order cancel --order 00000000-0000-0000-0000-0000000000
 after it has obtained that consent (see [Guide for AI agents](wrapper/ai_agents.md)).
 
 `order sync` writes only local rows and publishes nothing; it does not take `--yes`.
-Neither do the local commands `identity init`, `identity show`, `order mine` and
-`config set`.
+Neither do the local commands `identity init`, `identity show`, `order mine`,
+`config set` and `config show`.
 
 ## Invoice on standard input
 
@@ -200,5 +200,6 @@ JSON-capable or [human-only](commands/legacy.md), except the local ones (`schema
 beside it: runs of `config set` at the same time wait for each other and all land, and the
 file is replaced atomically. Besides the lock and its temporary file, `config set` writes
 nothing else in the data directory, which it creates when needed, and never touches
-`mcli.db`. `order list` reads nothing else there and `schema` never touches it; `order info`,
+`mcli.db`. [`config show`](commands/config_show.md) only reads `config`, and `order list`
+reads nothing else there; `schema` never touches the data directory; `order info`,
 `message list`, `order mine` and `identity show` only read it. `identity init` creates it.

@@ -169,6 +169,7 @@ None. The schema's shared `WarningCode` list names `invalid_event_timestamp` and
 
 ## Next
 
-Once `mostro-pubkey` and `relays` are set, [order list](order_list.md) and the other
-networked commands run without `-m` or `-r`. [identity init](identity_init.md) creates the
-identity the signing commands need.
+[config show](config_show.md) reports what the file holds. Once `mostro-pubkey` and
+`relays` are set, [order list](order_list.md) and the other networked commands run without
+`-m` or `-r`. [identity init](identity_init.md) creates the identity the signing commands
+need.

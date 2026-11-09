@@ -73,6 +73,7 @@ supplies values (except where a row writes one there):
 | `schema` success | `schema` |
 | `config set` success (`persistence: applied`) | `config set pow 0`; it writes `config` into `MCLI_DIR`, creating that directory (one level deep) if needed |
 | `configuration_unwritable` | `config set pow 0` with `MCLI_DIR` pointing at a regular file |
+| `config show` success | `config show`; with no `config` every value is `null`, and it creates nothing |
 
 For the rest, feed your parser the files in `examples/` (all of them are real-shaped
 envelopes; `examples/index.json` gives the exit code to pair with each).

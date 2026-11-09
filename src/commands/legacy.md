@@ -54,15 +54,17 @@ In human mode every one of them except the gRPC operator commands (`admsetmainte
   before `mcli.db` is created. A refused file (the same refusals as for the JSON-capable
   commands) stops the command there, even when the options give every value, with exit 1
   and one line on stderr naming the file and the problem, and the line when a line is at
-  fault, never the file's content:
+  fault, never the file's content (control characters in the path are escaped):
 
   ```text
   Invalid config file /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
   ```
 
-- When `MOSTRO_PUBKEY` or `RELAYS` is missing, the error they print offers a line in
-  `$MCLI_DIR/config` (else `~/.mcli/config`) as a third way to give it, next to the option
-  and the environment variable.
+- When `MOSTRO_PUBKEY` or `RELAYS` is missing, the error they print offers, next to the
+  option and the environment variable, [`config set`](config_set.md)
+  (`mostro-cli config set mostro-pubkey <npub>`, or `config set relays <relay[,relay...]>`),
+  which writes it to `$MCLI_DIR/config` (else `~/.mcli/config`), and suggests checking the
+  file with [`config show`](config_show.md) (`mostro-cli config show`).
 - `ADMIN_NSEC`, which the admin commands need, stays in the environment: the file refuses it.
 
 A wrapper that needs one of these today has to run it in human mode and treat its output
