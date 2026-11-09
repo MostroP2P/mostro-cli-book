@@ -69,5 +69,5 @@ Reject documents whose `schema_version` you do not know.
 
 > After 0.17.0, not yet released: the JSON-capable commands that talk to the node also read
 > the node settings from `$MCLI_DIR/config` ([The config file](getting_started.md#the-config-file);
-> [mostro-cli#CLI_PR_config_file_read](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_config_file_read)).
+> [mostro-cli#248](https://github.com/MostroP2P/mostro-cli/pull/248)).
 > With 0.17.0, pass them as options or environment variables.

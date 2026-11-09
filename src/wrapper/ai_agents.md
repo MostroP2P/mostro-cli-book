@@ -42,12 +42,20 @@ when deploying, next to `identity init`: each process then finds `MOSTRO_PUBKEY`
 and, when needed, `POW` without `-m`, `-r` or `-p`. (After 0.17.0, not yet released; with
 0.17.0, set them in the environment the tool layer gives each process.)
 
+A variable the host already sets still wins over the file, even an empty one: an empty
+`RELAYS` gives `configuration_missing`, and an old value selects the old relays. When the
+file should supply the settings, unset `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT` in
+the environment the tool layer passes on.
+
 Never put secrets there: the file takes only the four node settings and refuses any other
 key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`).
 
 Hand `configuration_missing` and `configuration_invalid` to the human together with the
 stderr `hint:` line, when there is one: it names the config file and the problem (and the
-line at fault, for a bad line), never the file's content.
+line at fault, for a bad line), never the file's content. The bundled Python and TypeScript
+wrappers keep stderr next to the envelope (`outcome.stderr`, `result.stderr`), and the shell
+wrapper passes it through. The Rust wrapper drops it: read `output.stderr` in its `run` if
+you need the hint.
 
 ## Consent: `--yes` belongs to the human
 
