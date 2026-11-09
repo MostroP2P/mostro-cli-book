@@ -9,10 +9,12 @@ All in `schemas/`. Regenerate with `scripts/refresh_schemas.sh` from any binary.
 | `<command>.output.json` | `.data.commands[].output_schema` | The envelope of one command, all statuses |
 | `envelope-v1.json` | Written for this book | Any command's envelope; for first-pass checks and legacy rejections |
 
-Commands with schemas: `bond.add-invoice`, `dispute.open`, `identity.init`,
-`identity.show`, `message.list`, `order.add-invoice`, `order.cancel`, `order.chat`, `order.fiat-sent`,
-`order.info`, `order.list`, `order.mine`, `order.new`, `order.rate`, `order.release`,
-`order.sync`, `order.take-buy`, `order.take-sell`, `order.watch`, `schema`.
+Commands with schemas: `bond.add-invoice`, `config.set`, `config.show`, `dispute.open`,
+`identity.init`, `identity.show`, `message.list`, `order.add-invoice`, `order.cancel`,
+`order.chat`, `order.fiat-sent`, `order.info`, `order.list`, `order.mine`, `order.new`,
+`order.rate`, `order.release`, `order.sync`, `order.take-buy`, `order.take-sell`,
+`order.watch`, `schema`. (`config.set`, `config.show`, `order.chat` and `order.watch` are
+after 0.17.0, not yet released.)
 
 ## Anatomy of an output schema
 
@@ -57,7 +59,7 @@ if (!validate(envelope)) console.error(validate.errors);
 ```
 
 `strict: false` is needed with Ajv because input schemas use the extension keywords
-`x-case-insensitive` and `x-stdin`.
+`x-case-insensitive`, `x-stdin` and `x-positional`.
 
 ## Drift
 
