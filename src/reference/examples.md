@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-153 examples: 109 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+155 examples: 111 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -79,6 +79,8 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.cancel/reply_malformed_uncertain` — An unusable answer: the cancel may have happened | `order.cancel` | uncertain | `reply_malformed` | 1 | fixture |
 | `order.cancel/store_unwritable` — Local store not writable: nothing sent | `order.cancel` | error | `store_unwritable` | 1 | authored |
 | `order.cancel/yes_required` — JSON mode without --yes | `order.cancel` | error | `invalid_arguments` | 2 | captured |
+| `order.chat/conversation_read` — Both sides of the chat, oldest first; nothing sent | `order.chat` | ok |  | 0 | fixture |
+| `order.chat/counterparty_unknown` — No counterparty yet: it is known once the escrow is locked | `order.chat` | error | `counterparty_unknown` | 1 | fixture |
 | `order.fiat-sent/fiat_sent` — The buyer confirmed the fiat payment | `order.fiat-sent` | ok |  | 0 | fixture |
 | `order.fiat-sent/node_refused` — Refused with reason invalid_pubkey | `order.fiat-sent` | error | `node_refused` | 1 | fixture |
 | `order.fiat-sent/range_key_sent` — Maker of a buy range order: the step carried the next trade key (index 4) | `order.fiat-sent` | ok |  | 0 | fixture |

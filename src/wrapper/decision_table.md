@@ -23,6 +23,7 @@ One table to map any outcome to an action. Evaluate top to bottom; the first mat
 | 17 | `read_limit_exceeded` | `too_much` | after narrowing | Smaller `--since`, or `--order` |
 | 18 | `order_declined` | `declined` | — | Only from the human prompt |
 | 19 | `internal_error` | `bug` | maybe once | Report with the command (without secrets) |
+| 20 | `counterparty_unknown` | `not_yet` | after the escrow is locked | `order chat` cannot name the counterparty yet; with its key, `getdmuser -p` / `dmtouser -p` |
 
 ## Warnings
 

@@ -20,7 +20,7 @@ export type ErrorCode =
   | "internal_error" | "identity_missing" | "identity_unreadable" | "identity_exists"
   | "protocol_unsupported" | "pow_required" | "request_rejected" | "reply_timeout"
   | "node_refused" | "reply_malformed" | "order_declined" | "order_not_saved"
-  | "store_unwritable" | "order_unknown" | "store_unreadable";
+  | "store_unwritable" | "order_unknown" | "store_unreadable" | "counterparty_unknown";
 
 export type WarningCode =
   | "invalid_event_timestamp" | "cleanup_incomplete" | "orders_not_returned"

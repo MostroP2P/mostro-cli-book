@@ -44,7 +44,8 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
    in). `order add-invoice` already tells you with `result: payment_accepted` when the
    seller had paid first; otherwise poll `order info` / `message list`.
 
-5. **Pay the fiat** to the seller through the agreed method, then:
+5. **Pay the fiat** to the seller through the method agreed in
+   [`order chat`](../commands/order_chat.md), then:
 
    ```sh
    mostro-cli --output json order fiat-sent --order <id> --yes

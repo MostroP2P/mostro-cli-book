@@ -11,9 +11,9 @@ All in `schemas/`. Regenerate with `scripts/refresh_schemas.sh` from any binary.
 
 Commands with schemas: `bond.add-invoice`, `config.set`, `config.show`, `dispute.open`,
 `identity.init`, `identity.show`, `message.list`, `order.add-invoice`, `order.cancel`,
-`order.fiat-sent`, `order.info`, `order.list`, `order.mine`, `order.new`, `order.rate`,
-`order.release`, `order.sync`, `order.take-buy`, `order.take-sell`, `schema`. (`config.set`
-and `config.show` are after 0.17.0, not yet released.)
+`order.chat`, `order.fiat-sent`, `order.info`, `order.list`, `order.mine`, `order.new`,
+`order.rate`, `order.release`, `order.sync`, `order.take-buy`, `order.take-sell`, `schema`.
+(`config.set`, `config.show` and `order.chat` are after 0.17.0, not yet released.)
 
 ## Anatomy of an output schema
 

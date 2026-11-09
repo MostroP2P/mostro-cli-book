@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "command": "order.chat",
+  "status": "error",
+  "data": null,
+  "error": {
+    "code": "counterparty_unknown",
+    "message": "The counterparty of this order was not found in the node's messages; it is known once the escrow is locked."
+  },
+  "warnings": [],
+  "meta": {
+    "publication": "not_applicable",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}

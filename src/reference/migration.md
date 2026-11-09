@@ -21,8 +21,8 @@ fails like an unknown command: `invalid_arguments`, exit 2, `command: null`. The
 | `getdm ...` | `message list [--since MINUTES] [--order ID]` |
 | `dispute -o ID` / `--orderid` | `dispute open --order ID --yes` |
 | `rate -o ID -r RATING` | `order rate --order ID --rating RATING --yes` |
-| `getdmuser -p KEY -o ID [--since MINUTES]` | `order chat --order ID [--since MINUTES]` (human output for now; `getdmuser` stays, see below) |
-| `dmtouser -p KEY -o ID -m TEXT` | `order chat --order ID --message TEXT` (human output for now; `dmtouser` stays, see below) |
+| `getdmuser -p KEY -o ID [--since MINUTES]` | `order chat --order ID [--since MINUTES]` (`getdmuser` stays, see below) |
+| `dmtouser -p KEY -o ID -m TEXT` | `order chat --order ID --message TEXT --yes` (`dmtouser` stays, see below) |
 | — | `order sync [--since MINUTES]` (new) |
 | — | `order mine` (new) |
 | — | `identity init`, `identity show` (new) |
@@ -44,9 +44,7 @@ Behaviour changes that matter to wrappers:
   an order in the local store it replaces `getdmuser` and `dmtouser`. Its `--since` defaults
   to 10080 minutes instead of 30. Both legacy commands stay, unchanged: like `order chat`
   they need the order's row, and they are the fallback when it cannot find the counterparty
-  (`counterparty_unknown`) and you know the key. `order chat` has human output only for now
-  (`output_not_supported` in JSON); see
-  [Human-only commands](../commands/legacy.md#order-chat).
+  (`counterparty_unknown`) and you know the key. See [`order chat`](../commands/order_chat.md).
 - `--kind` became `--side`; short option letters of the old commands are gone.
 - New options with no old spelling: `order new --expires-in SECONDS`, `--invoice -` (the
   invoice read from standard input) and the global `--reply-timeout SECONDS`; see

@@ -34,7 +34,7 @@
                 "protocol_unsupported", "pow_required", "request_rejected",
                 "reply_timeout", "node_refused", "reply_malformed",
                 "order_declined", "order_not_saved", "store_unwritable",
-                "order_unknown", "store_unreadable"
+                "order_unknown", "store_unreadable", "counterparty_unknown"
               ]
             },
             "message": { "type": "string", "description": "Fixed English prose chosen by the code. Never match on it." },

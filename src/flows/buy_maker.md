@@ -22,7 +22,8 @@ You publish a **buy** order: you pay fiat and receive sats.
    ```
 
 4. **When the order is `active`**, pay the fiat and run
-   `order fiat-sent --order <id> --yes` → `wait_for_release`.
+   `order fiat-sent --order <id> --yes` → `wait_for_release`. Agree on the payment details
+   with the seller in [`order chat`](../commands/order_chat.md).
 
 5. **Wait for the release** (`settled-hold-invoice`, then `success`).
 

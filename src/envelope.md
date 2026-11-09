@@ -106,6 +106,7 @@ The three stage enums are explained in [Status and execution stages](stages.md).
 | `order.fiat-sent`, `order.release`, `order.cancel` | `StepData` | [fiat-sent](commands/order_fiat_sent.md), [release](commands/order_release.md), [cancel](commands/order_cancel.md) |
 | `order.sync` | `SyncData` | [order sync](commands/order_sync.md) |
 | `message.list` | `MessageListData` | [message list](commands/message_list.md) |
+| `order.chat` | `ChatData` | [order chat](commands/order_chat.md) |
 
 ## Validating
 

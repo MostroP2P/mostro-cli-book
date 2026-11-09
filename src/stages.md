@@ -9,7 +9,7 @@
 | `uncertain` | 1 | A request was (or may have been) published and the CLI cannot prove what happened, **or** the node accepted it and the local write failed. | **Do not retry blindly.** Check the order first. See [Recovering](flows/uncertain.md). |
 
 `uncertain` only exists for commands that publish a write (`order new`, the takes, the
-invoices, the trade steps) and for `order sync`'s partial local save. Pure reads
+invoices, the trade steps), for `order chat --message` and for `order sync`'s partial local save. Pure reads
 (`order list`, `order info`, `message list`, `schema`) are `ok` or `error` only: they are
 safe to repeat.
 
@@ -21,8 +21,8 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`, `config set`, `config show`). |
-| `not_attempted` | Nothing was published: the command stopped before (bad arguments, no identity, refused PoW...) or every relay explicitly rejected the event. |
+| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order sync`, `schema`, `config set`, `config show`), or, for `order chat`, the send step did not run (no `--message`, or the command stopped before sending). |
+| `not_attempted` | Nothing was published: the command stopped before (bad arguments, no identity, refused PoW...) or every relay explicitly rejected the event. For `order chat`, the send step ran and published nothing (the wrap failed, no relay could be connected, or every relay rejected the message). |
 | `published` | At least one relay confirmed accepting the signed request. |
 | `unknown` | No relay confirmed, but at least one failed ambiguously (timeout, dropped connection after the send): the event may be out there. |
 
@@ -39,7 +39,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`, `config show`). |
+| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`, `config show`), or does not report it (`order chat`'s cache of the counterparty's key). |
 | `not_attempted` | No write was called for, or the command stopped before writing. |
 | `applied` | The write the outcome calls for was done (an order row, a status update, a reserved trade index). |
 | `failed` | The write was attempted and failed. |
@@ -129,6 +129,16 @@ index was recorded before publishing. An index that cannot be recorded stops the
 | `error` | `not_applicable / not_applicable / not_applicable` or `not_attempted` | Failed before or after reading, before saving |
 | `uncertain` | `not_applicable / not_applicable / failed` | Some rows saved, then one failed (`order_not_saved`) |
 
+### `order chat`
+
+| status | Stages | Typical codes |
+| --- | --- | --- |
+| `ok` | `not_applicable / not_applicable / not_applicable` | read only |
+| `ok` | `published / not_applicable / not_applicable` | read, then the message sent |
+| `error` | `not_applicable / not_applicable / not_applicable` | anything before the send step: arguments, local failures, `counterparty_unknown`, the read |
+| `error` | `not_attempted / not_applicable / not_applicable` | the send step: `request_rejected`, `relay_connection_failed`, `internal_error` |
+| `uncertain` | `unknown / not_applicable / not_applicable` | `request_rejected` |
+
 ### Local write: `config set`
 
 | status | Stages | Typical codes |
@@ -146,12 +156,13 @@ generated schema of `identity init` allows the same combinations, for `mcli.db`.
 | Situation | Stages |
 | --- | --- |
 | `command: null` (unknown command, removed spelling) | `not_attempted / unknown / not_attempted` |
-| [Human-only command](commands/legacy.md) (legacy, or `order chat`) with `--output json` (`output_not_supported`) | `not_attempted / unknown / not_attempted` |
+| [Human-only command](commands/legacy.md) with `--output json` (`output_not_supported`) | `not_attempted / unknown / not_attempted` |
 
 ## Reading stages in a wrapper
 
 Most of the time `status` + `error.code` is enough. Stages answer two finer questions:
 
-- **"Could the node have acted?"** — `publication` is `published` or `unknown`.
+- **"Could the node have acted?"** — `publication` is `published` or `unknown`. For
+  `order chat` this concerns the relays only: the node never receives a chat message.
 - **"Is my local store in step?"** — `persistence` is `failed` ⇒ the node moved on but the
   local row did not; follow the warning or error advice (often: `order info`, `order sync`).
