@@ -53,9 +53,10 @@ See [schema](commands/schema.md) for the full document.
 
 Every command except `schema`, `config set`, `config show`, `identity init`,
 `identity show` and `order mine` needs the node's public key and the relays. `order list`,
-`message list` and `order sync` only read events from the relays; `order chat` reads them
-too and, with `--message`, publishes one chat message for the counterparty, never a request
-to the node. The other commands send the node one signed request through them.
+`message list` and `order sync` only read events from the relays, and so does `order watch`,
+which stays connected until the trade ends; `order chat` reads them too and, with `--message`,
+publishes one chat message for the counterparty, never a request to the node. The other
+commands send the node one signed request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -65,9 +66,9 @@ to the node. The other commands send the node one signed request through them.
 | Transport | `TRANSPORT` | `--transport nip44` (`-t`) | no | Only `nip44` (protocol v2) is supported |
 | Data directory | `MCLI_DIR` | — | no | Where `mcli.db` and the [config file](#the-config-file) live; default `~/.mcli` |
 
-`POW` and `TRANSPORT` do not apply to `order chat`, which ignores even an invalid value given
-as an option or a variable (a config file line is always checked): its message goes to
-relays, not to the node.
+`POW` and `TRANSPORT` do not apply to `order chat` and `order watch`, which ignore even an
+invalid value given as an option or a variable (a config file line is always checked): they
+talk to relays, not to the node.
 
 Each of the first four settings comes from its root option, even an empty one; else from its
 environment variable when that is set, even to an empty value; else from the
@@ -207,6 +208,7 @@ shows complete code.
 ## What is not in JSON yet
 
 The older peer chat commands `getdmuser` and `dmtouser` (use `order chat`), the dispute
-conversation, `restore`, user info and the admin commands are human-only today.
+conversation, `restore`, user info, the admin commands and `order watch` (human output for
+now) are human-only today.
 Asking them for JSON returns `output_not_supported` (exit 2) before anything runs. See
 [Human-only commands](commands/legacy.md).

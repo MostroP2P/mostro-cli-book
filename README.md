@@ -70,3 +70,8 @@ Also documented: `order chat` of [mostro-cli#245](https://github.com/MostroP2P/m
 in human mode ([mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255)) and with JSON output ([mostro-cli#256](https://github.com/MostroP2P/mostro-cli/pull/256)),
 on `main`, not yet released; the schemas were refreshed from `main` after that merge on
 2026-11-09.
+
+Also documented: `order watch` of [mostro-cli#246](https://github.com/MostroP2P/mostro-cli/issues/246)
+in human mode ([mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)),
+on `main`, not yet released; `schemas/discovery.json` refreshed from `main` after that merge on
+2026-11-09.

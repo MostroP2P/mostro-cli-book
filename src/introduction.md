@@ -106,3 +106,9 @@ Reject documents whose `schema_version` you do not know.
 > in JSON (`order.chat`, `--yes` with `--message`; [`order chat`](commands/order_chat.md);
 > [mostro-cli#255](https://github.com/MostroP2P/mostro-cli/pull/255), [mostro-cli#256](https://github.com/MostroP2P/mostro-cli/pull/256)).
 > With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.
+
+> After 0.17.0, not yet released: `order watch --order <id>` follows an order you hold
+> until its trade ends, the node's messages and the peer chat, replayed then live, in human
+> output only for now ([`order watch`](commands/legacy.md#order-watch);
+> [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)).
+> With 0.17.0, poll `message list` and `getdmuser`.
