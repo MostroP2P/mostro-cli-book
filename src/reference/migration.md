@@ -43,6 +43,9 @@ Behaviour changes that matter to wrappers:
   `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT` from `$MCLI_DIR/config` (the
   [config file](../getting_started.md#the-config-file)) when neither the option nor the
   environment gives them, and a broken config file fails every one of them with
-  `configuration_invalid`, even when the options give every value.
+  `configuration_invalid`, even when the options give every value. The
+  [human-only commands](../commands/legacy.md), except the gRPC operator commands, read it
+  the same way; a broken file stops them with `Invalid config file <path>: <problem>` (exit 1)
+  before `mcli.db` is created.
 
 The short root options (`-m`, `-r`, `-p`, `-s`, `-t`, `-v`) still exist.

@@ -71,3 +71,9 @@ Reject documents whose `schema_version` you do not know.
 > the node settings from `$MCLI_DIR/config` ([The config file](getting_started.md#the-config-file);
 > [mostro-cli#248](https://github.com/MostroP2P/mostro-cli/pull/248)).
 > With 0.17.0, pass them as options or environment variables.
+
+> After 0.17.0, not yet released: the human-only commands, except the gRPC operator
+> commands, read the config file too, with the same precedence
+> ([Human-only commands](commands/legacy.md);
+> [mostro-cli#249](https://github.com/MostroP2P/mostro-cli/pull/249)).
+> With 0.17.0, pass their settings as options or environment variables.

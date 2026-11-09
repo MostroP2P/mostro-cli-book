@@ -39,7 +39,8 @@ reduced form: `status`, `error.code`, `error.reason`, warning codes, `data`.
 Agent hosts usually run each command in a fresh process, so an `export` from an earlier call
 is gone. Put the node settings in the [config file](../getting_started.md#the-config-file)
 when deploying, next to `identity init`: each process then finds `MOSTRO_PUBKEY`, `RELAYS`
-and, when needed, `POW` without `-m`, `-r` or `-p`. (After 0.17.0, not yet released; with
+and, when needed, `POW` without `-m`, `-r` or `-p`. The [human-only commands](../commands/legacy.md)
+read it too, except the gRPC operator commands. (After 0.17.0, not yet released; with
 0.17.0, set them in the environment the tool layer gives each process.)
 
 A variable the host already sets still wins over the file, even an empty one: an empty

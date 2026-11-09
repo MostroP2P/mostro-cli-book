@@ -85,12 +85,13 @@ file.
 
 > After 0.17.0, not yet released: mostro-cli 0.17.0 reads no config file.
 
-The JSON-capable commands that talk to the node (every one except `schema`,
-`identity init`, `identity show` and `order mine`) also read the four node settings from
-`config` in the data directory: `$MCLI_DIR/config`, else `~/.mcli/config`
-(on Windows the profile folder, normally `%USERPROFILE%\.mcli\config`). A program that runs each command in a fresh
-process, as coding agents and MCP hosts do, can write the settings there once instead of
-passing `-m`, `-r` and `-p` on every call.
+Every command, JSON-capable or [human-only](commands/legacy.md), also reads the four node
+settings from `config` in the data directory: `$MCLI_DIR/config`, else `~/.mcli/config`
+(on Windows the profile folder, normally `%USERPROFILE%\.mcli\config`). Only the local
+commands (`schema`, `identity init`, `identity show`, `order mine`) and the gRPC operator
+commands (`admsetmaintenance`, `admmaintenancestatus`, `admcancelpending`) never read it.
+A program that runs each command in a fresh process, as coding agents and MCP hosts do, can
+write the settings there once instead of passing `-m`, `-r` and `-p` on every call.
 
 ```sh
 mkdir -m 700 -p ~/.mcli
@@ -106,9 +107,9 @@ mostro-cli --output json order list
 The format:
 
 - One `KEY=VALUE` per line, with the variable names as keys. Blank lines and lines
-  starting with `#` are skipped, an `export ` prefix is dropped, key and value are trimmed
-  and one pair of matching `"` or `'` quotes around the value is removed. LF or CRLF; a
-  leading byte order mark is ignored.
+  starting with `#` are skipped, an `export ` prefix is dropped, key and value are trimmed,
+  one pair of matching `"` or `'` quotes around the value is removed and the value is
+  trimmed again (`POW=" 3 "` is 3). LF or CRLF; a leading byte order mark is ignored.
 - No inline comments (a `#` after a value is part of the value), escapes or variable
   expansion.
 - An empty value means unset. When a key is repeated, its last line wins.
@@ -130,8 +131,9 @@ hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELA
 
 When the file or the data directory does not exist, or the process may not look into the
 directory, there is no file and nothing changes. Reading the file never creates the data
-directory or anything in it. The [human-only commands](commands/legacy.md) do not read it
-yet: give them `MOSTRO_PUBKEY` and `RELAYS` in the environment or with `-m` and `-r`.
+directory or anything in it. A [human-only command](commands/legacy.md) takes the settings
+with the same precedence and refuses the same files, but stops with its own one-line
+message (exit 1) instead of `configuration_invalid` and the `hint:` line (see that page).
 
 ## Create an identity
 
