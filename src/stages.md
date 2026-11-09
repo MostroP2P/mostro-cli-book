@@ -21,7 +21,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order watch`, `order sync`, `schema`), or, for `order chat`, the send step did not run (no `--message`, or the command stopped before sending). |
+| `not_applicable` | This command publishes nothing (`order list`, `message list`, `order watch`, `order sync`, `schema`, `config set`, `config show`), or, for `order chat`, the send step did not run (no `--message`, or the command stopped before sending). |
 | `not_attempted` | Nothing was published: the command stopped before (bad arguments, no identity, refused PoW...) or every relay explicitly rejected the event. For `order chat`, the send step ran and published nothing (the wrap failed, no relay could be connected, or every relay rejected the message). |
 | `published` | At least one relay confirmed accepting the signed request. |
 | `unknown` | No relay confirmed, but at least one failed ambiguously (timeout, dropped connection after the send): the event may be out there. |
@@ -39,7 +39,7 @@ safe to repeat.
 
 | Value | Meaning |
 | --- | --- |
-| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`), or does not report it (the cache of the counterparty's key of `order chat` and `order watch`). |
+| `not_applicable` | This command never writes locally (`order list`, `order info`, `message list`, `schema`, `config show`), or does not report it (the cache of the counterparty's key of `order chat` and `order watch`). |
 | `not_attempted` | No write was called for, or the command stopped before writing. |
 | `applied` | The write the outcome calls for was done (an order row, a status update, a reserved trade index). |
 | `failed` | The write was attempted and failed. |
@@ -53,13 +53,14 @@ What "the write" is depends on the command:
 | `order fiat-sent`, `order release`, `order cancel` | Update the order's local status; for a range maker, record the next trade index |
 | `bond add-invoice` | Nothing (`not_attempted` on success) |
 | `order sync` | Insert rows for orders the store did not know |
+| `config set` | Rewrite the config file `config` in the data directory |
 
 ## Allowed combinations
 
 The generated schemas enforce exactly these combinations. The tables read
 `publication / daemon_acceptance / persistence`.
 
-### Reads: `order list`, `message list`, `schema`
+### Reads: `order list`, `message list`, `schema`, `config show`
 
 | status | Stages |
 | --- | --- |
@@ -144,6 +145,18 @@ index was recorded before publishing. An index that cannot be recorded stops the
 | --- | --- | --- |
 | `ok` | `not_applicable / not_applicable / not_applicable` | new records, or empty at the deadline |
 | `error` | `not_applicable / not_applicable / not_applicable` | arguments, local failures, the opening replay, `read_limit_exceeded` |
+
+### Local write: `config set`
+
+| status | Stages | Typical codes |
+| --- | --- | --- |
+| `ok` | `not_applicable / not_applicable / applied` | |
+| `error` | `not_applicable / not_applicable / not_applicable` | `invalid_arguments` |
+| `error` | `not_applicable / not_applicable / not_attempted` | `configuration_invalid`, `configuration_unwritable` |
+| `error` | `not_applicable / not_applicable / failed` | `configuration_unwritable` (the old file is intact) |
+
+`persistence` is about the config file; after `failed` the old file is intact. The
+generated schema of `identity init` allows the same combinations, for `mcli.db`.
 
 ### Unresolved or rejected before running
 

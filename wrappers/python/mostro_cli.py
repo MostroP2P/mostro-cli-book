@@ -62,10 +62,15 @@ class IncompatibleError(Exception):
 
 @dataclass
 class Outcome:
-    """One parsed envelope plus the process exit code."""
+    """One parsed envelope plus the process exit code and stderr.
+
+    `stderr` is what the process wrote there (for example a config-file `hint:` line);
+    it is never parsed.
+    """
 
     raw: Dict[str, Any]
     exit_code: int
+    stderr: str = ""
     status: str = field(init=False)
     command: Optional[str] = field(init=False)
     data: Optional[Dict[str, Any]] = field(init=False)
@@ -149,7 +154,7 @@ class MostroCli:
                                  stderr=stderr, exit_code=proc.returncode)
         if raw.get("schema_version") != SCHEMA_VERSION:
             raise IncompatibleError(f"unsupported schema_version {raw.get('schema_version')!r}")
-        outcome = Outcome(raw, proc.returncode)
+        outcome = Outcome(raw, proc.returncode, stderr)
         expected = 0 if outcome.ok else (2 if outcome.code in ARGUMENT_CODES else 1)
         if expected != proc.returncode:
             # Should not happen; keep the envelope but make the mismatch visible.

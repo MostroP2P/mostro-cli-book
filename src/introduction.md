@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 154 outcomes, each in its own file with the exact command line, all
+- **many examples**: 164 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -73,6 +73,40 @@ informative, not a stable identifier.
 > (up to 20 bits) instead of failing with `pow_required`, which now carries `error.required`
 > and `error.configured` ([Proof of work](errors.md#proof-of-work)). With 0.17.0, set `--pow` /
 > `POW` to the node's value yourself.
+
+> After 0.17.0, not yet released: the JSON-capable commands that talk to the node also read
+> the node settings from `$MCLI_DIR/config` ([The config file](getting_started.md#the-config-file);
+> [mostro-cli#248](https://github.com/MostroP2P/mostro-cli/pull/248)).
+> With 0.17.0, pass them as options or environment variables.
+
+> After 0.17.0, not yet released: the human-only commands, except the gRPC operator
+> commands, read the config file too, with the same precedence
+> ([Human-only commands](commands/legacy.md);
+> [mostro-cli#249](https://github.com/MostroP2P/mostro-cli/pull/249)).
+> With 0.17.0, pass their settings as options or environment variables.
+
+> After 0.17.0, not yet released: [`config set`](commands/config_set.md) writes one node
+> setting to the config file. It brings the error code `configuration_unwritable`, which only
+> it emits, and the discovery keyword `x-positional` for its two positional arguments
+> ([mostro-cli#250](https://github.com/MostroP2P/mostro-cli/pull/250)).
+> With 0.17.0, pass the settings as options or environment variables.
+
+> After 0.17.0, not yet released: [`config show`](commands/config_show.md) reports the config
+> file's path and the node settings stored in it, read-only, and the missing-setting messages
+> of the human-only commands name `config set` and `config show`
+> ([mostro-cli#251](https://github.com/MostroP2P/mostro-cli/pull/251)).
+> This completes the config file of
+> [mostro-cli#244](https://github.com/MostroP2P/mostro-cli/issues/244).
+> With 0.17.0, pass the settings as options or environment variables.
+
+> After 0.17.0, not yet released: review fixes of the config file
+> ([mostro-cli#254](https://github.com/MostroP2P/mostro-cli/pull/254)).
+> On Unix, [`config set`](commands/config_set.md) refuses a `.config.lock` that is a symlink
+> (`configuration_unwritable`). Its owner-only modes are Unix only too: on Windows the data
+> directory and the file keep the ACLs they inherit. In the
+> [human-only commands](commands/legacy.md) a blank `MOSTRO_PUBKEY` or `-m` now prints
+> `MOSTRO_PUBKEY not set`, and that message and `RELAYS not set` say that a variable that is
+> set, even empty, wins over the file.
 
 > After 0.17.0, not yet released: `order chat --order <id> [--message <text>]` reads the
 > peer chat of an order you hold and sends one message without the counterparty's key, also

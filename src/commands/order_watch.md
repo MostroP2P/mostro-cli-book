@@ -5,7 +5,7 @@
 | `command` | `order.watch` |
 | Kind | Private live read: the node's messages about one order and its peer chat |
 | Who | Either party of an order in the local store |
-| Needs | `MOSTRO_PUBKEY`, `RELAYS`, identity (never created), the order's local row |
+| Needs | `MOSTRO_PUBKEY` and `RELAYS` (each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file)), identity (never created), the order's local row |
 | Publishes | Nothing |
 | Local write | May save the counterparty's key in the order's row, as [`order chat`](order_chat.md) does; not reported |
 | Statuses | `ok`, `error` |

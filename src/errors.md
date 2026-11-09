@@ -10,8 +10,9 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | --- | --- | --- | --- |
 | `invalid_arguments` | 2 | The command arguments are invalid. | A missing, unknown or malformed option; an out-of-range value; a removed spelling; a write, or `order chat --message`, in JSON mode without `--yes`; an unusable `--invoice -` input. Nothing was done. Fix the call. The offending value is never echoed. When the program refused an invoice value itself (given literally or read with `--invoice -`), `error.reason` is `invalid_invoice`. |
 | `output_not_supported` | 2 | This command does not support JSON output. | A human-only command was asked for JSON. Nothing ran. |
-| `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` (or their options) unset or empty. |
-| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport`. |
+| `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` unset, or empty where it is taken from: the option, else a set environment variable, else the [config file](getting_started.md#the-config-file). |
+| `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport` (or `POW`, `TRANSPORT`) on a command that sends a request; or a [config file](getting_started.md#the-config-file) that is unreadable, has a line that is not `KEY=VALUE`, has another key or has a value its setting refuses. For [`config set`](commands/config_set.md) and [`config show`](commands/config_show.md): the existing config file is refused for one of those reasons or cannot be reached; `config set` leaves it untouched. For the file, stderr has one `hint:` line naming the file and the problem (and the line, for a bad line). Nothing was sent. |
+| `configuration_unwritable` | 1 | The configuration file cannot be written, so nothing was changed. | Only [`config set`](commands/config_set.md) (after 0.17.0, not yet released): no data directory can be determined, the data directory, its lock file `.config.lock` or the temporary file cannot be created, or (on Unix) `.config.lock` is a symlink (`persistence: not_attempted`), or the write or the rename failed (`failed`). The old config file is intact either way, but the data directory may already have been created (or, on Unix, made owner-only), with an empty `.config.lock` in it. Make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk with free space, with no symlink named `.config.lock` in it, then run it again. |
 | `relay_connection_failed` | 1 | A configured relay could not be connected. | Within 10 s. Check the network and relay list; safe to retry. |
 | `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. For `order watch`, only during the opening replay: once live, no relay failure ends it. |
 | `read_timeout` | 1 | The public order read did not complete before its deadline. | Not every relay sent EOSE within 15 s. No partial data is returned. Retry, maybe with fewer or faster relays. |
@@ -21,7 +22,7 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `identity_unreadable` | 1 | The local identity store cannot be read. | The database exists but cannot be opened or holds no valid mnemonic. |
 | `identity_exists` | 1 | A local identity already exists, so nothing was changed. | Only `identity init`: `mcli.db` (or its `-journal`, `-wal` or `-shm` file) is already in the data directory. Nothing was touched; use `identity show`. |
 | `protocol_unsupported` | 1 | The node speaks a protocol version this program does not support. | The node advertises protocol v1 (gift wrap). Nothing sent. |
-| `pow_required` | 1 | The node requires more proof of work than is configured. | The program mines what the node advertises on its own, up to 20 bits, so this means the node asks for more. `error.required` is the node's value and `error.configured` the `--pow` / `POW` floor: set `--pow <required>` to mine it (see [Proof of work](#proof-of-work)). Usually found before sending (`error`, nothing published); when found only after a timeout, it is `uncertain`. |
+| `pow_required` | 1 | The node requires more proof of work than is configured. | The program mines what the node advertises on its own, up to 20 bits, so this means the node asks for more. `error.required` is the node's value and `error.configured` the `--pow` / `POW` / config-file floor: set `--pow <required>` to mine it (see [Proof of work](#proof-of-work)). Usually found before sending (`error`, nothing published); when found only after a timeout, it is `uncertain`. |
 | `request_rejected` | 1 | No relay confirmed accepting the request. | `publication: not_attempted` ⇒ every relay refused the event, provably nothing sent (`error`). `publication: unknown` ⇒ a relay failed ambiguously; for a write this is `uncertain`. For `order chat` it is about the chat message, which relays that require proof of work refuse (`--pow` does not apply). |
 | `reply_timeout` | 1 | The node did not answer before the deadline. | Published, no correlated reply before the deadline (`--reply-timeout`, 15 s by default). For `order info` an `error` (repeatable); for writes `uncertain`. |
 | `node_refused` | 1 | The node refused the request. | The node answered `cant-do`. `error.reason` carries its reason when it is a snake_case word. The node did not act. |
@@ -74,14 +75,18 @@ before it sends anything and mines what the request needs:
 | `order rate` | the trade key of a finished order | the higher of `pow` and `pow_first_contact` |
 | `order add-invoice`, `bond add-invoice`, `order fiat-sent`, `order release`, `order cancel`, `dispute open` | the trade key of an order the node holds open | `pow` |
 
-`--pow` / `POW` is a floor: the program never mines less than it, and mines more when the node
-asks for more. With no info event, or one without these tags, it mines the floor only.
+`--pow`, `POW` or the `POW` line of the [config file](getting_started.md#the-config-file) is a
+floor: the program never mines less than it, and mines more when the node asks for more. With
+no info event, or one without these tags, it mines the floor only.
 
 The program raises the work on its own only up to **20 bits** (about a million hashes: a
 second or two on a laptop). A node that asks for more gets nothing, and the command fails with
 `pow_required` before publishing. `error.required` says how many bits the node wants, and
-`error.configured` how many were configured. Setting `--pow` (or `POW`) to `error.required` or
-more mines it, however long that takes.
+`error.configured` how many were configured. Setting `--pow` (or `POW`, or the config file's
+`POW`) to `error.required` or more mines it, however long that takes. Raise it where the
+value is actually taken from: an option beats a set `POW` variable, which beats the file, so
+a `POW` set in the environment (even `0` or empty) hides the file's line. Unset it, or change
+it too.
 
 `pow_required` can also come after the request was published: the node did not answer, and it
 advertises more work than was sent (it changed its value, or did not know a key the program
@@ -91,30 +96,31 @@ took for known). That outcome is `uncertain`, with the same two fields.
 
 `E` = as `error`, `U` = as `uncertain`, `E/U` = either, depending on the stages.
 
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | watch | identity init | identity show | mine | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | E | | | | |
-| `read_timeout` | E | | | | | | | | E | E | E | E | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | E | E | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | E | | E | E | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | E | | E | | |
-| `identity_exists` | | | | | | | | | | | | | E | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | | | E | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | E | E | | | | |
-| `store_unreadable` | | | | | | | | | E | E | E | E | | | E | |
-| `counterparty_unknown` | | | | | | | | | | | E | | | | | |
+| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | watch | identity init | identity show | mine | config set | config show | schema |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | E | | | | E | E | |
+| `configuration_unwritable` | | | | | | | | | | | | | | | | E | | |
+| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | E | | | | | | |
+| `read_timeout` | E | | | | | | | | E | E | E | E | | | | | | |
+| `read_limit_exceeded` | E | | | | | | | | E | E | E | E | | | | | | |
+| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | E | | E | E | | | |
+| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | E | | E | | | | |
+| `identity_exists` | | | | | | | | | | | | | E | | | | | |
+| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | | | |
+| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | | | |
+| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | | | |
+| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | | | |
+| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | | | |
+| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | | | |
+| `order_declined` | | | E | E | E | E | E | E | | | | | | | | | | |
+| `order_not_saved` | | | U | U | | | | | U | | | | | | | | | |
+| `store_unwritable` | | | E | E | E | E | E | E | E | | | | E | | | | | |
+| `order_unknown` | | | | | E | E | E | E | | E | E | E | | | | | | |
+| `store_unreadable` | | | | | | | | | E | E | E | E | | | E | | | |
+| `counterparty_unknown` | | | | | | | | | | | E | | | | | | | |
 
 `output_not_supported` is emitted only for [human-only commands](commands/legacy.md).

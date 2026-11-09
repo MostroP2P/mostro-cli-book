@@ -4,7 +4,7 @@
 | --- | --- |
 | `command` | `order.list` |
 | Kind | Public read |
-| Needs | `MOSTRO_PUBKEY`, `RELAYS`. No identity: the database is never opened |
+| Needs | `MOSTRO_PUBKEY`, `RELAYS`, from the option, the environment or the [config file](../getting_started.md#the-config-file). No identity: the database is never opened, and `config` is the only file it reads in the data directory |
 | Publishes | Nothing (only relay subscriptions, with throw-away keys if a relay asks for NIP-42 auth) |
 | Statuses | `ok`, `error` |
 | Schemas | `schemas/order.list.input.json`, `schemas/order.list.output.json` |

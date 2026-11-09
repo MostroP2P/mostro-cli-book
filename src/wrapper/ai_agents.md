@@ -17,6 +17,7 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `sync_orders(since_minutes?)` | `order sync` | local only |
 | `my_orders()` | `order mine` | no |
 | `show_identity()` | `identity show` | no |
+| `show_config()` | `config show` | no |
 | `create_order(...)` | `order new` | **yes** |
 | `take_sell_order(order_id, invoice?, amount?)` | `order take-sell` | **yes** |
 | `take_buy_order(order_id, amount?)` | `order take-buy` | **yes** |
@@ -30,11 +31,47 @@ from `input_schema` in `mostro-cli --output json schema` and keep descriptions s
 | `chat(order_id, message?)` | `order chat` | **yes** with `message` (to the counterparty) |
 | `watch_order(order_id, after?)` | `order watch` | no |
 
-`identity init` is a set-up step for the operator, not a tool: run it once when deploying.
+`identity init` and `config set` are set-up steps for the operator, not tools: run them
+when deploying.
 Pass invoices with `--invoice -` on standard input rather than on the command line.
 
 Return the **whole envelope** to the model (it is compact and self-describing), or a
 reduced form: `status`, `error.code`, `error.reason`, warning codes, `data`.
+
+## Configuration
+
+Agent hosts usually run each command in a fresh process, so an `export` from an earlier call
+is gone. Put the node settings in the [config file](../getting_started.md#the-config-file)
+when deploying, next to `identity init`, with [`config set`](../commands/config_set.md)
+(`config set mostro-pubkey <key>`, `config set relays <list>`) or by hand: each process then
+finds `MOSTRO_PUBKEY`, `RELAYS` and, when needed, `POW` without `-m`, `-r` or `-p`. The
+[human-only commands](../commands/legacy.md) read it too, except the gRPC operator
+commands. (After 0.17.0, not yet released; with 0.17.0, set them in the environment the tool
+layer gives each process.)
+
+A variable the host already sets still wins over the file, even an empty one: an empty
+`RELAYS` gives `configuration_missing`, and an old value selects the old relays. When the
+file should supply the settings, unset `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT` in
+the environment the tool layer passes on.
+
+Never put secrets there: the file takes only the four node settings and refuses any other
+key, `ADMIN_NSEC` included. Keep it owner-only (`chmod 600`); on Unix `config set` writes it
+so. On Windows `config set` sets no permissions of its own: the file keeps the ACLs it
+inherits from the data directory.
+
+Hand `configuration_missing` and `configuration_invalid` to the human together with the
+stderr `hint:` line, when there is one: it names the config file and the problem (and the
+line at fault, for a bad line), never the file's content. The bundled Python and TypeScript
+wrappers keep stderr next to the envelope (`outcome.stderr`, `result.stderr`), and the shell
+wrapper passes it through. The Rust wrapper drops it: read `output.stderr` in its `run` if
+you need the hint. `configuration_unwritable`, from `config set` only, goes to the human too:
+the config file or its data directory cannot be written.
+
+After `configuration_missing` or `configuration_invalid`, call `show_config()`
+([`config show`](../commands/config_show.md)) and hand its result to the human as well: it
+gives the file's path and the values stored there, or, for a refused file,
+`configuration_invalid` with the same `hint:` line. It reports only the file, so a value it
+shows may still be overridden by a variable the host sets.
 
 ## Consent: `--yes` belongs to the human
 
@@ -44,7 +81,7 @@ amounts). Recommended:
 
 - read tools: run freely;
 - `order sync`: run freely (local, idempotent);
-- `order mine`, `identity show`: run freely (local, read-only);
+- `order mine`, `identity show`, `config show`: run freely (local, read-only);
 - every write: require an explicit confirmation step in the UI each time;
 - `order chat` with a message: confirm each message; it goes to the counterparty;
 - `order release`: additionally show that it is irreversible and that the fiat must have
@@ -114,8 +151,9 @@ released; 0.17.0 reports those messages with `next_step` null.
 | `node_refused` / `invalid_amount` | Choose an amount inside `fiat_amount_min`..`fiat_amount_max` |
 | `node_refused` / `invalid_order_status` | Refresh with `get_orders`; someone else may have taken it |
 
-Errors it should hand to the human: `configuration_*`, `identity_*`, `store_*`,
-`protocol_unsupported`, `pow_required`, `internal_error`, any `uncertain`.
+Errors it should hand to the human: `configuration_*` (with the stderr `hint:` line),
+`identity_*`, `store_*`, `protocol_unsupported`, `pow_required`, `internal_error`, any
+`uncertain`.
 
 ## Prompt snippet
 
