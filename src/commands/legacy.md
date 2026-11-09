@@ -91,8 +91,10 @@ mostro-cli order chat --order <order-id>
 mostro-cli order chat --order <order-id> --message "hi, sending now"
 ```
 
-- **Needs** `MOSTRO_PUBKEY`, `RELAYS`, an existing identity (it never creates one) and the
-  order's row in the local store. An order with no row is `order_unknown`, before any relay
+- **Needs** `MOSTRO_PUBKEY` and `RELAYS` (each from its root option, its environment variable
+  or the [config file](../getting_started.md#the-config-file), as for the JSON-capable
+  commands), an existing identity (it never creates one) and the order's row in the local
+  store. An order with no row is `order_unknown`, before any relay
   is contacted.
 - **Options.** `--since` is 1 to 10080 minutes (default 10080, the seven-day chat window).
   `--message` takes one value, trimmed, 1 to 4096 bytes; a text that starts with `-` is
