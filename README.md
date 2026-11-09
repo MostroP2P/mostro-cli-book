@@ -63,5 +63,5 @@ Also documented: `order watch` of [mostro-cli#246](https://github.com/MostroP2P/
 in human mode ([mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)) and with JSON output ([mostro-cli#262](https://github.com/MostroP2P/mostro-cli/pull/262)),
 from the branches stacked on `main`, not yet released; `schemas/discovery.json` and
 `schemas/order.watch.input.json` refreshed from `feat/order-watch-json` on 2026-11-09. Its output
-schema file `schemas/order.watch.output.json` ([mostro-cli#CLI_PR_order_watch_schema](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_watch_schema))
+schema file `schemas/order.watch.output.json` ([mostro-cli#263](https://github.com/MostroP2P/mostro-cli/pull/263))
 was written from `feat/order-watch-schema` on 2026-11-09.
