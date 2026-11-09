@@ -12,7 +12,7 @@ You publish a **buy** order: you pay fiat and receive sats.
    `next_step: wait_for_taker` (or `pay_bond_invoice` on a bonded node).
 
 2. **Wait for a seller.** A seller takes it with `order take-buy` and pays the hold invoice.
-   Poll `message list --order <id>`.
+   Wait with `order watch --order <id> --after <cursor>`.
 
 3. **Give an invoice if asked.** Without `--invoice` at creation, the node sends a message
    with `next_step: add_invoice` (payload `order`, with the computed `sats_amount`):

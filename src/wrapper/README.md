@@ -18,6 +18,8 @@ pipe stdin as in step 2 below.
 3. if spawn failed                     → TransportError(may_have_acted = false)
    if timeout                          → TransportError(may_have_acted = is_write)
    (order chat --message counts as a write here: relays only, never the node; allow it 90 s)
+   (order watch is a read; allow it --timeout + 70 s, 100 s with its default: more than
+    the one constructor timeout of the shipped wrappers, so give it a client of its own)
 4. stdout.strip() empty                → TransportError(may_have_acted = is_write and exit == 1)
    not one JSON object                 → TransportError(may_have_acted = is_write)
 5. envelope.schema_version != "1"      → IncompatibleError

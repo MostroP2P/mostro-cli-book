@@ -47,7 +47,7 @@ status.
 
 | `result` | Node reply | Meaning | Next |
 | --- | --- | --- | --- |
-| `waiting_seller_payment` | `waiting-seller-to-pay` | Invoice stored; the seller has not locked the sats yet | Wait (watch `message list`) |
+| `waiting_seller_payment` | `waiting-seller-to-pay` | Invoice stored; the seller has not locked the sats yet | Wait (`order watch --order <id>`) |
 | `payment_accepted` | `hold-invoice-payment-accepted` | Invoice stored and the seller had already paid: the order is `active` | Pay the fiat, then `order fiat-sent` |
 | `invoice_updated` | `invoice-updated` | A replacement invoice was stored | Wait for the payout |
 

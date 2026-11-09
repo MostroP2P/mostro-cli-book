@@ -8,7 +8,8 @@ Lightning **hold invoice** until you release them.
 Two read commands tell you where a trade is:
 
 - [`message list`](../commands/message_list.md) — what the node told you, with `next_step`
-  when it asks for something. Poll it; deduplicate by `event_id`.
+  when it asks for something. Poll it; deduplicate by `event_id`. Or wait with
+  [`order watch`](../commands/order_watch.md), which returns at the first new message.
 - [`order info`](../commands/order_info.md) — the order's current `status`, authoritative.
 
 A robust program drives the trade from **`order info` status** and uses `message list` to
@@ -31,7 +32,7 @@ waiting-buyer-invoice / active ──(buyer: fiat-sent)──► fiat-sent ─�
    `data.next_step` is `wait_for_taker` (on a bonded node, `pay_bond_invoice` first: pay
    `data.payment_request`). Keep `data.order.id`.
 
-2. **Wait for a taker.** Poll `message list --order <id>`. When a buyer takes the order the
+2. **Wait for a taker.** Wait with `order watch --order <id> --after <cursor>`. When a buyer takes the order the
    node sends a message with `next_step: pay_hold_invoice` and a `payment_request` payload:
 
    ```json

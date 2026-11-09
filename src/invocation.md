@@ -153,9 +153,9 @@ The JSON-capable commands replaced old spellings (`listorders`, `neworder`, `tak
 With the default reply deadline, a wrapper timeout of **45 seconds** per run is comfortably
 above the worst case; add whatever you add to `--reply-timeout`. If you kill the process
 earlier, treat a write as uncertain. [`order chat`](commands/order_chat.md) takes longer:
-up to 52 s, or 78 s with `--message`; allow it 90 s. [`order watch`](commands/legacy.md#order-watch) has no
-such bound: it stays connected until the trade ends or its `--timeout`, in human output only
-for now.
+up to 52 s, or 78 s with `--message`; allow it 90 s. A JSON call of [`order watch`](commands/order_watch.md)
+takes at most `--timeout` + 67 s: give it `--timeout` + 70 s, 100 s with the default
+`--timeout` of 30. `--reply-timeout` does not apply to it.
 
 ### `--reply-timeout SECONDS`
 
@@ -184,3 +184,4 @@ data directory (both may reserve trade indexes and update rows). Run write comma
 `schema` never touch the data directory; `order info`, `message list`, `order mine` and
 `identity show` only read it. `identity init` creates it. `order chat` may write the
 counterparty's key into the order's row: run it one at a time with the write commands.
+`order watch` may write it too, only in the lookup before it starts watching.

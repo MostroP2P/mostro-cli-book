@@ -13,9 +13,9 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `configuration_missing` | 1 | Required node configuration is missing. | `MOSTRO_PUBKEY` or `RELAYS` (or their options) unset or empty. |
 | `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport`. |
 | `relay_connection_failed` | 1 | A configured relay could not be connected. | Within 10 s. Check the network and relay list; safe to retry. |
-| `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. |
+| `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. For `order watch`, only during the opening replay: once live, no relay failure ends it. |
 | `read_timeout` | 1 | The public order read did not complete before its deadline. | Not every relay sent EOSE within 15 s. No partial data is returned. Retry, maybe with fewer or faster relays. |
-| `read_limit_exceeded` | 1 | The public order read exceeded its event limit. | More than 10 000 matching events. Narrow the read (`--since`). |
+| `read_limit_exceeded` | 1 | The public order read exceeded its event limit. | More than 10 000 matching events. Narrow the read (`--since`). For `order watch`, more than 10 000 records in one run. |
 | `internal_error` | 1 | An internal error occurred. | A bug or an output that could not be written. Report it. |
 | `identity_missing` | 1 | No local identity exists. | No data directory, `mcli.db` or user row. Create one (see [Getting started](getting_started.md#create-an-identity)) or point `MCLI_DIR` at the right place. |
 | `identity_unreadable` | 1 | The local identity store cannot be read. | The database exists but cannot be opened or holds no valid mnemonic. |
@@ -91,30 +91,30 @@ took for known). That outcome is `uncertain`, with the same two fields.
 
 `E` = as `error`, `U` = as `uncertain`, `E/U` = either, depending on the stages.
 
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | identity init | identity show | mine | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | | | | |
-| `read_timeout` | E | | | | | | | | E | E | E | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | E | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | | E | E | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | | E | | |
-| `identity_exists` | | | | | | | | | | | | E | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | | E | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | E | | | | |
-| `store_unreadable` | | | | | | | | | E | E | E | | | E | |
-| `counterparty_unknown` | | | | | | | | | | | E | | | | |
+| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | watch | identity init | identity show | mine | schema |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
+| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
+| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | E | | | | |
+| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | E | | | | |
+| `read_timeout` | E | | | | | | | | E | E | E | E | | | | |
+| `read_limit_exceeded` | E | | | | | | | | E | E | E | E | | | | |
+| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | E | | E | E | |
+| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | E | | E | | |
+| `identity_exists` | | | | | | | | | | | | | E | | | |
+| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | |
+| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | |
+| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | |
+| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | |
+| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | |
+| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | |
+| `order_declined` | | | E | E | E | E | E | E | | | | | | | | |
+| `order_not_saved` | | | U | U | | | | | U | | | | | | | |
+| `store_unwritable` | | | E | E | E | E | E | E | E | | | | E | | | |
+| `order_unknown` | | | | | E | E | E | E | | E | E | E | | | | |
+| `store_unreadable` | | | | | | | | | E | E | E | E | | | E | |
+| `counterparty_unknown` | | | | | | | | | | | E | | | | | |
 
 `output_not_supported` is emitted only for [human-only commands](commands/legacy.md).

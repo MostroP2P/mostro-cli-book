@@ -43,9 +43,9 @@ Behaviour changes that matter to wrappers:
   to 10080 minutes instead of 30. Both legacy commands stay, unchanged: like `order chat`
   they need the order's row, and they are the fallback when it cannot find the counterparty
   (`counterparty_unknown`) and you know the key. See [`order chat`](../commands/order_chat.md).
-- After 0.17.0, not yet released: `order watch --order ID` is new, with no old spelling; it
-  follows an order until its trade ends, in human output for now. See
-  [`order watch`](../commands/legacy.md#order-watch).
+- After 0.17.0, not yet released: `order watch --order ID [--after CURSOR]` is new, with no
+  old spelling; it replaces a loop that polls `message list` and `getdmuser`. See
+  [`order watch`](../commands/order_watch.md).
 - `--kind` became `--side`; short option letters of the old commands are gone.
 - New options with no old spelling: `order new --expires-in SECONDS`, `--invoice -` (the
   invoice read from standard input) and the global `--reply-timeout SECONDS`; see

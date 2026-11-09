@@ -90,6 +90,6 @@ A store that cannot be read or written is `store_unwritable`, and nothing is sen
 
 ## Next
 
-Wait for the solver; watch [`message list`](message_list.md) and
+Wait for the solver with [`order watch`](order_watch.md) and check
 [`order info`](order_info.md). The dispute conversation itself is human-only today
 (`disputechat`).

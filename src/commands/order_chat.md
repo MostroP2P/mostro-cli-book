@@ -137,6 +137,6 @@ After `uncertain`, **do not send it again blindly**: run `order chat --order <id
 
 ## Next
 
-Poll it while you agree on the payment, as you poll [`message list`](message_list.md), and
-deduplicate by `message_id`. The trade goes on with [`order fiat-sent`](order_fiat_sent.md)
+Poll it while you agree on the payment, and deduplicate by `message_id`, or wait for new
+messages with [`order watch`](order_watch.md), which returns the chat too. The trade goes on with [`order fiat-sent`](order_fiat_sent.md)
 and [`order release`](order_release.md).
