@@ -77,3 +77,9 @@ the `rate` that follows a completed trade, part of
 [mostro-cli#243](https://github.com/MostroP2P/mostro-cli/issues/243) ([mostro-cli#265](https://github.com/MostroP2P/mostro-cli/pull/265)), from the branches
 stacked on `main`, not yet released; the schemas were refreshed from
 `feat/fiat-sent-and-rate-steps` on 2026-11-09.
+
+Also documented: the `next_step` value `release` on the seller's `fiat-sent-ok`, from the local
+order row, part of
+[mostro-cli#243](https://github.com/MostroP2P/mostro-cli/issues/243) ([mostro-cli#CLI_PR_release_step](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_release_step)), from the branches
+stacked on `main`, not yet released; the schemas were refreshed from `feat/release-step` on
+2026-11-09.

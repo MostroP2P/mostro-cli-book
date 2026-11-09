@@ -41,6 +41,7 @@ def main(order_id: str) -> None:
                     continue
                 step = message_next_step(message)  # an unknown value reads as None
                 if (step == "fiat_sent" and status != "active") or (
+                        step == "release" and status != "fiat-sent") or (
                         step == "rate" and status not in ("success", "settled-hold-invoice")):
                     continue  # keep it pending: the status may pass on a later poll
                 seen.add(message["event_id"])
@@ -65,6 +66,10 @@ def main(order_id: str) -> None:
                 elif step == "fiat_sent":
                     print("    -> send the fiat, then run:"
                           f" order fiat-sent --order {order_id} --yes")
+                elif step == "release":
+                    # Never release on the message alone: it repeats the buyer's claim.
+                    print("    -> only once the fiat is in your account, run:"
+                          f" order release --order {order_id} --yes")
                 elif step == "rate":
                     # The node takes a seller's rating from settled-hold-invoice, a buyer's at success.
                     print(f"    -> run: order rate --order {order_id} --rating <1-5> --yes")

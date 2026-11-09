@@ -139,7 +139,7 @@ export function isKnownPayload(p: MessagePayload): p is KnownMessagePayload {
   return KNOWN_PAYLOAD_KINDS.has(p.kind);
 }
 export type MessageNextStep =
-  | "pay_bond_invoice" | "add_invoice" | "pay_hold_invoice" | "add_bond_invoice" | "fiat_sent" | "rate";
+  | "pay_bond_invoice" | "add_invoice" | "pay_hold_invoice" | "add_bond_invoice" | "fiat_sent" | "release" | "rate";
 export interface MessageRecord {
   event_id: Hex64; created_at: Rfc3339 | null; created_at_unix: Decimal;
   order_id: Uuid | null; request_id: Decimal | null; action: string;

@@ -41,6 +41,10 @@ Poll it: there is no push. Typical intervals are 10 to 30 seconds during an acti
 Deduplicate by `event_id`. To follow one order, with its chat, use
 [`order watch`](order_watch.md): it returns as soon as there is something new.
 
+After 0.17.0, not yet released: the local order rows are read once, before any relay is
+contacted, to know your side of each trade (for [`release`](#next_step)); rows that cannot be
+read give `store_unreadable`, and nothing is sent.
+
 **Human output.** One block per message. When a message asks you for something, its
 "👉 Next:" line names the command with the record's order id filled in, for example
 "send an invoice for the sats: `order add-invoice --order 00000000-0000-0000-0000-000000000001 --invoice <invoice>`"
@@ -49,7 +53,9 @@ Deduplicate by `event_id`. To follow one order, with its chat, use
 After 0.17.0, not yet released: `hold-invoice-payment-accepted` prints
 "send the fiat, then: `order fiat-sent --order <order-id>`" and `rate` prints
 "rate your counterparty: `order rate --order <order-id> --rating <1-5>`"; 0.17.0 prints no
-"👉 Next:" line for either.
+"👉 Next:" line for either. The seller's `fiat-sent-ok` (below) prints
+"once the fiat is in your account: `order release --order <order-id>`" (after 0.17.0, not yet
+released; 0.17.0 prints no "👉 Next:" line for it).
 
 ## Success data: `MessageListData`
 
@@ -86,10 +92,22 @@ After 0.17.0, not yet released: `hold-invoice-payment-accepted` prints
 | `pay_hold_invoice` | `pay-invoice` | Pay the hold invoice in the `payment_request` payload |
 | `add_bond_invoice` | `add-bond-invoice` | [`bond add-invoice`](bond_add_invoice.md) |
 | `fiat_sent` | `hold-invoice-payment-accepted` (to the buyer only, once the seller's hold invoice is paid) | Send the fiat, then [`order fiat-sent`](order_fiat_sent.md); only while `order info` says `active` |
+| `release` | `fiat-sent-ok`, on the seller's copy only (below) | Check that the fiat is in your account, then [`order release`](order_release.md); only while `order info` says `fiat-sent` |
 | `rate` | `rate` (to both sides, right after `purchase-completed` for the buyer or `hold-invoice-payment-settled` for the seller) | [`order rate`](order_rate.md); once the order is `success` (a seller may rate from `settled-hold-invoice`) |
 
-`fiat_sent` and `rate` come after 0.17.0 and are not yet released; 0.17.0 reports both messages
-with `next_step: null`.
+`fiat_sent`, `release` and `rate` come after 0.17.0 and are not yet released; 0.17.0 reports
+those messages with `next_step: null`.
+
+The node sends `fiat-sent-ok` to both sides. `release` is on the seller's copy only, and the
+side comes from your local order row, not from the message: the row must say you are the
+seller (its order kind and whether you made or took the order), the message must have gone to
+the key stored for that order, and it must answer no request (the buyer's copy echoes the
+`request_id` of the buyer's `fiat-sent`). Without a local row (a trade made in another client,
+after a restore from the mnemonic, or a range child before [`order sync`](order_sync.md)), with
+a row written by 0.16.3 or earlier for an order you took (those rows say "made" for every
+order), or on another key, the record has `next_step: null`: check the trade with
+[`order info`](order_info.md) yourself. Never release on the record alone: it repeats the
+buyer's claim, not a proof that the fiat arrived.
 
 Every other action has `next_step: null`, and so has a `payment-failed` while the node still
 retries.

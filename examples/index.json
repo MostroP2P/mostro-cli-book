@@ -340,6 +340,27 @@
       }
     },
     {
+      "id": "message.list/release_for_the_seller",
+      "file": "message.list/release_for_the_seller.json",
+      "command": "message.list",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "message",
+        "list",
+        "--since",
+        "60"
+      ],
+      "title": "The seller's copy of fiat-sent-ok asks release; the copy that echoes the buyer's request id asks nothing",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/021-next-steps/contracts/examples.json",
+        "case": "the_seller_is_asked_to_release"
+      }
+    },
+    {
       "id": "message.list/payload_kinds",
       "file": "message.list/payload_kinds.json",
       "command": "message.list",

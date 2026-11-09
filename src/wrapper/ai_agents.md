@@ -97,9 +97,12 @@ retrying the payout on its own: wait; it asks for a new invoice (`add_invoice`) 
 attempt fails, or at once when `payment_attempts` is `"0"`. A `fiat_sent` record (on
 `hold-invoice-payment-accepted`, buyer only) asks the human to send the fiat; call
 `confirm_fiat_sent` only while the order is `active` and the human says the fiat is sent. A
-`rate` record asks for `rate_counterparty` once the order is `success` (a seller may rate from
-`settled-hold-invoice`). Both values come after
-0.17.0 and are not yet released; 0.17.0 reports those messages with `next_step` null.
+`release` record (on the seller's `fiat-sent-ok`) repeats the buyer's claim: call `release_sats`
+only while the order is `fiat-sent` and after the human confirms the fiat is in the
+account, never on the record alone; its absence proves nothing (a trade with no local row
+never gets one). A `rate` record asks for `rate_counterparty` once the order is `success` (a
+seller may rate from `settled-hold-invoice`). These values come after 0.17.0 and are not yet
+released; 0.17.0 reports those messages with `next_step` null.
 
 ## Errors the model can fix itself
 
