@@ -14,9 +14,9 @@ command pages and the [matrix](#which-command-emits-which-code) below).
 | `configuration_invalid` | 1 | The node configuration is invalid. | Unparsable node key or relay URL, bad `--pow` or `--transport` (or `POW`, `TRANSPORT`) on a command that sends a request; or a [config file](getting_started.md#the-config-file) that is unreadable, has a line that is not `KEY=VALUE`, has another key or has a value its setting refuses. For [`config set`](commands/config_set.md) and [`config show`](commands/config_show.md): the existing config file is refused for one of those reasons or cannot be reached; `config set` leaves it untouched. For the file, stderr has one `hint:` line naming the file and the problem (and the line, for a bad line). Nothing was sent. |
 | `configuration_unwritable` | 1 | The configuration file cannot be written, so nothing was changed. | Only [`config set`](commands/config_set.md) (after 0.17.0, not yet released): no data directory can be determined, the data directory, its lock file `.config.lock` or the temporary file cannot be created, or (on Unix) `.config.lock` is a symlink (`persistence: not_attempted`), or the write or the rename failed (`failed`). The old config file is intact either way, but the data directory may already have been created (or, on Unix, made owner-only), with an empty `.config.lock` in it. Make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk with free space, with no symlink named `.config.lock` in it, then run it again. |
 | `relay_connection_failed` | 1 | A configured relay could not be connected. | Within 10 s. Check the network and relay list; safe to retry. |
-| `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. |
+| `relay_read_failed` | 1 | A configured relay failed during the public order read. | A relay closed or dropped the subscription. For a read: retry. **After publishing a write, this comes as `uncertain`.** The message mentions "public order read" for every command. For `order watch`, only during the opening replay: once live, no relay failure ends it. |
 | `read_timeout` | 1 | The public order read did not complete before its deadline. | Not every relay sent EOSE within 15 s. No partial data is returned. Retry, maybe with fewer or faster relays. |
-| `read_limit_exceeded` | 1 | The public order read exceeded its event limit. | More than 10 000 matching events. Narrow the read (`--since`). |
+| `read_limit_exceeded` | 1 | The public order read exceeded its event limit. | More than 10 000 matching events. Narrow the read (`--since`). For `order watch`, more than 10 000 records in one run. |
 | `internal_error` | 1 | An internal error occurred. | A bug or an output that could not be written. Report it. |
 | `identity_missing` | 1 | No local identity exists. | No data directory, `mcli.db` or user row. Create one (see [Getting started](getting_started.md#create-an-identity)) or point `MCLI_DIR` at the right place. |
 | `identity_unreadable` | 1 | The local identity store cannot be read. | The database exists but cannot be opened or holds no valid mnemonic. |
@@ -96,31 +96,31 @@ took for known). That outcome is `uncertain`, with the same two fields.
 
 `E` = as `error`, `U` = as `uncertain`, `E/U` = either, depending on the stages.
 
-| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | identity init | identity show | mine | config set | config show | schema |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
-| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | | | | E | E | |
-| `configuration_unwritable` | | | | | | | | | | | | | | | E | | |
-| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
-| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | | | | | | |
-| `read_timeout` | E | | | | | | | | E | E | E | | | | | | |
-| `read_limit_exceeded` | E | | | | | | | | E | E | E | | | | | | |
-| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
-| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | | E | E | | | |
-| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | | E | | | | |
-| `identity_exists` | | | | | | | | | | | | E | | | | | |
-| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | | |
-| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | | |
-| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | | |
-| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | | |
-| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | | |
-| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | | |
-| `order_declined` | | | E | E | E | E | E | E | | | | | | | | | |
-| `order_not_saved` | | | U | U | | | | | U | | | | | | | | |
-| `store_unwritable` | | | E | E | E | E | E | E | E | | | E | | | | | |
-| `order_unknown` | | | | | E | E | E | E | | E | E | | | | | | |
-| `store_unreadable` | | | | | | | | | E | E | E | | | E | | | |
-| `counterparty_unknown` | | | | | | | | | | | E | | | | | | |
+| Code | list | info | new | take-* | add-invoice | bond | fiat-sent / release / cancel | dispute open / rate | sync | message list | chat | watch | identity init | identity show | mine | config set | config show | schema |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `invalid_arguments` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `configuration_missing` | E | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `configuration_invalid` | E | E | E | E | E | E | E | E | E | E | E | E | | | | E | E | |
+| `configuration_unwritable` | | | | | | | | | | | | | | | | E | | |
+| `relay_connection_failed` | E | E | E | E | E | E | E | E | E | E | E | E | | | | | | |
+| `relay_read_failed` | E | E | E/U | E/U | E/U | E/U | E/U | E/U | E | E | E | E | | | | | | |
+| `read_timeout` | E | | | | | | | | E | E | E | E | | | | | | |
+| `read_limit_exceeded` | E | | | | | | | | E | E | E | E | | | | | | |
+| `internal_error` | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E | E |
+| `identity_missing` | | E | E | E | E | E | E | E | E | E | E | E | | E | E | | | |
+| `identity_unreadable` | | E | E | E | E | E | E | E | E | E | E | E | | E | | | | |
+| `identity_exists` | | | | | | | | | | | | | E | | | | | |
+| `protocol_unsupported` | | E | E | E | E | E | E | E | | | | | | | | | | |
+| `pow_required` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | | | | | | | | |
+| `request_rejected` | | E | E/U | E/U | E/U | E/U | E/U | E/U | | | E/U | | | | | | | |
+| `reply_timeout` | | E | U | U | U | U | U | U | | | | | | | | | | |
+| `node_refused` | | E | E | E | E | E | E | E | | | | | | | | | | |
+| `reply_malformed` | | E | U | U | U | U | U | U | | | | | | | | | | |
+| `order_declined` | | | E | E | E | E | E | E | | | | | | | | | | |
+| `order_not_saved` | | | U | U | | | | | U | | | | | | | | | |
+| `store_unwritable` | | | E | E | E | E | E | E | E | | | | E | | | | | |
+| `order_unknown` | | | | | E | E | E | E | | E | E | E | | | | | | |
+| `store_unreadable` | | | | | | | | | E | E | E | E | | | E | | | |
+| `counterparty_unknown` | | | | | | | | | | | E | | | | | | | |
 
 `output_not_supported` is emitted only for [human-only commands](commands/legacy.md).

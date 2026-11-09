@@ -42,7 +42,7 @@ take-sell ──► waiting-buyer-invoice ──(add-invoice)──► waiting-p
 
 4. **Wait until the order is `active`** (seller paid the hold invoice and your invoice is
    in). `order add-invoice` already tells you with `result: payment_accepted` when the
-   seller had paid first; otherwise poll `order info` / `message list`.
+   seller had paid first; otherwise wait with `order watch --order <id>` and check `order info`.
 
 5. **Pay the fiat** to the seller through the method agreed in
    [`order chat`](../commands/order_chat.md), then:

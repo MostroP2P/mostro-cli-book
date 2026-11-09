@@ -3341,6 +3341,27 @@
       }
     },
     {
+      "id": "order.watch/new_records",
+      "file": "order.watch/new_records.json",
+      "command": "order.watch",
+      "exit_code": 0,
+      "argv": [
+        "mostro-cli",
+        "--output",
+        "json",
+        "order",
+        "watch",
+        "--order",
+        "00000000-0000-0000-0000-000000000001"
+      ],
+      "title": "The first new records after the replay: a node message and a chat message, with the cursor for --after",
+      "source": {
+        "kind": "fixture",
+        "file": "specs/020-order-watch/contracts/examples.json",
+        "case": "new_records"
+      }
+    },
+    {
       "id": "config.set/saved",
       "file": "config.set/saved.json",
       "command": "config.set",

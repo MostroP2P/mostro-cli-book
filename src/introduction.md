@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 159 outcomes, each in its own file with the exact command line, all
+- **many examples**: 160 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -108,7 +108,8 @@ Reject documents whose `schema_version` you do not know.
 > With 0.17.0, pass the counterparty's key to `getdmuser -p` and `dmtouser -p`.
 
 > After 0.17.0, not yet released: `order watch --order <id>` follows an order you hold
-> until its trade ends, the node's messages and the peer chat, replayed then live, in human
-> output only for now ([`order watch`](commands/legacy.md#order-watch);
-> [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261)).
+> until its trade ends, the node's messages and the peer chat, replayed then live. In JSON
+> (`order.watch`) each call returns one document at the first new records, with a cursor for
+> `--after` ([`order watch`](commands/order_watch.md);
+> [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261), [mostro-cli#262](https://github.com/MostroP2P/mostro-cli/pull/262)).
 > With 0.17.0, poll `message list` and `getdmuser`.

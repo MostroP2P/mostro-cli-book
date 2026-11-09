@@ -57,7 +57,7 @@ If the node answers that the seller must pay first and sends no order
 | `next_step` | Meaning | Do |
 | --- | --- | --- |
 | `add_invoice` | The node needs your invoice for the sats | [`order add-invoice`](order_add_invoice.md) (the amount is in `order.sats_amount`) |
-| `wait_for_seller_payment` | Your invoice was accepted; the seller must lock the sats | Watch `message list` |
+| `wait_for_seller_payment` | Your invoice was accepted; the seller must lock the sats | Wait with `order watch --order <id>` |
 | `pay_bond_invoice` | A bonded node wants a taker bond first | Pay `payment_request`; the node continues the take after |
 | `pay_hold_invoice` | (Only for take-buy in practice) | — |
 

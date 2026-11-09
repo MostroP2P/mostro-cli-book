@@ -42,7 +42,8 @@ elif out.code == "node_refused":
 ## Following a trade
 
 `wrappers/python/example_trade_loop.py` polls `order info` and `message list` for one order
-and prints what to do for each `next_step`. It never runs a write.
+and prints what to do for each `next_step`. It never runs a write. With a binary that has
+[`order watch`](../commands/order_watch.md), wait with it instead of polling.
 
 ```python
 {{#include ../../wrappers/python/example_trade_loop.py}}

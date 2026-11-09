@@ -44,6 +44,7 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 "order.sync"
 "order.take-buy"
 "order.take-sell"
+"order.watch"
 "schema"
 ```
 
@@ -54,9 +55,10 @@ See [schema](commands/schema.md) for the full document.
 Every command except `schema`, `config set`, `config show`, `identity init`,
 `identity show` and `order mine` needs the node's public key and the relays. `order list`,
 `message list` and `order sync` only read events from the relays, and so does `order watch`,
-which stays connected until the trade ends; `order chat` reads them too and, with `--message`,
-publishes one chat message for the counterparty, never a request to the node. The other
-commands send the node one signed request through them.
+which stays connected until there is something new (in human mode, until the trade ends);
+`order chat` reads them too and, with `--message`, publishes one chat message for the
+counterparty, never a request to the node. The other commands send the node one signed
+request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -208,7 +210,6 @@ shows complete code.
 ## What is not in JSON yet
 
 The older peer chat commands `getdmuser` and `dmtouser` (use `order chat`), the dispute
-conversation, `restore`, user info, the admin commands and `order watch` (human output for
-now) are human-only today.
+conversation, `restore`, user info and the admin commands are human-only today.
 Asking them for JSON returns `output_not_supported` (exit 2) before anything runs. See
 [Human-only commands](commands/legacy.md).

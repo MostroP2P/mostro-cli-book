@@ -64,7 +64,7 @@ so a later attempt always uses a fresh key. The CLI never retries.
 
 | `next_step` | Meaning | Do |
 | --- | --- | --- |
-| `wait_for_taker` | The order is on the book | Watch `message list` for a taker |
+| `wait_for_taker` | The order is on the book | Wait for a taker with `order watch --order <id>` |
 | `pay_bond_invoice` | The node requires a maker bond before publishing the order | Pay `payment_request` with a Lightning wallet; the node publishes the order once paid |
 
 ## Outcomes

@@ -63,7 +63,7 @@ Shared with [release](order_release.md) and [cancel](order_cancel.md).
 
 | `next_step` | When | Do |
 | --- | --- | --- |
-| `wait_for_release` | after `fiat_sent` | Wait for the seller; watch `message list` |
+| `wait_for_release` | after `fiat_sent` | Wait for the seller with `order watch --order <id>` |
 | `wait_for_peer_cancel` | after `cancel_requested` | The other party must also run `order cancel` |
 | `sync_child_order` | after `released` of a sell range order that sent a next key | Run [`order sync`](order_sync.md) |
 | `null` | otherwise | |

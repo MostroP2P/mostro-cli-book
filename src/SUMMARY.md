@@ -34,6 +34,7 @@
 - [bond add-invoice](commands/bond_add_invoice.md)
 - [message list](commands/message_list.md)
 - [order chat](commands/order_chat.md)
+- [order watch](commands/order_watch.md)
 - [dispute open](commands/dispute_open.md)
 - [order rate](commands/order_rate.md)
 - [Human-only commands](commands/legacy.md)

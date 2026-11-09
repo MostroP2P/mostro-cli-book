@@ -2,7 +2,7 @@
 
 # Example catalogue
 
-159 examples: 115 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
+160 examples: 116 fixtures from the CLI's test suite, 14 captured from the binary, 30 authored for this book. Every one validates against the generated schema of its command (`scripts/validate_examples.py`).
 
 Files are in `examples/`, one envelope per file, exactly as printed on stdout. `examples/index.json` adds the command line, exit code, title and source of each.
 
@@ -171,6 +171,7 @@ Files are in `examples/`, one envelope per file, exactly as printed on stdout. `
 | `order.take-sell/reply_malformed_uncertain` — An answer the CLI cannot use (for example a Cashu escrow): the take may stand | `order.take-sell` | uncertain | `reply_malformed` | 1 | authored |
 | `order.take-sell/waiting_for_seller` — Took a sell order with an invoice: wait for the seller to pay | `order.take-sell` | ok |  | 0 | fixture |
 | `order.take-sell/yes_required` — JSON mode without --yes | `order.take-sell` | error | `invalid_arguments` | 2 | fixture |
+| `order.watch/new_records` — The first new records after the replay: a node message and a chat message, with the cursor for --after | `order.watch` | ok |  | 0 | fixture |
 | `schema/discovery` — The full discovery document (all commands, inputs, outputs) | `schema` | ok |  | 0 | captured |
 | `schema/invalid_arguments` — schema takes no options | `schema` | error | `invalid_arguments` | 2 | captured |
 
