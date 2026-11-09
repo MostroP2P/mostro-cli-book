@@ -92,11 +92,12 @@ node or the counterparty..." when the replay is empty; then each update: a node 
 `order chat` shows it, escaped, under "💬 Chat:". A line follows when the counterparty is
 learned and one when older messages may be missing. Each update is written whole and
 flushed. The last line is "🏁 The trade ended: <action>", or at `--timeout` "⏰ Stopped at the
-watch deadline; the trade has not ended."; both exit 0. Ctrl-C stops it, with no exit status
-promised. A value the argument parser rejects gets the parser's own message; other errors
-are one `error: <fixed message>` line on stderr (exit 1, 2 for arguments). A stdout that
-cannot be written stops the watch with `error: the watch could not be written` (exit 1).
-The warnings are not printed. `--verbose` adds `verbose: order.watch <ok|code>` on stderr.
+watch deadline; no ending message was seen. Run `order info` to check the order."; both exit
+0. Ctrl-C stops it, with no exit status promised. A value the argument parser rejects gets
+the parser's own message; other errors are one `error: <fixed message>` line on stderr (exit
+1, 2 for arguments). A stdout that cannot be written stops the watch with `error: the watch
+could not be written` (exit 1); on Unix so does a reader that closes stdout while the watch
+is idle, elsewhere the watch notices at its next write. The warnings are not printed. `--verbose` adds `verbose: order.watch <ok|code>` on stderr.
 
 ## Success data: `WatchData`
 
