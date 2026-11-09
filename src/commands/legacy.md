@@ -45,6 +45,38 @@ _`general/output_not_supported_secret` · exit 2 · fixture_
 Note the stages `not_attempted / unknown / not_attempted`: the command was resolved but
 not executed.
 
+In human mode every one of them except the gRPC operator commands (`admsetmaintenance`,
+`admmaintenancestatus`, `admcancelpending`), which never read it, also reads the
+[config file](../getting_started.md#the-config-file) (after 0.17.0, not yet released; with
+0.17.0, set `MOSTRO_PUBKEY` and `RELAYS` in the environment or with `-m` and `-r`):
+
+- `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT` each come from the root option, else the
+  environment variable when it is set, even to an empty value, else `$MCLI_DIR/config`: the
+  same precedence as the JSON-capable commands. The file's values never enter the
+  environment.
+- The file is read right after the root options are applied, before `ADMIN_NSEC` is read and
+  before `mcli.db` is created. A refused file (the same refusals as for the JSON-capable
+  commands) stops the command there, even when the options give every value, with exit 1
+  and one line on stderr naming the file and the problem, and the line when a line is at
+  fault, never the file's content (control characters in the path are escaped):
+
+  ```text
+  Invalid config file /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
+  ```
+
+- When `MOSTRO_PUBKEY` or `RELAYS` is missing, the error they print offers, next to the
+  option and the environment variable, [`config set`](config_set.md)
+  (`mostro-cli config set mostro-pubkey <npub>`, or `config set relays <relay[,relay...]>`),
+  which writes it to `$MCLI_DIR/config` (else `~/.mcli/config`), suggests checking the
+  file with [`config show`](config_show.md) (`mostro-cli config show`), and says that a
+  variable that is set, even empty, wins over the file (unset it to use the file).
+- A blank value counts as missing, whatever the file holds: an empty `-m`, or a
+  `MOSTRO_PUBKEY` that is set but empty or only whitespace, prints `MOSTRO_PUBKEY not set`
+  with that guidance instead of a key parse error, as an empty `-r` or `RELAYS` prints
+  `RELAYS not set`. Either way the command stops with exit 1 before `mcli.db` is created
+  and before any relay is contacted.
+- `ADMIN_NSEC`, which the admin commands need, stays in the environment: the file refuses it.
+
 A wrapper that needs one of these today has to run it in human mode and treat its output
 as text for a person, not as data. Do not scrape it; its wording is not a contract.
 

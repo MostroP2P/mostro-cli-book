@@ -25,6 +25,8 @@ mostro-cli --output json schema | jq '.data.commands[] | select(.output_modes | 
 
 ```text
 "bond.add-invoice"
+"config.set"
+"config.show"
 "dispute.open"
 "identity.init"
 "identity.show"
@@ -48,10 +50,10 @@ See [schema](commands/schema.md) for the full document.
 
 ## Configure the node
 
-Every command except `schema`, `identity init`, `identity show` and `order mine` needs the
-node's public key and the relays. `order list`, `message list` and `order sync` only read
-events from the relays; the other commands also send the node one signed request through
-them.
+Every command except `schema`, `config set`, `config show`, `identity init`,
+`identity show` and `order mine` needs the node's public key and the relays. `order list`,
+`message list` and `order sync` only read events from the relays; the other commands also
+send the node one signed request through them.
 
 | Setting | Environment variable | Root option | Required | Meaning |
 | --- | --- | --- | --- | --- |
@@ -59,12 +61,18 @@ them.
 | Relays | `RELAYS` | `--relays URL[,URL...]` (`-r`) | yes | Comma-separated `wss://` URLs |
 | Proof of work | `POW` | `--pow BITS` (`-p`) | no | The least PoW put on requests, 0-255, default 0. The commands raise it to what the node advertises, up to 20 bits, so you rarely need it ([Proof of work](errors.md#proof-of-work)) |
 | Transport | `TRANSPORT` | `--transport nip44` (`-t`) | no | Only `nip44` (protocol v2) is supported |
-| Data directory | `MCLI_DIR` | — | no | Where `mcli.db` lives; default `~/.mcli` |
+| Data directory | `MCLI_DIR` | — | no | Where `mcli.db` and the [config file](#the-config-file) live; default `~/.mcli` |
 
-A root option overrides its environment variable. An **empty or invalid** option does not
-fall back to the environment: it fails with `configuration_invalid`. Root options go
-**before** the command (`mostro-cli --relays wss://a order list`), while `--output` may go
-anywhere.
+Each of the first four settings comes from its root option, even an empty one; else from its
+environment variable when that is set, even to an empty value; else from the
+[config file](#the-config-file). A value given in one place never falls back to the next.
+An **empty** value counts as not given: an empty node key or relay list is
+`configuration_missing`, an empty `POW` is 0 and an empty `TRANSPORT` means detect. An
+**invalid** value (an unparsable key or relay URL, a `POW` outside 0-255, a transport other
+than `nip44`) is `configuration_invalid`; `order list`, `message list` and `order sync`
+send no request and do not look at `POW` or `TRANSPORT` given as an option or a variable
+(a config file line is always checked). Root options go **before** the command
+(`mostro-cli --relays wss://a order list`), while `--output` may go anywhere.
 
 ```sh
 export MOSTRO_PUBKEY=<hex public key of the Mostro node you trade with>
@@ -72,14 +80,95 @@ export RELAYS=wss://relay.example.com,wss://relay2.example.com
 mostro-cli --output json order list
 ```
 
-The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported.
+The examples in this book assume `MOSTRO_PUBKEY` and `RELAYS` are exported or in the config
+file.
+
+### The config file
+
+> After 0.17.0, not yet released: mostro-cli 0.17.0 reads no config file.
+
+Every command, JSON-capable or [human-only](commands/legacy.md), also reads the four node
+settings from `config` in the data directory: `$MCLI_DIR/config`, else `~/.mcli/config`
+(on Windows the profile folder, normally `%USERPROFILE%\.mcli\config`). Only the local
+commands (`schema`, `identity init`, `identity show`, `order mine`) and the gRPC operator
+commands (`admsetmaintenance`, `admmaintenancestatus`, `admcancelpending`) never read it.
+A program that runs each command in a fresh process, as coding agents and MCP hosts do, can
+write the settings there once instead of passing `-m`, `-r` and `-p` on every call.
+
+[`config set`](commands/config_set.md) writes one setting at a time. It checks the value as
+the commands do, creates the data directory if needed, and rewrites the file as
+`NAME=value` lines, keeping the other settings and dropping comments. On Unix it makes the
+directory (`0700`) and the file (`0600`) owner-only; on Windows it sets no permissions of
+its own, so the directory keeps the ACLs it inherits from its parent folder and the file
+those it inherits from the directory. It leaves a file the commands refuse, or one it
+cannot reach, untouched (`configuration_invalid`, with the `hint:` line below).
+
+```sh
+mostro-cli --output json config set mostro-pubkey <hex public key of the Mostro node you trade with>
+mostro-cli --output json config set relays wss://relay.example.com,wss://relay2.example.com
+mostro-cli --output json config show
+mostro-cli --output json order list
+```
+
+[`config show`](commands/config_show.md) reports the file's path and the values stored in
+it (`null` when absent), read-only. It shows only the file: an option or a set environment
+variable still wins over a value it shows.
+
+Or write the file by hand:
+
+```sh
+mkdir -m 700 -p ~/.mcli
+cat > ~/.mcli/config <<'EOF'
+# node settings of mostro-cli
+MOSTRO_PUBKEY=<hex public key of the Mostro node you trade with>
+RELAYS=wss://relay.example.com,wss://relay2.example.com
+EOF
+chmod 600 ~/.mcli/config
+mostro-cli --output json order list
+```
+
+The format:
+
+- One `KEY=VALUE` per line, with the variable names as keys. Blank lines and lines
+  starting with `#` are skipped, an `export ` prefix is dropped, key and value are trimmed,
+  one pair of matching `"` or `'` quotes around the value is removed and the value is
+  trimmed again (`POW=" 3 "` is 3). LF or CRLF; a leading byte order mark is ignored.
+- No inline comments (a `#` after a value is part of the value), escapes or variable
+  expansion.
+- An empty value means unset. When a key is repeated, its last line wins.
+- Only `MOSTRO_PUBKEY`, `RELAYS`, `POW` and `TRANSPORT`. Any other key, `ADMIN_NSEC` and
+  `MOSTRO_RPC_TOKEN` included, refuses the file, so secrets stay in the environment.
+- Every value is checked, by every command that reads the file: a key in hex or `npub`,
+  `ws://` or `wss://` relay URLs, 0-255, `nip44`, no control character.
+
+A file with another key, a line that is not `KEY=VALUE`, a value its setting refuses, or a
+`config` that is not a readable UTF-8 file is refused **as a whole**: the command fails with
+`configuration_invalid` (exit 1) after its own argument checks (an `invalid_arguments`
+comes first) and before it touches the identity, the store or the network, even when the
+options give every value. Stderr then has one line naming the file and the problem, with
+the line number when a line is at fault, never the file's content (control characters in
+the path are escaped, as in human output):
+
+```text
+hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELAYS, POW or TRANSPORT
+```
+
+When the file or the data directory does not exist, or the process may not look into the
+directory, there is no file and nothing changes. `config set` and `config show` are
+stricter: they refuse a data directory they may not look into (`configuration_invalid`,
+with the `hint:` line), so that `config set` never replaces a file it could not read and
+`config show` never reports such a file as empty. Reading the file never creates the data
+directory or anything in it. A [human-only command](commands/legacy.md) takes the settings
+with the same precedence and refuses the same files, but stops with its own one-line
+message (exit 1) instead of `configuration_invalid` and the `hint:` line (see that page).
 
 ## Create an identity
 
-Commands that act for you (everything except `order list` and `schema`) need a local
-identity: a BIP-39 mnemonic in `mcli.db` from which the identity key and one trade key per
-order are derived. Only [`identity init`](commands/identity_init.md) creates it; the
-other commands that need it fail with `identity_missing` instead. Create it once:
+Commands that act for you (everything except `order list`, `schema`, `config set` and
+`config show`) need a local identity: a BIP-39 mnemonic in `mcli.db` from which the
+identity key and one trade key per order are derived. Only
+[`identity init`](commands/identity_init.md) creates it; the other commands that need it
+fail with `identity_missing` instead. Create it once:
 
 ```sh
 mostro-cli --output json identity init   # creates $MCLI_DIR (else ~/.mcli) and mcli.db

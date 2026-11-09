@@ -45,7 +45,8 @@ mostro-cli --output json order cancel --order 00000000-0000-0000-0000-0000000000
 after it has obtained that consent (see [Guide for AI agents](wrapper/ai_agents.md)).
 
 `order sync` writes only local rows and publishes nothing; it does not take `--yes`.
-Neither do the local commands `identity init`, `identity show` and `order mine`.
+Neither do the local commands `identity init`, `identity show`, `order mine`,
+`config set` and `config show`.
 
 ## Invoice on standard input
 
@@ -69,6 +70,22 @@ The line is then validated like a literal `--invoice` value. The error message i
 and never contains what was read. `mostro-cli schema` marks these properties with
 `"x-stdin": "-"`.
 
+## Positional arguments
+
+The JSON-capable commands take only options, except [`config set`](commands/config_set.md)
+(after 0.17.0, not yet released), whose key and value are positional arguments: they come
+after the command path, in that order. Put `--` before them when a value could start with
+`-`; otherwise such a value is read as an option (`invalid_arguments`, exit 2), or as an
+output selection when it looks like `--output`.
+
+```sh
+mostro-cli --output json config set -- relays wss://relay.example.com
+```
+
+`mostro-cli schema` marks these properties with `"x-positional"` and their 0-based position.
+A wrapper that ignores the keyword passes them as options (`--key pow`) and gets
+`invalid_arguments` (exit 2), with nothing written.
+
 ## Streams
 
 With JSON selected, a controlled outcome is:
@@ -78,7 +95,9 @@ With JSON selected, a controlled outcome is:
 - **stderr**: optional diagnostics in fixed English prose. With `--verbose` (`-v`, a root
   option) a command adds one line such as `verbose: order.take-sell ok` or
   `verbose: order.release reply_timeout`. Diagnostics never contain keys, invoices, relay
-  URLs or argument values. Do not parse stderr.
+  URLs or argument values. A refused [config file](getting_started.md#the-config-file) adds
+  one line `hint: <path>: <problem>` naming the file and the problem (and the line, for a
+  bad line), never the file's content. Do not parse stderr.
 - **stdin**: read only for `--invoice -` (above); otherwise never read.
 
 ## Exit codes
@@ -174,6 +193,14 @@ range, default and the commands they apply to (`data.global_options`).
 
 The CLI makes no promise about two write commands running at the same time against one
 data directory (both may reserve trade indexes and update rows). Run write commands
-**one at a time** per data directory; queue them in your wrapper. `order list` and
-`schema` never touch the data directory; `order info`, `message list`, `order mine` and
-`identity show` only read it. `identity init` creates it.
+**one at a time** per data directory; queue them in your wrapper. Every command,
+JSON-capable or [human-only](commands/legacy.md), except the local ones (`schema`,
+`identity init`, `identity show`, `order mine`) and the gRPC operator commands reads
+`$MCLI_DIR/config` (the [config file](getting_started.md#the-config-file)). Only
+[`config set`](commands/config_set.md) writes it, under an exclusive lock on `.config.lock`
+beside it: runs of `config set` at the same time wait for each other and all land, and the
+file is replaced atomically. Besides the lock and its temporary file, `config set` writes
+nothing else in the data directory, which it creates when needed, and never touches
+`mcli.db`. [`config show`](commands/config_show.md) only reads `config`, and `order list`
+reads nothing else there; `schema` never touches the data directory; `order info`,
+`message list`, `order mine` and `identity show` only read it. `identity init` creates it.
