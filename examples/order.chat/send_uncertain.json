@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "command": "order.chat",
+  "status": "uncertain",
+  "data": {
+    "counterparty_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+    "messages": [
+      {
+        "created_at": "2026-10-16T00:00:00Z",
+        "created_at_unix": "1792108800",
+        "from": "me",
+        "message_id": "1111111111111111111111111111111111111111111111111111111111111111",
+        "text": "Fiat sent by bank transfer."
+      },
+      {
+        "created_at": "2026-10-16T00:00:00Z",
+        "created_at_unix": "1792108800",
+        "from": "counterparty",
+        "message_id": "2222222222222222222222222222222222222222222222222222222222222222",
+        "text": "Received, releasing now."
+      }
+    ],
+    "order_id": "00000000-0000-0000-0000-000000000001",
+    "sent": {
+      "created_at": "2026-10-16T00:00:00Z",
+      "created_at_unix": "1792108800",
+      "from": "me",
+      "message_id": "3333333333333333333333333333333333333333333333333333333333333333",
+      "text": "Thanks!"
+    },
+    "truncated": false
+  },
+  "error": {
+    "code": "request_rejected",
+    "message": "No relay confirmed accepting the request."
+  },
+  "warnings": [],
+  "meta": {
+    "publication": "unknown",
+    "daemon_acceptance": "not_applicable",
+    "persistence": "not_applicable",
+    "snapshot": null
+  }
+}
