@@ -97,7 +97,8 @@ write the settings there once instead of passing `-m`, `-r` and `-p` on every ca
 [`config set`](commands/config_set.md) writes one setting at a time. It checks the value as
 the commands do, creates the data directory owner-only, and rewrites the file owner-only as
 `NAME=value` lines, keeping the other settings and dropping comments. It leaves a file the
-commands refuse untouched (`configuration_invalid`, with the `hint:` line below).
+commands refuse, or one it cannot reach, untouched (`configuration_invalid`, with the
+`hint:` line below).
 
 ```sh
 mostro-cli --output json config set mostro-pubkey <hex public key of the Mostro node you trade with>
@@ -144,8 +145,10 @@ hint: /home/alice/.mcli/config: line 2 sets a key other than MOSTRO_PUBKEY, RELA
 ```
 
 When the file or the data directory does not exist, or the process may not look into the
-directory, there is no file and nothing changes. Reading the file never creates the data
-directory or anything in it. A [human-only command](commands/legacy.md) takes the settings
+directory, there is no file and nothing changes. `config set` is stricter: it refuses a data
+directory it may not look into (`configuration_invalid`, with the `hint:` line), so that it
+never replaces a file it could not read. Reading the file never creates the data directory or
+anything in it. A [human-only command](commands/legacy.md) takes the settings
 with the same precedence and refuses the same files, but stops with its own one-line
 message (exit 1) instead of `configuration_invalid` and the `hint:` line (see that page).
 

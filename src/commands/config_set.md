@@ -154,8 +154,9 @@ Values are not normalized: an `npub` stays an `npub`.
 `invalid_arguments`, `configuration_invalid`, `configuration_unwritable`, `internal_error`.
 Nothing is published in any case. Only this command emits `configuration_unwritable`
 ([catalogue](../errors.md)): make `MCLI_DIR` (else `~/.mcli`) a directory you own on a disk
-with free space, then run it again. After `configuration_invalid`, fix or delete the line
-the `hint:` names; `config set` never repairs a refused file.
+with free space, then run it again. After `configuration_invalid`, fix what the `hint:`
+line names (the line at fault, or a file or data directory the process cannot read);
+`config set` never repairs a refused file.
 
 ## Warnings
 
