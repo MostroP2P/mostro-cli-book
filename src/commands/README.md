@@ -24,7 +24,8 @@ must already exist; only `identity init` creates it.
 | [`dispute open`](dispute_open.md) | `dispute.open` | write | 1 signed request | yes | status | **yes** | ok, error, uncertain |
 | [`order rate`](order_rate.md) | `order.rate` | write | 1 signed request | yes | none | **yes** | ok, error, uncertain |
 
-All of them need `MOSTRO_PUBKEY` and `RELAYS` except `schema`, `identity init`,
+All of them need `MOSTRO_PUBKEY` and `RELAYS` (root option, environment or
+[config file](../getting_started.md#the-config-file)) except `schema`, `identity init`,
 `identity show` and `order mine`, which only use the local data directory (`MCLI_DIR`,
 else `~/.mcli`) or nothing at all.
 

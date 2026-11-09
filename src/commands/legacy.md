@@ -41,5 +41,9 @@ _`general/output_not_supported_secret` · exit 2 · fixture_
 Note the stages `not_attempted / unknown / not_attempted`: the command was resolved but
 not executed.
 
+In human mode they do not read the [config file](../getting_started.md#the-config-file) yet:
+set `MOSTRO_PUBKEY` and `RELAYS` in the environment or with `-m` and `-r`. When one they need
+is missing, the error they print says that the command reads no config file.
+
 A wrapper that needs one of these today has to run it in human mode and treat its output
 as text for a person, not as data. Do not scrape it; its wording is not a contract.

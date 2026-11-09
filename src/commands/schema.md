@@ -24,9 +24,9 @@ None. Any option is `invalid_arguments`.
 
 ## Behavior
 
-Pure and deterministic for a given binary. It never reads environment values (so it never
-prints secrets or relay URLs), never opens the database and never connects. Call it once
-at wrapper start-up and cache it keyed by `executable_version`.
+Pure and deterministic for a given binary. It never reads environment values or the config
+file (so it never prints secrets or relay URLs), never opens the database and never
+connects. Call it once at wrapper start-up and cache it keyed by `executable_version`.
 
 ## Success data: `DiscoveryData`
 
@@ -47,7 +47,7 @@ at wrapper start-up and cache it keyed by `executable_version`.
 | `output_modes` | array of `"human"` \| `"json"` | `["human", "json"]` for migrated commands, `["human"]` for legacy ones |
 | `input_schema` | object or null | JSON Schema of the options; `null` for human-only commands |
 | `output_schema` | object or null | JSON Schema of the whole envelope; `null` for human-only commands |
-| `required_configuration` | array of string or null | Environment variables read (`["MOSTRO_PUBKEY", "RELAYS"]`); `[]` for the local commands (`schema`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
+| `required_configuration` | array of string or null | Names of the required settings (`["MOSTRO_PUBKEY", "RELAYS"]`), each from its root option, its environment variable or the [config file](../getting_started.md#the-config-file) key of that name; `[]` for the local commands (`schema`, `identity init`, `identity show`, `order mine`); `null` when not modeled (legacy) |
 
 Example descriptor (trimmed):
 
