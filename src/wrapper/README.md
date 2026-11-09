@@ -73,5 +73,5 @@ Many outcomes can be produced offline:
 | `relay_connection_failed` | `--relays ws://127.0.0.1:1` (with an identity, for identity commands) |
 | `schema` success | `schema` |
 
-For the rest, feed your parser the files in `examples/` (all 147 are real-shaped envelopes;
+For the rest, feed your parser the files in `examples/` (all 153 are real-shaped envelopes;
 `examples/index.json` gives the exit code to pair with each).

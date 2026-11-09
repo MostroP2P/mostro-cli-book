@@ -19,7 +19,7 @@ wrapper, a GUI, a bot, an MCP server, or an AI agent. It explains:
   and on disk;
 - **every field** of every document, every status, error code, warning code and
   execution stage, and how to react to each;
-- **many examples**: 152 outcomes, each in its own file with the exact command line, all
+- **many examples**: 153 outcomes, each in its own file with the exact command line, all
   validated against the schemas the CLI generates.
 
 ## How this relates to the Mostro protocol book
@@ -78,4 +78,6 @@ Reject documents whose `schema_version` you do not know.
 > (`order.watch`) each call returns one document at the first new records, with a cursor for
 > `--after` ([`order watch`](commands/order_watch.md);
 > [mostro-cli#261](https://github.com/MostroP2P/mostro-cli/pull/261), [mostro-cli#CLI_PR_order_watch_json](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_watch_json)).
+> Its output schema file is `schemas/order.watch.output.json`
+> ([mostro-cli#CLI_PR_order_watch_schema](https://github.com/MostroP2P/mostro-cli/pull/CLI_PR_order_watch_schema)).
 > With 0.17.0, poll `message list` and `getdmuser`.
